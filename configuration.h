@@ -85,6 +85,9 @@
 #if defined(V_GYRO)
   #include "conf_VGYRO.h"
 #endif
+#if defined(GBIAS)
+  #include "conf_GBIAS.h"
+#endif
 
 #ifndef SENSORS_GYROSCOPE_ENABLE
   #define SENSORS_GYROSCOPE_ENABLE 		(0)
