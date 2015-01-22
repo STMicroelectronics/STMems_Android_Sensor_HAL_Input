@@ -124,12 +124,11 @@ MagnSensor::MagnSensor()
 
 	memset(data_raw, 0, sizeof(data_raw));
 
-#if (((MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1)) ||\
-				(SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1))
+#if ((MAG_CALIBRATION_ENABLE == 1) || (SENSOR_GEOMAG_ENABLE == 1))
 	acc = new AccelSensor();
 #endif
 
-#if (MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1)
+#if (MAG_CALIBRATION_ENABLE == 1)
 	compass_API_Init(0, 0, HIGH_SENSITIVITY, DEFAULT_CALIB_DATA_FILE);
   #if (MAG_SI_COMPENSATION_ENABLED == 1)
 	if (compass_API_loadSIMatrixFromFile(DEFAULT_SI_MATRIX_FILEPATH) != 0)
@@ -148,7 +147,7 @@ MagnSensor::~MagnSensor() {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 	acc->~AccelSensor();
 #endif
-#if SENSORS_COMPASS_API
+#if (MAG_CALIBRATION_ENABLE == 1)
 	compass_API_DeInit();
 #endif
 }
@@ -160,7 +159,7 @@ int MagnSensor::setInitialState()
 	struct input_absinfo absinfo_z;
 	float value;
 
-#if (MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1)
+#if (MAG_CALIBRATION_ENABLE == 1)
 	data_read = 0;
 #endif
 
@@ -250,7 +249,7 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 			}
 		}
 
-#if ((MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
+#if (MAG_CALIBRATION_ENABLE == 1)
 		acc->enable(SENSORS_MAGNETIC_FIELD_HANDLE, flags, 2);
 #endif
 #if (SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)
@@ -281,7 +280,7 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 			if(err >= 0)
 				err = 0;
 		}
-#if ((MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
+#if (MAG_CALIBRATION_ENABLE == 1)
 			acc->enable(SENSORS_MAGNETIC_FIELD_HANDLE, flags, 2);
 #endif
 #if (SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)
@@ -335,25 +334,25 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 	if (what < 0)
 		return what;
 
-#if ((MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
-				acc->setDelay(SENSORS_MAGNETIC_FIELD_HANDLE, SEC_TO_NSEC(1 / CALIBRATION_FREQUENCY));
+#if (MAG_CALIBRATION_ENABLE == 1)
+				acc->setDelay(SENSORS_MAGNETIC_FIELD_HANDLE, SEC_TO_NSEC(1.0f / CALIBRATION_FREQUENCY));
 #endif
 #if (SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)
 				if (what == GeoMagRotVect_Magnetic)
-					acc->setDelay(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
+					acc->setDelay(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
 #endif
 #if ((SENSOR_FUSION_ENABLE == 0) && (MAG_CALIBRATION_ENABLE == 1))
   #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 				if (what == Orientation)
-					acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
+					acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
   #endif
   #if (GEOMAG_GRAVITY_ENABLE == 1)
 				if (what == Gravity_Accel)
-					acc->setDelay(SENSORS_GRAVITY_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
+					acc->setDelay(SENSORS_GRAVITY_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
   #endif
   #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
 				if (what == Linear_Accel)
-					acc->setDelay(SENSORS_LINEAR_ACCELERATION_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
+					acc->setDelay(SENSORS_LINEAR_ACCELERATION_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
   #endif
 #endif
 	/**
@@ -539,7 +538,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				/**
 				 * Get and apply Hard Iron calibration to raw mag data
 				 */
-#if ((MAG_CALIBRATION_ENABLE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
+#if (MAG_CALIBRATION_ENABLE == 1)
 				compass_API_getCalibrationData(&cf);
 				data_calibrated.v[0] = data_rot[0] - cf.magOffX;
 				data_calibrated.v[1] = data_rot[1] - cf.magOffY;
@@ -548,7 +547,13 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				MagOffset[0] = cf.magOffX;
 				MagOffset[1] = cf.magOffY;
 				MagOffset[2] = cf.magOffZ;
-  #if (DEBUG_CALIBRATION == 1) && (MAG_CALIBRATION_ENABLE == 1)
+
+#if (DEBUG_MAGNETOMETER == 1)
+				STLOGD("MagnSensor::MagCalibData: %f, %f, %f", data_calibrated.v[0], data_calibrated.v[1], data_calibrated.v[2]);
+#endif
+
+
+  #if (DEBUG_CALIBRATION == 1)
 				STLOGD("Calibration accuracy = %d\tmag offset = %f\t%f\t%f",
 						data_calibrated.status,
 						cf.magOffX, cf.magOffY, cf.magOffZ);

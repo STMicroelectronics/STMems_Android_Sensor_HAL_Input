@@ -245,8 +245,13 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
 	int64_t Min_delay_ms = 0;
 
+	STLOGD("AccSensor: Delay_ms: %lld", delay_ms);
+	STLOGD("AccSensor: Delay_ns: %lld", delay_ns);
+
 	if(delay_ms == 0)
 		return err;
+
+	STLOGD("AccSensor: what: %d", what);
 
 	what = getWhatFromHandle(handle);
 	if (what < 0)
