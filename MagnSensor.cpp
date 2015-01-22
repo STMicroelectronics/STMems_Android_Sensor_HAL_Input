@@ -545,6 +545,9 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				data_calibrated.v[1] = data_rot[1] - cf.magOffY;
 				data_calibrated.v[2] = data_rot[2] - cf.magOffZ;
 				data_calibrated.status = compass_API_Get_Calibration_Accuracy();
+				MagOffset[0] = cf.magOffX;
+				MagOffset[1] = cf.magOffY;
+				MagOffset[2] = cf.magOffZ;
   #if (DEBUG_CALIBRATION == 1) && (MAG_CALIBRATION_ENABLE == 1)
 				STLOGD("Calibration accuracy = %d\tmag offset = %f\t%f\t%f",
 						data_calibrated.status,
