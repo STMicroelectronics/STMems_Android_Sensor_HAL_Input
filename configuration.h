@@ -25,10 +25,19 @@
 #ifndef CONFIGURATION_HAL_H
 #define CONFIGURATION_HAL_H
 
+// Alberto
+#define LSM303C 1
+#define V_GYRO 1
+#define GEOMAG_FUSION 1
+
+#define NEWCOMPASS_MODULE_PRESENT 1
+#define GEOMAG_FUSION_MODULE_PRESENT 1
+
+
 /* ANDROID API VERSION */
 #define ANDROID_ICS				(14)
 #define ANDROIS_JB				(16)
-#define ANDROIS_JBMR2				(18)
+#define ANDROIS_JBMR2			(18)
 #define ANDROIS_KK				(19)
 #define ANDROIS_L				(21)
 
@@ -85,6 +94,9 @@
 #if defined(V_GYRO)
   #include "conf_VGYRO.h"
 #endif
+#if defined(GEOMAG_FUSION)
+  #include "conf_GEOMAG.h"
+#endif
 #if defined(GBIAS)
   #include "conf_GBIAS.h"
 #endif
@@ -124,6 +136,7 @@
 #define DEBUG_PRESSURE_SENSOR			(0)
 #define DEBUG_CALIBRATION			(0)
 #define DEBUG_MAG_SI_COMPENSATION		(0)
+#define DEBUG_VIRTUAL_GYROSCOPE			(0)
 
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)

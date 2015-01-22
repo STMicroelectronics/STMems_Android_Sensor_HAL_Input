@@ -131,17 +131,17 @@ int AccelSensor::getWhatFromHandle(int32_t handle)
 			break;
 #endif
 #if (SENSOR_FUSION_ENABLE == 0)
-  #if ((SENSORS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if ((SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1))
 		case SENSORS_ORIENTATION_HANDLE:
 			what = Orientation;
 			break;
   #endif
-  #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
+  #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
 		case SENSORS_LINEAR_ACCELERATION_HANDLE:
 			what = Linear_Accel;
 			break;
   #endif
-  #if (SENSORS_GRAVITY_ENABLE == 1)
+  #if (GEOMAG_GRAVITY_ENABLE == 1)
 		case SENSORS_GRAVITY_HANDLE:
 			what = Gravity_Accel;
 			break;

@@ -185,12 +185,12 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
-#if ((SENSORS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+#if ((SENSORS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1))
 	{
   #if (SENSOR_FUSION_ENABLE == 1)
 		"iNemoEngine Orientation sensor",
   #else
-    #if (SENSOR_GEOMAG_ENABLE == 1)
+    #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
 		"iNemoEngineGeoMag Orientation sensor",
     #else
 		"ST Orientation sensor",
@@ -537,7 +537,7 @@ private:
 				return magn;
 #endif
 
-#if (SENSORS_ORIENTATION_ENABLE == 1)
+#if ((SENSORS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1))
 			case SENSORS_ORIENTATION_HANDLE:
 #if (SENSOR_FUSION_ENABLE == 1)
 				return inemo;

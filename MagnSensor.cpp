@@ -32,7 +32,7 @@
 #include "MagnSensor.h"
 #include SENSOR_MAG_INCLUDE_FILE_NAME
 
-#if ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1) || ((SENSOR_GEOMAG_ENABLE == 1) && (SENSOR_FUSION_ENABLE == 0) && (SENSORS_COMPASS_ORIENTATION_ENABLE == 0)))
+#if (SENSOR_GEOMAG_ENABLE == 1)
 #include "iNemoEngineGeoMagAPI.h"
 #endif
 
@@ -84,21 +84,21 @@ MagnSensor::MagnSensor()
 	mPendingEvent[UncalibMagneticField].magnetic.status = SENSOR_STATUS_UNRELIABLE;
 #endif
 #if (SENSOR_FUSION_ENABLE == 0)
-  #if ((SENSORS_ORIENTATION_ENABLE == 1) | (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 	mPendingEvent[Orientation].version = sizeof(sensors_event_t);
 	mPendingEvent[Orientation].sensor = ID_ORIENTATION;
 	mPendingEvent[Orientation].type = SENSOR_TYPE_ORIENTATION;
 	memset(mPendingEvent[Orientation].data, 0, sizeof(mPendingEvent[Orientation].data));
 	mPendingEvent[Orientation].orientation.status = SENSOR_STATUS_UNRELIABLE;
   #endif
-  #if (SENSORS_GRAVITY_ENABLE == 1)
+  #if (GEOMAG_GRAVITY_ENABLE == 1)
 	mPendingEvent[Gravity_Accel].version = sizeof(sensors_event_t);
 	mPendingEvent[Gravity_Accel].sensor = ID_GRAVITY;
 	mPendingEvent[Gravity_Accel].type = SENSOR_TYPE_GRAVITY;
 	memset(mPendingEvent[Gravity_Accel].data, 0, sizeof(mPendingEvent[Gravity_Accel].data));
 	mPendingEvent[Gravity_Accel].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
   #endif
-  #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
+  #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
 	mPendingEvent[Linear_Accel].version = sizeof(sensors_event_t);
 	mPendingEvent[Linear_Accel].sensor = ID_LINEAR_ACCELERATION;
 	mPendingEvent[Linear_Accel].type = SENSOR_TYPE_LINEAR_ACCELERATION;
@@ -203,18 +203,18 @@ int MagnSensor::getWhatFromHandle(int32_t handle)
 			break;
 #endif
 #if ((SENSOR_FUSION_ENABLE == 0) && (MAG_CALIBRATION_ENABLE == 1))
-  #if (SENSORS_GRAVITY_ENABLE == 1)
+  #if (GEOMAG_GRAVITY_ENABLE == 1)
 		case SENSORS_GRAVITY_HANDLE:
 			what = Gravity_Accel;
 			break;
   #endif
-  #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
+  #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
 		case SENSORS_LINEAR_ACCELERATION_HANDLE:
 			what = Linear_Accel;
 			break;
   #endif
 #endif
-#if ((SENSORS_ORIENTATION_ENABLE == 1) | (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+#if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 		case SENSORS_ORIENTATION_HANDLE:
 			what = Orientation;
 			break;
@@ -259,15 +259,15 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 
 #endif
 #if (SENSOR_FUSION_ENABLE == 0)
-  #if ((SENSORS_ORIENTATION_ENABLE == 1) | (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 		if (what == Orientation)
 				acc->enable(SENSORS_ORIENTATION_HANDLE, flags, 4);
   #endif
-  #if (SENSORS_GRAVITY_ENABLE == 1)
+  #if (GEOMAG_GRAVITY_ENABLE == 1)
 		if (what == Gravity_Accel)
 				acc->enable(SENSORS_GRAVITY_HANDLE, flags, 5);
   #endif
-  #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
+  #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
 		if (what == Linear_Accel)
 				acc->enable(SENSORS_LINEAR_ACCELERATION_HANDLE, flags, 6);
   #endif
@@ -289,15 +289,15 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 					acc->enable(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, flags, 3);
 #endif
 #if (SENSOR_FUSION_ENABLE == 0)
-  #if ((SENSORS_ORIENTATION_ENABLE == 1) | (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 				if (what == Orientation)
 					acc->enable(SENSORS_ORIENTATION_HANDLE, flags, 4);
   #endif
-  #if (SENSORS_GRAVITY_ENABLE == 1)
+  #if (GEOMAG_GRAVITY_ENABLE == 1)
 				if (what == Gravity_Accel)
 					acc->enable(SENSORS_GRAVITY_HANDLE, flags, 5);
   #endif
-  #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
+  #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
 				if (what == Linear_Accel)
 					acc->enable(SENSORS_ORIENTATION_HANDLE, flags, 6);
   #endif
@@ -343,11 +343,11 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 					acc->setDelay(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
 #endif
 #if ((SENSOR_FUSION_ENABLE == 0) && (MAG_CALIBRATION_ENABLE == 1))
-  #if ((SENSORS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 				if (what == Orientation)
 					acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
   #endif
-  #if (SENSORS_GRAVITY_ENABLE == 1)
+  #if (GEOMAG_GRAVITY_ENABLE == 1)
 				if (what == Gravity_Accel)
 					acc->setDelay(SENSORS_GRAVITY_HANDLE, SEC_TO_NSEC(1 / GEOMAG_FREQUENCY));
   #endif
@@ -377,9 +377,9 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 	if(Min_delay_ms > 1000 / CALIBRATION_FREQUENCY)
 		Min_delay_ms = 1000 / CALIBRATION_FREQUENCY;
 #endif
-#if ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1) || (((SENSORS_ORIENTATION_ENABLE == 1) ||\
-	(SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_LINEAR_ACCELERATION_ENABLE == 1) ||\
-	(SENSORS_GRAVITY_ENABLE == 1))  && (SENSOR_FUSION_ENABLE == 0)))
+#if ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1) || (((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) ||\
+	(SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1) ||\
+	(GEOMAG_GRAVITY_ENABLE == 1))  && (SENSOR_FUSION_ENABLE == 0)))
 	if ((what == GeoMagRotVect_Magnetic) || (what == Orientation)
 			 || (what == Linear_Accel) || (what == Gravity_Accel)){
 		if(Min_delay_ms > (1000 / GEOMAG_FREQUENCY))
@@ -560,8 +560,10 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				memset(data_calibrated.v, 0, sizeof(data_calibrated.v));
 				data_calibrated.status = SENSOR_STATUS_UNRELIABLE;
 #endif
-#if ((((SENSORS_GRAVITY_ENABLE == 1) || (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)) &&\
-	(SENSOR_FUSION_ENABLE != 1)) || ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)))
+
+#if ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1) || (((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) ||\
+	(GEOMAG_LINEAR_ACCELERATION_ENABLE == 1) ||\
+	(GEOMAG_GRAVITY_ENABLE == 1))  && (SENSOR_FUSION_ENABLE == 0)))
 				memcpy(sData.accel,
 				       mSensorsBufferedVectors[ID_ACCELEROMETER].v,
 							sizeof(sData.accel));
@@ -586,7 +588,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				DecimationCount[UncalibMagneticField]++;
 				if((mEnabled & (1<<UncalibMagneticField)) && (DecimationCount[UncalibMagneticField] >= DecimationBuffer[UncalibMagneticField])) {
 					DecimationCount[UncalibMagneticField] = 0;
-					mPendingEvent[UncalibMagneticField].magnetic.status =
+					mPendingEvent[UncalibMagneticField].magnetic.status = 
 							data_calibrated.status;
 					memcpy(mPendingEvent[UncalibMagneticField].uncalibrated_magnetic.uncalib,
 							data_rot, sizeof(data_rot));
@@ -619,7 +621,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 #endif
 #if (SENSOR_FUSION_ENABLE == 0)
   #if (SENSOR_GEOMAG_ENABLE == 1)
-    #if ((SENSORS_LINEAR_ACCELERATION_ENABLE == 1))
+    #if ((GEOMAG_LINEAR_ACCELERATION_ENABLE == 1))
 				DecimationCount[Linear_Accel]++;
 				if((mEnabled & (1<<Linear_Accel)) && (DecimationCount[Linear_Accel] >= DecimationBuffer[Linear_Accel])) {
 					DecimationCount[Linear_Accel] = 0;
@@ -632,7 +634,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					}
 				}
     #endif
-    #if ((SENSORS_GRAVITY_ENABLE == 1))
+    #if ((GEOMAG_GRAVITY_ENABLE == 1))
 				DecimationCount[Gravity_Accel]++;
 				if((mEnabled & (1<<Gravity_Accel)) && (DecimationCount[Gravity_Accel] >= DecimationBuffer[Gravity_Accel])) {
 					DecimationCount[Gravity_Accel] = 0;
@@ -647,7 +649,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				}
     #endif
   #endif
-  #if ((SENSORS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
 				DecimationCount[Orientation]++;
 				if((mEnabled & (1<<Orientation)) && (DecimationCount[Orientation] >= DecimationBuffer[Orientation])) {
 					DecimationCount[Orientation] = 0;

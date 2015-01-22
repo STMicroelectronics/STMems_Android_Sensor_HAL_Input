@@ -54,12 +54,16 @@ endef
 # - L3GD20H                                                                    #
 # - LIS3MDL                                                                    #
 # - LPS331AP                                                                   #
-# - V_GYRO                                                                     #
+# - V_GYRO																	   #
+# - LSM303C																	   #
+# - SENSOR_FUSION                                                              #
+# - GEOMAG_FUSION															   #
+# - GBIAS																	   #
 #                                                                              #
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LSM6DS0 LIS3MDL
+ENABLED_SENSORS := GEOMAG_FUSION LSM303C V_GYRO
 ENABLED_MODULES :=
 
 LOCAL_ARM_MODE := arm
