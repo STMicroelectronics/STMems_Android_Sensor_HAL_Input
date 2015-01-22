@@ -48,6 +48,7 @@ endef
 # - LSM303D                                                                    #
 # - LSM303DLHC                                                                 #
 # - LSM6DS0                                                                    #
+# - LSM6DS3                                                                    #
 # - LSM9DS0                                                                    #
 # - LSM9DS1                                                                    #
 # - L3GD20                                                                     #

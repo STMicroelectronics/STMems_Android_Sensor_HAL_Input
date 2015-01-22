@@ -53,6 +53,9 @@
 #if defined(LSM6DS0)
   #include "conf_LSM6DS0.h"
 #endif
+#if defined(LSM6DS3)
+  #include "conf_LSM6DS3.h"
+#endif
 #if defined(LSM9DS0)
   #include "conf_LSM9DS0.h"
 #endif
