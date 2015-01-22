@@ -322,9 +322,9 @@ int VirtualGyroSensor::readEvents(sensors_event_t* data, int count)
 				>= DecimationBuffer[VirtualGyro])) {
 				/** Downsample VirtualGyro output */
 				DecimationCount = 0;
-				mPendingEvent[VirtualGyro].data[0] = DEG_TO_RAD(gyro[0]);
-				mPendingEvent[VirtualGyro].data[1] = DEG_TO_RAD(gyro[1]);
-				mPendingEvent[VirtualGyro].data[2] = DEG_TO_RAD(gyro[2]);
+				mPendingEvent[VirtualGyro].data[0] = gyro[0];
+				mPendingEvent[VirtualGyro].data[1] = gyro[1];
+				mPendingEvent[VirtualGyro].data[2] = gyro[2];
 				mPendingEvent[VirtualGyro].timestamp =
 						timevalToNano(event->time);
 				mPendingEvent[VirtualGyro].gyro.status =
