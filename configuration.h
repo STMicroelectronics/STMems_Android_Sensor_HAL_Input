@@ -25,13 +25,6 @@
 #ifndef CONFIGURATION_HAL_H
 #define CONFIGURATION_HAL_H
 
-//Alberto
-#define LSM330DLC	1
-#define SENSOR_FUSION	1
-#define GBIAS	1
-#define GBIAS_MODULE_PRESENT		1
-#define SENSOR_FUSION_MODULE_PRESENT	1
-
 /* ANDROID API VERSION */
 #define ANDROID_ICS				(14)
 #define ANDROIS_JB				(16)
