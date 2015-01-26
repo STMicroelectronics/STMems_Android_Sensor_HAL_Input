@@ -490,6 +490,10 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 #endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 			MagnSensor::getBufferData(&mSensorsBufferedVectors[MagneticField]);
+#else
+			mSensorsBufferedVectors[MagneticField].v[0] = 0.0f;
+			mSensorsBufferedVectors[MagneticField].v[1] = 0.7f;
+			mSensorsBufferedVectors[MagneticField].v[2] = 0.7f;
 #endif
 
 			if (mEnabled & ((1<<Orientation) | (1<<Gravity) |
