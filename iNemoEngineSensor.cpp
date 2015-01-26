@@ -154,6 +154,8 @@ iNemoEngineSensor::iNemoEngineSensor()
 	init_data_api.gbias_file = NULL;
 	init_data_api.LocalEarthMagField = 50.0f;
 	init_data_api.Gbias_threshold_magn = 1200e-6;
+	init_data_api.Gbias_threshold_accel = 1200e-6;
+	init_data_api.Gbias_threshold_gyro = 1200e-6;
 
 	debug_init_data_api.accel_flag = 0;
 	debug_init_data_api.magn_flag = 0;
@@ -491,6 +493,7 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 			MagnSensor::getBufferData(&mSensorsBufferedVectors[MagneticField]);
 #else
+			/* Constant Magnetometer module is passed to the Library when Mag is disabled */
 			mSensorsBufferedVectors[MagneticField].v[0] = 0.0f;
 			mSensorsBufferedVectors[MagneticField].v[1] = 0.7f;
 			mSensorsBufferedVectors[MagneticField].v[2] = 0.7f;

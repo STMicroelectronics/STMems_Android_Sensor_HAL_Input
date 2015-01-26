@@ -56,8 +56,6 @@
 #define GYR_DEFAULT_DELAY		10					// 1/frequency (default: 9.523809f -> 105 Hz) [ms]
 
 /* SENSOR FUSION */
-#define ACCELEROMETER_ACTIVE		1					// Enable Accelerometer sensor in Sensor Fusion -> [0]:off, [1]:on
-#define GYROSCOPE_ACTIVE		1					// Enable Gyroscope sensor in Sensor Fusion -> [0]:off, [1]:on
 #define ACC_GBIAS_THRESHOLD		550e-6					// Set acceleration gbias threshold [uT] - Default value for LSM303DLHC: 550e-6
 #define GYR_GBIAS_THRESHOLD		475e-6					// Set gyroscope gbias threshold [uT] - Default value for L3G4200D: 400e-6
 
