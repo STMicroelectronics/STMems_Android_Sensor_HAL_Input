@@ -23,6 +23,8 @@
 #define SENSORS_GYROSCOPE_ENABLE		(1)
 #define SENSORS_UNCALIB_GYROSCOPE_ENABLE	(1 & SENSORS_GYROSCOPE_ENABLE & OS_VERSION_ENABLE)
 
+#define SENSORS_TILT_ENABLE		(1)
+
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL					"LSM6DS3 3-axis Accelerometer Sensor"	// Label views in Android Applications
 #define SENSOR_ACC_INCLUDE_FILE_NAME		"lsm6ds3.h"								// Name of driver header file (include subfolder)
@@ -48,6 +50,13 @@
 #define GYRO_DEFAULT_FULLSCALE			2000					// Set default full-scale (value depends on the driver sysfs file)
 #define TO_MDPS(x)				(x / 1000000.0f)
 
+/* TILT SENSOR */
+#define SENSOR_TILT_LABEL			"LSM6DS3 Tilt Detector sensor"	// Label views in Android Applications
+#define SENSOR_TILT_INCLUDE_FILE_NAME		"lsm6ds3.h"				// Name of driver header file (include subfolder)
+#define SENSOR_DATANAME_TILT		"ST LSM6DS3 Tilt Sensor"		// Name of input device: struct input_dev->name
+#define TILT_ENABLE_FILE_NAME			"tilt/enable"		// name of sysfs file for enable/disable the sensor state
+#define TILT_POWER_CONSUMPTION		0.6f
+
 /* INEMO_ENGINE SENSOR */
 #define GYRO_DEFAULT_RANGE			2000					// full scale set to 2000 DPS (value depends on the driver sysfs file)
 #define ACC_DEFAULT_RANGE			8					// full scale set to 8g (value depends on the driver sysfs file)
@@ -67,6 +76,7 @@
 /*****************************************************************************/
 #define EVENT_TYPE_ACCEL			EV_MSC
 #define EVENT_TYPE_GYRO			EV_MSC
+#define EVENT_TYPE_TILT			EV_MSC
 
 #define EVENT_TYPE_TIME_MSB			MSC_SCAN
 #define EVENT_TYPE_TIME_LSB			MSC_MAX
@@ -80,6 +90,8 @@
 #define EVENT_TYPE_GYRO_X			MSC_SERIAL
 #define EVENT_TYPE_GYRO_Y			MSC_PULSELED
 #define EVENT_TYPE_GYRO_Z			MSC_GESTURE
+
+#define EVENT_TYPE_TILT_DATA			MSC_SERIAL
 
 /*****************************************************************************/
 /* AXIS MAPPING */
