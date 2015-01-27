@@ -58,6 +58,9 @@
 #if (SENSORS_STEP_COUNTER_ENABLE == 1)
 #include "StepCounterSensor.h"
 #endif
+#if (SENSORS_STEP_DETECTOR_ENABLE == 1)
+#include "StepDetectorSensor.h"
+#endif
 
 
 /*****************************************************************************/
@@ -496,6 +499,31 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+
+#if (SENSORS_STEP_DETECTOR_ENABLE == 1)
+	{
+		SENSOR_STEP_D_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_STEP_DETECTOR_HANDLE,
+		SENSOR_TYPE_STEP_DETECTOR,
+		1.0f,
+		1.0f,
+		STEP_D_POWER_CONSUMPTION,
+		0,
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROIS_L)
+		SENSOR_STRING_TYPE_STEP_DETECTOR,
+		"",
+		0,
+		SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 };
 
 
@@ -572,6 +600,9 @@ private:
 #endif
 #if(SENSORS_STEP_COUNTER_ENABLE == 1)
 		step_c,
+#endif
+#if(SENSORS_STEP_DETECTOR_ENABLE == 1)
+		step_d,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -681,6 +712,10 @@ private:
 			case SENSORS_STEP_COUNTER_HANDLE:
 				return step_c;
 #endif
+#if SENSORS_STEP_DETECTOR_ENABLE
+			case SENSORS_STEP_DETECTOR_HANDLE:
+				return step_d;
+#endif
 		}
 		return -EINVAL;
 	}
@@ -744,6 +779,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[step_c].fd = mSensors[step_c]->getFd();
 	mPollFds[step_c].events = POLLIN;
 	mPollFds[step_c].revents = 0;
+#endif
+
+#if (SENSORS_STEP_DETECTOR_ENABLE == 1)
+	mSensors[step_d] = new StepDetectorSensor();
+	mPollFds[step_d].fd = mSensors[step_d]->getFd();
+	mPollFds[step_d].events = POLLIN;
+	mPollFds[step_d].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
