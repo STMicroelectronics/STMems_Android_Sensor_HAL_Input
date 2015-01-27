@@ -55,6 +55,9 @@
 #if (SENSORS_TILT_ENABLE == 1)
 #include "TiltSensor.h"
 #endif
+#if (SENSORS_STEP_COUNTER_ENABLE == 1)
+#include "StepCounterSensor.h"
+#endif
 
 
 /*****************************************************************************/
@@ -468,6 +471,31 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+
+#if (SENSORS_STEP_COUNTER_ENABLE == 1)
+	{
+		SENSOR_STEP_C_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_STEP_COUNTER_HANDLE,
+		SENSOR_TYPE_STEP_COUNTER,
+		65535.0f,
+		1.0f,
+		STEP_C_POWER_CONSUMPTION,
+		0,
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROIS_L)
+		SENSOR_STRING_TYPE_STEP_COUNTER,
+		"",
+		0,
+		SENSOR_FLAG_ON_CHANGE_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 };
 
 
@@ -541,6 +569,9 @@ private:
 #endif
 #if(SENSORS_TILT_ENABLE == 1)
 		tilt,
+#endif
+#if(SENSORS_STEP_COUNTER_ENABLE == 1)
+		step_c,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -646,6 +677,10 @@ private:
 			case SENSORS_TILT_DETECTOR_HANDLE:
 				return tilt;
 #endif
+#if SENSORS_STEP_COUNTER_ENABLE
+			case SENSORS_STEP_COUNTER_HANDLE:
+				return step_c;
+#endif
 		}
 		return -EINVAL;
 	}
@@ -702,6 +737,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[tilt].fd = mSensors[tilt]->getFd();
 	mPollFds[tilt].events = POLLIN;
 	mPollFds[tilt].revents = 0;
+#endif
+
+#if (SENSORS_STEP_COUNTER_ENABLE == 1)
+	mSensors[step_c] = new StepCounterSensor();
+	mPollFds[step_c].fd = mSensors[step_c]->getFd();
+	mPollFds[step_c].events = POLLIN;
+	mPollFds[step_c].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)

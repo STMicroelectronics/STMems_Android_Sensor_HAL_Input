@@ -133,6 +133,7 @@
 #define DEBUG_MAG_SI_COMPENSATION		(0)
 #define DEBUG_VIRTUAL_GYROSCOPE			(0)
 #define DEBUG_TILT				(1)
+#define DEBUG_STEP_C				(1)
 
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)

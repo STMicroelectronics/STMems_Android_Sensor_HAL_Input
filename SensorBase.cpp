@@ -247,6 +247,12 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 			className = "TiltSensor::Enable()";
 			break;
 #endif
+#if (SENSORS_STEP_COUNTER_ENABLE == 1)
+		case SENSORS_STEP_COUNTER_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], STEP_C_ENABLE_FILE_NAME);
+			className = "StepCounterSensor::Enable()";
+			break;
+#endif
 		default:
 			return -1;
 	}
