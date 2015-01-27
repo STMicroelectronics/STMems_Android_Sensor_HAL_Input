@@ -241,6 +241,12 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 			className = "PressTempSensor::Enable()";
 			break;
 #endif
+#if (SENSORS_TILT_ENABLE == 1)
+		case SENSORS_TILT_DETECTOR_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], TILT_ENABLE_FILE_NAME);
+			className = "TiltSensor::Enable()";
+			break;
+#endif
 		default:
 			return -1;
 	}

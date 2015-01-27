@@ -49,9 +49,11 @@
 #if (SENSORS_PRESSURE_ENABLE == 1)
 #include "PressTempSensor.h"
 #endif
-
 #if (SENSORS_VIRTUAL_GYROSCOPE_ENABLE == 1)
 #include "VirtualGyroSensor.h"
+#endif
+#if (SENSORS_TILT_ENABLE == 1)
+#include "TiltSensor.h"
 #endif
 
 
@@ -441,6 +443,31 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+
+#if (SENSORS_TILT_ENABLE == 1)
+	{
+		SENSOR_TILT_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_TILT_DETECTOR_HANDLE,
+		SENSOR_TYPE_TILT_DETECTOR,
+		1.0f,
+		1.0f,
+		TILT_POWER_CONSUMPTION,
+		0,
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROIS_L)
+		SENSOR_STRING_TYPE_TILT_DETECTOR,
+		"",
+		0,
+		SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 };
 
 
@@ -511,6 +538,9 @@ private:
 #endif
 #if (SENSORS_TEMPERATURE_ENABLE == 1) || (SENSORS_PRESSURE_ENABLE == 1)
 		presstemp,
+#endif
+#if(SENSORS_TILT_ENABLE == 1)
+		tilt,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -612,6 +642,10 @@ private:
 			case SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE:
 				return magn;
 #endif
+#if SENSORS_TILT_ENABLE
+			case SENSORS_TILT_DETECTOR_HANDLE:
+				return tilt;
+#endif
 		}
 		return -EINVAL;
 	}
@@ -661,6 +695,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[presstemp].fd = mSensors[presstemp]->getFd();
 	mPollFds[presstemp].events = POLLIN;
 	mPollFds[presstemp].revents = 0;
+#endif
+
+#if (SENSORS_TILT_ENABLE == 1)
+	mSensors[tilt] = new TiltSensor();
+	mPollFds[tilt].fd = mSensors[tilt]->getFd();
+	mPollFds[tilt].events = POLLIN;
+	mPollFds[tilt].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
