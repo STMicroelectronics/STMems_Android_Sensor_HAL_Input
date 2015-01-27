@@ -48,6 +48,8 @@
 /* EVENT TYPE */
 /*****************************************************************************/
 /* Event Type in gyroscope sensor: see input_set_abs_params() function in your input driver */
+#define EVENT_TYPE_GYRO		EV_ABS
+
 #define EVENT_TYPE_GYRO_X		ABS_X
 #define EVENT_TYPE_GYRO_Y		ABS_Y
 #define EVENT_TYPE_GYRO_Z		ABS_Z

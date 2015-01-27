@@ -84,6 +84,10 @@
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/
+#define EVENT_TYPE_ACCEL		EV_ABS
+#define EVENT_TYPE_MAG			EV_ABS
+#define EVENT_TYPE_GYRO		EV_ABS
+
 /* Event Type in accelerometer sensor: see input_set_abs_params() function in your input driver */
 #define EVENT_TYPE_ACCEL_X		ABS_X
 #define EVENT_TYPE_ACCEL_Y		ABS_Y

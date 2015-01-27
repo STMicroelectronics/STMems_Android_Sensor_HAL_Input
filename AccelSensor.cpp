@@ -357,7 +357,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 	again:
 #endif
 	while (count && mInputReader.readEvent(&event)) {
-		if (event->type == EV_ABS) {
+		if (event->type == EVENT_TYPE_ACCEL) {
 #if (DEBUG_ACCELEROMETER == 1)
 	STLOGD("AccelSensor::readEvents (event_code=%d)", event->code);
 #endif

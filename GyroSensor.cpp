@@ -319,7 +319,7 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 
 	while (count && mInputReader.readEvent(&event)) {
 
-		if (event->type == EV_ABS) {
+		if (event->type == EVENT_TYPE_GYRO) {
 
 #if (DEBUG_GYROSCOPE == 1)
 	STLOGD("GyroSensor::readEvents (event_code=%d)", event->code);

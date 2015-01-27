@@ -79,28 +79,6 @@ __BEGIN_DECLS
 /* EVENT TYPE */
 /*****************************************************************************/
 
-/* Event Type in accelerometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_ACCEL_X		ABS_X
-#define EVENT_TYPE_ACCEL_Y		ABS_Y
-#define EVENT_TYPE_ACCEL_Z		ABS_Z
-
-
-/* Event Type in magnetometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_MAG_X		ABS_X
-#define EVENT_TYPE_MAG_Y		ABS_Y
-#define EVENT_TYPE_MAG_Z		ABS_Z
-
-
-/* Event Type in gyroscope sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_GYRO_X		ABS_X
-#define EVENT_TYPE_GYRO_Y		ABS_Y
-#define EVENT_TYPE_GYRO_Z		ABS_Z
-
-
-/* Event Type in pressure sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_PRESSURE		ABS_PR
-
-
 /* Event Type in temperature sensor: see input_set_abs_params() function in your input driver */
 #define EVENT_TYPE_TEMPERATURE		ABS_TEMP
 

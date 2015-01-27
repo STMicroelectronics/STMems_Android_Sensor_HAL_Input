@@ -469,7 +469,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 
 	while (count && mInputReader.readEvent(&event)) {
 
-		if (event->type == EV_ABS) {
+		if (event->type == EVENT_TYPE_MAG) {
 			float value = (float) event->value;
 
 			if (event->code == EVENT_TYPE_MAG_X) {

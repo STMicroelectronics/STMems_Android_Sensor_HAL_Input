@@ -37,6 +37,13 @@
 #define PRESS_TEMP_POWER_CONSUMPTION	0.015f					// Set sensor's power consumption [mA]
 
 /*****************************************************************************/
+/* EVENT TYPE */
+/*****************************************************************************/
+
+/* Event Type in pressure sensor: see input_set_abs_params() function in your input driver */
+#define EVENT_TYPE_PRESSURE		ABS_PR
+
+/*****************************************************************************/
 /* DATA CONVERSION */
 /*****************************************************************************/
 // conversion of pressure data to SI units (hPa, 1hPa=1mbar)
