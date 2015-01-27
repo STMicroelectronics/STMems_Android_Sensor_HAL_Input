@@ -83,6 +83,7 @@ AccelSensor::~AccelSensor()
 	pthread_mutex_destroy(&dataMutex);
 }
 
+#if !defined(NOT_SET_INITIAL_STATE)
 int AccelSensor::setInitialState()
 {
 	struct input_absinfo absinfo_x;
@@ -101,6 +102,7 @@ int AccelSensor::setInitialState()
 
 	return 0;
 }
+#endif
 
 int AccelSensor::getWhatFromHandle(int32_t handle)
 {
@@ -191,7 +193,9 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 #endif
 		}
 		if ((!mEnabled) && (errSM1 >= 0) && (errSM2 >= 0)) {
+#if !defined(NOT_SET_INITIAL_STATE)
 			setInitialState();
+#endif
 			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE, flags);	// Enable Accelerometer
 		}
 		mEnabled |= (1<<what);

@@ -97,6 +97,7 @@ GyroSensor::~GyroSensor()
 	pthread_mutex_destroy(&dataMutex);
 }
 
+#if !defined(NOT_SET_INITIAL_STATE)
 int GyroSensor::setInitialState()
 {
 	struct input_absinfo absinfo_x;
@@ -116,6 +117,7 @@ int GyroSensor::setInitialState()
 
 	return 0;
 }
+#endif
 
 int GyroSensor::getWhatFromHandle(int32_t handle)
 {
@@ -155,7 +157,9 @@ int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
 
 	if (flags) {
 		if (!mEnabled) {
+#if !defined(NOT_SET_INITIAL_STATE)
 			setInitialState();
+#endif
 			err = writeEnable(SENSORS_GYROSCOPE_HANDLE, flags);
 			if(err >= 0)
 				err = 0;

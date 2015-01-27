@@ -152,6 +152,7 @@ MagnSensor::~MagnSensor() {
 #endif
 }
 
+#if !defined(NOT_SET_INITIAL_STATE)
 int MagnSensor::setInitialState()
 {
 	struct input_absinfo absinfo_x;
@@ -175,6 +176,7 @@ int MagnSensor::setInitialState()
 
 	return 0;
 }
+#endif
 
 int MagnSensor::getWhatFromHandle(int32_t handle)
 {
@@ -242,7 +244,9 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 
 	if (flags) {
 		if (!mEnabled) {
+#if !defined(NOT_SET_INITIAL_STATE)
 			setInitialState();
+#endif
 			err = writeEnable(SENSORS_MAGNETIC_FIELD_HANDLE, flags);
 			if(err >= 0) {
 				err = 0;
