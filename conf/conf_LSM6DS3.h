@@ -159,4 +159,7 @@ static short matrix_gyr[3][3] = {
 #define CONVERT_GYRO_Y				(CONVERT_GYRO)
 #define CONVERT_GYRO_Z				(CONVERT_GYRO)
 
+#define SYSFS_PATCH_PATH		1
+#define INPUT_EVENT_HAS_TIMESTAMP		1
+#define NOT_SET_INITIAL_STATE		1
 #endif	/*	CONFIGURATION_LSM6DS3_H	*/
