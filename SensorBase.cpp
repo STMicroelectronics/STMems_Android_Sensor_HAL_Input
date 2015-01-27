@@ -138,7 +138,11 @@ int SensorBase::getSysfsDevicePath(char* sysfs_path ,const char* inputDeviceName
 			if (!strcmp(name, inputDeviceName)) {
 				strcpy(sysfs_path,"/sys/class/input/");
 				strcat(sysfs_path,filename);
+#if defined(SYSFS_PATCH_PATH)
+				strcat(sysfs_path,"/device/");
+#else
 				strcat(sysfs_path,"/device/device/");
+#endif
 				break;
 			} else {
 				close(fd);
