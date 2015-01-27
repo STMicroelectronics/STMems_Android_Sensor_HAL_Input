@@ -94,6 +94,7 @@ private:
 	float data_rot[3];
 	sensors_vec_t data_calibrated;
 	static pthread_mutex_t dataMutex;
+	int64_t timestamp;
 
 public:
 	MagnSensor();

@@ -60,7 +60,7 @@ pthread_mutex_t MagnSensor::dataMutex;
 
 MagnSensor::MagnSensor()
 	: SensorBase(NULL, SENSOR_DATANAME_MAGNETIC_FIELD),
-	mInputReader(4),
+	mInputReader(6),
 	mHasPendingEvent(false)
 {
 	int err;
@@ -482,7 +482,16 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				data_raw[1] = value * CONVERT_M_Y;
 			} else if (event->code == EVENT_TYPE_MAG_Z) {
 				data_raw[2] = value * CONVERT_M_Z;
-			} else {
+			}
+#if defined(INPUT_EVENT_HAS_TIMESTAMP)
+			else if (event->code == EVENT_TYPE_TIME_MSB) {
+				timestamp = ((int64_t)(event->value)) << 32;
+			}
+			else if (event->code == EVENT_TYPE_TIME_LSB) {
+				timestamp |= (uint32_t)(event->value);
+			}
+#endif
+			else {
 				STLOGE("MagnSensor: unknown event code (type = %d, code = %d)", event->type, event->code);
 			}
 		} else if (event->type == EV_SYN) {
@@ -496,6 +505,9 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					data_raw[1] * matrix_mag[1][2] +
 					data_raw[2] * matrix_mag[2][2];
 
+#if !defined(INPUT_EVENT_HAS_TIMESTAMP)
+			timestamp = timevalToNano(event->time);
+#endif
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 			AccelSensor::getBufferData(&mSensorsBufferedVectors[ID_ACCELEROMETER]);
 #endif
@@ -588,7 +600,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					memcpy(mPendingEvent[MagneticField].data,
 							data_calibrated.v,
 							sizeof(data_calibrated.v));
-					mPendingEvent[MagneticField].timestamp = timevalToNano(event->time);
+					mPendingEvent[MagneticField].timestamp = timestamp;
 					*data++ = mPendingEvent[MagneticField];
 					count--;
 					numEventReceived++;
@@ -603,8 +615,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 							data_rot, sizeof(data_rot));
 					memcpy(mPendingEvent[UncalibMagneticField].uncalibrated_magnetic.bias,
 							MagOffset, sizeof(MagOffset));
-					mPendingEvent[UncalibMagneticField].timestamp =
-							timevalToNano(event->time);
+					mPendingEvent[UncalibMagneticField].timestamp = timestamp;
 					*data++ = mPendingEvent[UncalibMagneticField];
 					count--;
 					numEventReceived++;
@@ -620,8 +631,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 						mPendingEvent[GeoMagRotVect_Magnetic].magnetic.status =
 							data_calibrated.status;
 						mPendingEvent[GeoMagRotVect_Magnetic].data[4] = -1;
-						mPendingEvent[GeoMagRotVect_Magnetic].timestamp =
-							timevalToNano(event->time);
+						mPendingEvent[GeoMagRotVect_Magnetic].timestamp = timestamp;
 						*data++ = mPendingEvent[GeoMagRotVect_Magnetic];
 						count--;
 						numEventReceived++;
@@ -636,7 +646,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					DecimationCount[Linear_Accel] = 0;
 					err = iNemoEngine_GeoMag_API_Get_LinAcc(mPendingEvent[Linear_Accel].data);
 					if (err == 0) {
-						mPendingEvent[Linear_Accel].timestamp = timevalToNano(event->time);
+						mPendingEvent[Linear_Accel].timestamp = timestamp;
 						*data++ = mPendingEvent[Linear_Accel];
 						count--;
 						numEventReceived++;
@@ -649,8 +659,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					DecimationCount[Gravity_Accel] = 0;
 					err = iNemoEngine_GeoMag_API_Get_Gravity(mPendingEvent[Gravity_Accel].data);
 					if (err == 0) {
-						mPendingEvent[Gravity_Accel].timestamp =
-							timevalToNano(event->time);
+						mPendingEvent[Gravity_Accel].timestamp = timestamp;
 						*data++ = mPendingEvent[Gravity_Accel];
 						count--;
 						numEventReceived++;
@@ -681,8 +690,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					{
 						mPendingEvent[Orientation].orientation.status =
 							data_calibrated.status;
-						mPendingEvent[Orientation].timestamp =
-							timevalToNano(event->time);
+						mPendingEvent[Orientation].timestamp = timestamp;
 						*data++ = mPendingEvent[Orientation];
 						count--;
 						numEventReceived++;

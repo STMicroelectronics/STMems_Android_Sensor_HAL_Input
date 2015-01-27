@@ -46,7 +46,7 @@ pthread_mutex_t AccelSensor::dataMutex;
 
 AccelSensor::AccelSensor()
 	: SensorBase(NULL, SENSOR_DATANAME_ACCELEROMETER),
-	mInputReader(4),
+	mInputReader(6),
 	mHasPendingEvent(false)
 {
 	pthread_mutex_init(&dataMutex, NULL);
@@ -375,6 +375,14 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 			else if (event->code == EVENT_TYPE_ACCEL_Z) {
 				data_raw[2] = value * CONVERT_A_Z;
 			}
+#if defined(INPUT_EVENT_HAS_TIMESTAMP)
+			else if (event->code == EVENT_TYPE_TIME_MSB) {
+				timestamp = ((int64_t)(event->value)) << 32;
+			}
+			else if (event->code == EVENT_TYPE_TIME_LSB) {
+				timestamp |= (uint32_t)(event->value);
+			}
+#endif
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
 			else if (event->code == EVENT_TYPE_SIGNIFICANT_MOTION) {
 
@@ -403,6 +411,10 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 					data_raw[1]*matrix_acc[1][2] +
 					data_raw[2]*matrix_acc[2][2];
 
+#if !defined(INPUT_EVENT_HAS_TIMESTAMP)
+			timestamp = timevalToNano(event->time);
+#endif
+
 			DecimationCount++;
 
 			if ((mEnabled & (1<<Acceleration)) &&
@@ -410,7 +422,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 				DecimationCount = 0;
 
 				memcpy(mPendingEvents[Acceleration].data, data_rot, sizeof(float) * 3);
-				mPendingEvents[Acceleration].timestamp = timevalToNano(event->time);
+				mPendingEvents[Acceleration].timestamp = timestamp;
 				mPendingMask |= 1<<Acceleration;
 			}
 

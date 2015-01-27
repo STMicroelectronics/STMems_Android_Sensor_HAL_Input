@@ -72,6 +72,7 @@ private:
 	float data_raw[3];
 	float data_rot[3];
 	static pthread_mutex_t dataMutex;
+	int64_t timestamp;
 
 #if ((SENSORS_ACCELEROMETER_ENABLE == 1) && (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1))
 	static AccelSensor *acc;

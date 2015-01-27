@@ -51,7 +51,7 @@ AccelSensor* GyroSensor::acc = NULL;
 
 GyroSensor::GyroSensor()
 	: SensorBase(NULL, SENSOR_DATANAME_GYROSCOPE),
-	mInputReader(4),
+	mInputReader(6),
 	mHasPendingEvent(false)
 {
 	pthread_mutex_init(&dataMutex, NULL);
@@ -338,7 +338,16 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 			}
 			else if (event->code == EVENT_TYPE_GYRO_Z) {
 				data_raw[2] = value * CONVERT_GYRO_Z;
-			} else {
+			}
+#if defined(INPUT_EVENT_HAS_TIMESTAMP)
+			else if (event->code == EVENT_TYPE_TIME_MSB) {
+				timestamp = ((int64_t)(event->value)) << 32;
+			}
+			else if (event->code == EVENT_TYPE_TIME_LSB) {
+				timestamp |= (uint32_t)(event->value);
+			}
+#endif
+			else {
 				STLOGE("GyroSensor: unknown event code (type = %d, code = %d)", event->type, event->code);
 			}
 		} else if (event->type == EV_SYN) {
@@ -362,6 +371,10 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 					data_raw[1]*matrix_gyr[1][2] +
 					data_raw[2]*matrix_gyr[2][2];
 
+#if !defined(INPUT_EVENT_HAS_TIMESTAMP)
+			timestamp = timevalToNano(event->time);
+#endif
+
 #if !(GYROSCOPE_GBIAS_ESTIMATION_FUSION == 1)
 			memset(gbias_out, 0, sizeof(gbias_out));
   #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
@@ -383,7 +396,7 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 				mPendingEvent[Gyro].data[0] = data_rot[0] - gbias_out[0];
 				mPendingEvent[Gyro].data[1] = data_rot[1] - gbias_out[1];
 				mPendingEvent[Gyro].data[2] = data_rot[2] - gbias_out[2];
-				mPendingEvent[Gyro].timestamp = timevalToNano(event->time);
+				mPendingEvent[Gyro].timestamp = timestamp;
 				mPendingEvent[Gyro].gyro.status = SENSOR_STATUS_ACCURACY_HIGH;
 
 				*data++ = mPendingEvent[Gyro];
@@ -401,7 +414,7 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 				mPendingEvent[GyroUncalib].uncalibrated_gyro.bias[0] = gbias_out[0];
 				mPendingEvent[GyroUncalib].uncalibrated_gyro.bias[1] = gbias_out[1];
 				mPendingEvent[GyroUncalib].uncalibrated_gyro.bias[2] = gbias_out[2];
-				mPendingEvent[GyroUncalib].timestamp = timevalToNano(event->time);
+				mPendingEvent[GyroUncalib].timestamp = timestamp;
 				mPendingEvent[GyroUncalib].gyro.status = SENSOR_STATUS_ACCURACY_HIGH;
 
 				*data++ = mPendingEvent[GyroUncalib];
