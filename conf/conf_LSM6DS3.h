@@ -65,6 +65,7 @@
 #define SENSOR_STEP_C_INCLUDE_FILE_NAME		"lsm6ds3.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_STEP_C		"ST LSM6DS3 Step Counter Sensor"		// Name of input device: struct input_dev->name
 #define STEP_C_ENABLE_FILE_NAME			"step_c/enable"		// name of sysfs file for enable/disable the sensor state
+#define STEP_C_DELAY_FILE_NAME			"step_c/max_delivery_rate"
 #define STEP_C_POWER_CONSUMPTION		0.6f
 
 /* STEP DETECTOR SENSOR */
