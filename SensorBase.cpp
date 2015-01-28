@@ -259,6 +259,12 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 			className = "StepDetectorSensor::Enable()";
 			break;
 #endif
+#if (SENSORS_SIGN_MOTION_ENABLE == 1)
+		case SENSORS_SIGN_MOTION_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], SIGN_M_ENABLE_FILE_NAME);
+			className = "SignMotionSensor::Enable()";
+			break;
+#endif
 		default:
 			return -1;
 	}

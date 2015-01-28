@@ -61,6 +61,9 @@
 #if (SENSORS_STEP_DETECTOR_ENABLE == 1)
 #include "StepDetectorSensor.h"
 #endif
+#if (SENSORS_SIGN_MOTION_ENABLE == 1)
+#include "SignMotionSensor.h"
+#endif
 
 
 /*****************************************************************************/
@@ -524,6 +527,31 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+
+#if (SENSORS_SIGN_MOTION_ENABLE == 1)
+	{
+		SENSOR_SIGN_M_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_SIGN_MOTION_HANDLE,
+		SENSOR_TYPE_SIGNIFICANT_MOTION,
+		1.0f,
+		1.0f,
+		SIGN_M_POWER_CONSUMPTION,
+		0,
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROIS_L)
+		SENSOR_STRING_TYPE_SIGNIFICANT_MOTION,
+		"",
+		0,
+		SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+#endif
+#endif
+		{ }
+	},
+#endif
 };
 
 
@@ -603,6 +631,9 @@ private:
 #endif
 #if(SENSORS_STEP_DETECTOR_ENABLE == 1)
 		step_d,
+#endif
+#if(SENSORS_SIGN_MOTION_ENABLE == 1)
+		sign_m,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -716,6 +747,10 @@ private:
 			case SENSORS_STEP_DETECTOR_HANDLE:
 				return step_d;
 #endif
+#if SENSORS_SIGN_MOTION_ENABLE
+			case SENSORS_SIGN_MOTION_HANDLE:
+				return sign_m;
+#endif
 		}
 		return -EINVAL;
 	}
@@ -786,6 +821,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[step_d].fd = mSensors[step_d]->getFd();
 	mPollFds[step_d].events = POLLIN;
 	mPollFds[step_d].revents = 0;
+#endif
+
+#if (SENSORS_SIGN_MOTION_ENABLE == 1)
+	mSensors[sign_m] = new SignMotionSensor();
+	mPollFds[sign_m].fd = mSensors[sign_m]->getFd();
+	mPollFds[sign_m].events = POLLIN;
+	mPollFds[sign_m].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)

@@ -135,6 +135,7 @@
 #define DEBUG_TILT				(1)
 #define DEBUG_STEP_C				(1)
 #define DEBUG_STEP_D				(1)
+#define DEBUG_SIGN_M				(1)
 
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)
