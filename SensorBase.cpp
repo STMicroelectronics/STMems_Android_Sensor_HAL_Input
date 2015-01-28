@@ -313,6 +313,12 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 			className = "Gyro::Delay()";
 			break;
 #endif
+#if (SENSORS_STEP_COUNTER_ENABLE == 1)
+		case SENSORS_STEP_COUNTER_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], STEP_C_DELAY_FILE_NAME);
+			className = "StepCounterSensor::Delay()";
+			break;
+#endif
 		default:
 			return -1;
 	}

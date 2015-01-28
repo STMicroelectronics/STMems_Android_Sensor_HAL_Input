@@ -44,6 +44,7 @@ private:
 	static pthread_mutex_t dataMutex;
 	int64_t timestamp;
 	uint32_t steps;
+	int64_t delivery_rate;
 
 public:
 	StepCounterSensor();

@@ -42,6 +42,7 @@ StepCounterSensor::StepCounterSensor()
 	mPendingEvent.sensor = ID_STEP_COUNTER;
 	mPendingEvent.type = SENSOR_TYPE_STEP_COUNTER;
 	memset(&mPendingEvent.u64, 0, sizeof(mPendingEvent.u64));
+	delivery_rate = 0;
 
 	if (data_fd) {
 		STLOGI("StepCounterSensor::StepCounterSensor device_sysfs_path:(%s)", sysfs_device_path);
@@ -102,9 +103,17 @@ bool StepCounterSensor::hasPendingEvents() const
 }
 
 int StepCounterSensor::setDelay(int32_t __attribute__((unused))handle,
-					int64_t __attribute__((unused))delay_ns)
+							int64_t delay_ns)
 {
-	return 0;
+	int err = 0;
+
+	if (delay_ns != delivery_rate) {
+		err = writeDelay(SENSORS_STEP_COUNTER_HANDLE,
+						NSEC_TO_MSEC(delay_ns));
+		if(err >= 0)
+			delivery_rate = delay_ns;
+	}
+	return err;
 }
 
 int StepCounterSensor::readEvents(sensors_event_t* data, int count)
