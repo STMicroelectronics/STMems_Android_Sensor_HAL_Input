@@ -26,6 +26,7 @@
 #define SENSORS_TILT_ENABLE		(1)
 #define SENSORS_STEP_COUNTER_ENABLE		(1)
 #define SENSORS_STEP_DETECTOR_ENABLE		(1)
+#define SENSORS_SIGN_MOTION_ENABLE		(1)
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL					"LSM6DS3 3-axis Accelerometer Sensor"	// Label views in Android Applications
@@ -73,6 +74,13 @@
 #define STEP_D_ENABLE_FILE_NAME			"step_d/enable"		// name of sysfs file for enable/disable the sensor state
 #define STEP_D_POWER_CONSUMPTION		0.6f
 
+/* SIGNIFICANT MOTION SENSOR */
+#define SENSOR_SIGN_M_LABEL			"LSM6DS3 Significant Motion Sensor"	// Label views in Android Applications
+#define SENSOR_SIGN_M_INCLUDE_FILE_NAME		"lsm6ds3.h"				// Name of driver header file (include subfolder)
+#define SENSOR_DATANAME_SIGN_M		"ST LSM6DS3 Significant Motion Sensor"		// Name of input device: struct input_dev->name
+#define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"		// name of sysfs file for enable/disable the sensor state
+#define SIGN_M_POWER_CONSUMPTION		0.6f
+
 /* INEMO_ENGINE SENSOR */
 #define GYRO_DEFAULT_RANGE			2000					// full scale set to 2000 DPS (value depends on the driver sysfs file)
 #define ACC_DEFAULT_RANGE			8					// full scale set to 8g (value depends on the driver sysfs file)
@@ -95,6 +103,7 @@
 #define EVENT_TYPE_TILT			EV_MSC
 #define EVENT_TYPE_STEP_C			EV_MSC
 #define EVENT_TYPE_STEP_D			EV_MSC
+#define EVENT_TYPE_SIGN_M			EV_MSC
 
 #define EVENT_TYPE_TIME_MSB			MSC_SCAN
 #define EVENT_TYPE_TIME_LSB			MSC_MAX
@@ -112,6 +121,7 @@
 #define EVENT_TYPE_TILT_DATA			MSC_SERIAL
 #define EVENT_TYPE_STEP_C_DATA			MSC_SERIAL
 #define EVENT_TYPE_STEP_D_DATA			MSC_SERIAL
+#define EVENT_TYPE_SIGN_M_DATA			MSC_SERIAL
 
 /*****************************************************************************/
 /* AXIS MAPPING */
