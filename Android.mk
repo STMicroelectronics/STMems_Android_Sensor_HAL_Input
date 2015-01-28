@@ -1,5 +1,5 @@
-# Copyright (C) 2012 STMicroelectronics
-# Matteo Dameno, Denis Ciocca - Motion MEMS Product Div.
+# Copyright (C) 2015 STMicroelectronics
+# Giuseppe Barba, Alberto Marinoni - Motion MEMS Product Div.
 # Copyright (C) 2008 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,6 +45,7 @@ endef
 # - LSM330                                                                     #
 # - LSM330D                                                                    #
 # - LSM330DLC                                                                  #
+# - LSM303C                                                                    #
 # - LSM303D                                                                    #
 # - LSM303DLHC                                                                 #
 # - LSM6DS0                                                                    #
@@ -55,17 +56,18 @@ endef
 # - L3GD20H                                                                    #
 # - LIS3MDL                                                                    #
 # - LPS331AP                                                                   #
-# - V_GYRO																	   #
-# - LSM303C																	   #
+# - V_GYRO                                                                     #
+#                                                                              #
+# Valid values for ENABLED_MODULES:                                            #
 # - SENSOR_FUSION                                                              #
-# - GEOMAG_FUSION															   #
-# - GBIAS																	   #
+# - GEOMAG_FUSION                                                              #
+# - GBIAS                                                                      #
 #                                                                              #
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LSM330DLC SENSOR_FUSION GBIAS
-ENABLED_MODULES :=
+ENABLED_SENSORS := LSM330DLC
+ENABLED_MODULES := SENSOR_FUSION GBIAS
 
 LOCAL_ARM_MODE := arm
 LOCAL_PRELINK_MODULE := false
