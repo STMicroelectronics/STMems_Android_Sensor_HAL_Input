@@ -61,6 +61,7 @@ endef
 # Valid values for ENABLED_MODULES:                                            #
 # - SENSOR_FUSION                                                              #
 # - GEOMAG_FUSION                                                              #
+# - MAGCALIB                                                                   #
 # - GBIAS                                                                      #
 #                                                                              #
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
