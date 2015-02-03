@@ -69,9 +69,12 @@ VirtualGyroSensor::VirtualGyroSensor()
 			" device_sysfs_path:(%s) not found", sysfs_device_path);
 	}
 
+	/* GeoMag library execution here only if GeoMag sensors are disabled */
 	mag = new MagnSensor();
 	acc = new AccelSensor();
+#if (SENSOR_GEOMAG_ENABLE == 0)
 	iNemoEngine_GeoMag_API_Initialization();
+#endif
 }
 
 VirtualGyroSensor::~VirtualGyroSensor()
@@ -298,6 +301,9 @@ int VirtualGyroSensor::readEvents(sensors_event_t* data, int count)
 #endif
 				goto no_data;
 			}
+
+#if (SENSOR_GEOMAG_ENABLE == 0)
+			/* GeoMag library execution here only if GeoMag sensors are disabled */
 			AccelSensor::getBufferData(&mSensorsBufferedVectors[Acceleration]);
 			MagnSensor::getBufferData(&mSensorsBufferedVectors[MagneticField]);
 
@@ -314,6 +320,7 @@ int VirtualGyroSensor::readEvents(sensors_event_t* data, int count)
 			deltatime = (deltatime == 0) ? mag->getDelayms() : deltatime;
 
 			iNemoEngine_GeoMag_API_Run(deltatime, &sdata);
+#endif
 			iNemoEngine_GeoMag_API_Get_VirtualGyro(gyro);
 
 			DecimationCount++;
