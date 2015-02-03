@@ -53,7 +53,8 @@ int MagnSensor::current_fullscale = 0;
 AccelSensor* MagnSensor::acc = NULL;
 #endif
 static int calibration_running;
-int64_t MagnSensor::setDelayBuffer[numSensors] = {0};
+int64_t MagnSensor::setDelayBuffer[numSensors] = {20, 20, 10, 10, 10, 10, 10, 10};
+int64_t MagnSensor::writeDelayBuffer[numSensors] = {0};
 int MagnSensor::DecimationBuffer[numSensors] = {0};
 int MagnSensor::DecimationCount[numSensors] = {0};
 pthread_mutex_t MagnSensor::dataMutex;
@@ -112,10 +113,13 @@ MagnSensor::MagnSensor()
 	mPendingEvent[GeoMagRotVect_Magnetic].type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR;
 	memset(mPendingEvent[GeoMagRotVect_Magnetic].data, 0, sizeof(mPendingEvent[GeoMagRotVect_Magnetic].data));
 	mPendingEvent[GeoMagRotVect_Magnetic].magnetic.status = SENSOR_STATUS_UNRELIABLE;
+#endif
 
+#if (SENSOR_GEOMAG_ENABLE == 1)
 	memset(&sData, 0, sizeof(iNemoGeoMagSensorsData));
 	iNemoEngine_GeoMag_API_Initialization();
 #endif
+
 	if (data_fd) {
 		STLOGI("MagnSensor::MagnSensor magn_device_sysfs_path:(%s)", sysfs_device_path);
 	} else {
@@ -243,8 +247,10 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 		return what;
 
 	if (flags) {
-		if (!mEnabled) {
-#if !defined(NOT_SET_INITIAL_STATE)
+		mEnabled |= (1<<what);
+		writeMinDelay();
+
+		if (mEnabled == (1<<what)) {
 			setInitialState();
 #endif
 			err = writeEnable(SENSORS_MAGNETIC_FIELD_HANDLE, flags);
@@ -275,7 +281,6 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 				acc->enable(SENSORS_LINEAR_ACCELERATION_HANDLE, flags, 6);
   #endif
 #endif
-		mEnabled |= (1<<what);
 	} else {
 		mEnabled &= ~(1<<what);
 
@@ -283,7 +288,6 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 			err = writeEnable(SENSORS_MAGNETIC_FIELD_HANDLE, flags);
 			if(err >= 0)
 				err = 0;
-		}
 #if (MAG_CALIBRATION_ENABLE == 1)
 			acc->enable(SENSORS_MAGNETIC_FIELD_HANDLE, flags, 2);
 #endif
@@ -305,7 +309,12 @@ int MagnSensor::enable(int32_t handle, int en, int __attribute__((unused))type)
 					acc->enable(SENSORS_ORIENTATION_HANDLE, flags, 6);
   #endif
 #endif
-		setDelay(handle, DELAY_OFF);
+		}
+
+		//setDelay(handle, DELAY_OFF);
+		if (mEnabled) {
+			writeMinDelay();
+		}
 	}
 
 	if(err >= 0 )
@@ -368,13 +377,56 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 
 	// Min setDelay Definition
 	setDelayBuffer[what] = delay_ms;
+
+#if (DEBUG_POLL_RATE == 1)
+	STLOGD("MagSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+				setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2],
+				setDelayBuffer[3], setDelayBuffer[4], setDelayBuffer[5],
+				setDelayBuffer[6], setDelayBuffer[7]);
+#endif
+
+	// Update sysfs
+	if(mEnabled & 1<<what)
+	{
+		writeMinDelay();
+	}
+
+	return err;
+}
+
+int MagnSensor::writeMinDelay(void)
+{
+	int err = 0;
+	int kk;
+	int64_t Min_delay_ms = 0;
+
+	for(kk = 0; kk < numSensors; kk++)
+	{
+		if ((mEnabled & 1<<kk) != 0)
+		{
+			writeDelayBuffer[kk] = setDelayBuffer[kk];
+		}
+		else
+			writeDelayBuffer[kk] = 0;
+	}
+
+	// Min setDelay Definition
 	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (Min_delay_ms != 0) {
-			if ((setDelayBuffer[kk] != 0) && (setDelayBuffer[kk] <= Min_delay_ms))
-				Min_delay_ms = setDelayBuffer[kk];
+			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
+				Min_delay_ms = writeDelayBuffer[kk];
 		} else
-			Min_delay_ms = setDelayBuffer[kk];
+			Min_delay_ms = writeDelayBuffer[kk];
+	}
+
+	for(kk = 0; kk < numSensors; kk++)
+	{
+		if (Min_delay_ms != 0) {
+			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
+				Min_delay_ms = writeDelayBuffer[kk];
+		} else
+			Min_delay_ms = writeDelayBuffer[kk];
 	}
 #if (MAG_CALIBRATION_ENABLE == 1)
 	if(Min_delay_ms > 1000 / CALIBRATION_FREQUENCY)
@@ -383,8 +435,8 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 #if ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1) || (((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) ||\
 	(SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1) ||\
 	(GEOMAG_GRAVITY_ENABLE == 1))  && (SENSOR_FUSION_ENABLE == 0)))
-	if ((what == GeoMagRotVect_Magnetic) || (what == Orientation)
-			 || (what == Linear_Accel) || (what == Gravity_Accel)){
+	if ((mEnabled & 1<<GeoMagRotVect_Magnetic) || (mEnabled & 1<<Orientation)
+			 || (mEnabled & 1<<Linear_Accel) || (mEnabled & 1<<Gravity_Accel)){
 		if(Min_delay_ms > (1000 / GEOMAG_FREQUENCY))
 			Min_delay_ms = 1000 / GEOMAG_FREQUENCY;
 	}
@@ -407,25 +459,33 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (delayms)
-			DecimationBuffer[kk] = setDelayBuffer[kk]/delayms;
+			DecimationBuffer[kk] = writeDelayBuffer[kk]/delayms;
 		else
 			DecimationBuffer[kk] = 0;
 	}
 
-#if DEBUG_MAGNETOMETER == 1
-	STLOGD("MagSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld",
-				setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2],
-				setDelayBuffer[3], setDelayBuffer[4], setDelayBuffer[5],
-				setDelayBuffer[6]);
+#if (DEBUG_POLL_RATE == 1)
+	STLOGD("MagSensor::writeDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+				writeDelayBuffer[0], writeDelayBuffer[1], writeDelayBuffer[2],
+				writeDelayBuffer[3], writeDelayBuffer[4], writeDelayBuffer[5],
+				writeDelayBuffer[6], writeDelayBuffer[7]);
 	STLOGD("MagSensor::Min_delay_ms = %lld, delayms = %lld, mEnabled = %d",
 				Min_delay_ms, delayms, mEnabled);
-	STLOGD("MagSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d",
+	STLOGD("MagSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d",
 				DecimationBuffer[0], DecimationBuffer[1], DecimationBuffer[2],
 				DecimationBuffer[3], DecimationBuffer[4], DecimationBuffer[5],
-				DecimationBuffer[6]);
+				DecimationBuffer[6], DecimationBuffer[7]);
 #endif
 
 	return err;
+
+}
+
+void MagnSensor::getMagDelay(int64_t *Mag_Delay_ms)
+{
+	*Mag_Delay_ms = delayms;
+
+	return;
 }
 
 int MagnSensor::setFullScale(int32_t __attribute__((unused))handle, int value)

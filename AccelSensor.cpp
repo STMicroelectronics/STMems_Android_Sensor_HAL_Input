@@ -39,7 +39,8 @@ sensors_vec_t  AccelSensor::dataBuffer;
 int AccelSensor::mEnabled = 0;
 int64_t AccelSensor::delayms = 0;
 int AccelSensor::current_fullscale = 0;
-int64_t AccelSensor::setDelayBuffer[numSensors] = {0};
+int64_t AccelSensor::setDelayBuffer[numSensors] = {200, 20, 10, 40, 10, 10, 10, 10, 10, 20};
+int64_t AccelSensor::writeDelayBuffer[numSensors] = {0};
 int AccelSensor::DecimationBuffer[numSensors] = {0};
 int AccelSensor::DecimationCount = 0;
 pthread_mutex_t AccelSensor::dataMutex;
@@ -197,13 +198,16 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 								"%lld", 1);
 #endif
 		}
-		if ((!mEnabled) && (errSM1 >= 0) && (errSM2 >= 0)) {
-#if !defined(NOT_SET_INITIAL_STATE)
+
+		mEnabled |= (1<<what);
+		writeMinDelay();
+
+		if ((mEnabled == (1<<what)) && (errSM1 >= 0) && (errSM2 >= 0)) {
 			setInitialState();
 #endif
 			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE, flags);	// Enable Accelerometer
 		}
-		mEnabled |= (1<<what);
+
 
 	} else {
 		int tmp = mEnabled;
@@ -227,7 +231,10 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 			err = -1;
 			mEnabled = tmp;
 		}
-		setDelay(handle, DELAY_OFF);
+		//setDelay(handle, DELAY_OFF);
+		if (mEnabled) {
+			writeMinDelay();
+		}
 	}
 
 	if(err >= 0 ) {
@@ -252,15 +259,9 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	int kk;
 	int what = -1;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
-	int64_t Min_delay_ms = 0;
-
-	STLOGD("AccSensor: Delay_ms: %lld", delay_ms);
-	STLOGD("AccSensor: Delay_ns: %lld", delay_ns);
 
 	if(delay_ms == 0)
 		return err;
-
-	STLOGD("AccSensor: what: %d", what);
 
 	what = getWhatFromHandle(handle);
 	if (what < 0)
@@ -280,13 +281,49 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 
 	// Min setDelay Definition
 	setDelayBuffer[what] = delay_ms;
+
+#if (DEBUG_POLL_RATE == 1)
+	STLOGD("AccSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+						setDelayBuffer[0], setDelayBuffer[1],
+						setDelayBuffer[2], setDelayBuffer[3],
+						setDelayBuffer[4], setDelayBuffer[5],
+						setDelayBuffer[6], setDelayBuffer[7],
+						setDelayBuffer[8], setDelayBuffer[9]);
+#endif
+
+	// Update sysfs
+	if(mEnabled & 1<<what)
+	{
+		writeMinDelay();
+	}
+
+	return err;
+}
+
+int AccelSensor::writeMinDelay(void)
+{
+	int err = 0;
+	int kk;
+	int64_t Min_delay_ms = 0;
+
+	for(kk = 0; kk < numSensors; kk++)
+	{
+		if ((mEnabled & 1<<kk) != 0)
+		{
+			writeDelayBuffer[kk] = setDelayBuffer[kk];
+		}
+		else
+			writeDelayBuffer[kk] = 0;
+	}
+
+	// Min setDelay Definition
 	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (Min_delay_ms != 0) {
-			if ((setDelayBuffer[kk] != 0) && (setDelayBuffer[kk] <= Min_delay_ms))
-				Min_delay_ms = setDelayBuffer[kk];
+			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
+				Min_delay_ms = writeDelayBuffer[kk];
 		} else
-			Min_delay_ms = setDelayBuffer[kk];
+			Min_delay_ms = writeDelayBuffer[kk];
 	}
 
 	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms))
@@ -303,27 +340,30 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (delayms)
-			DecimationBuffer[kk] = setDelayBuffer[kk]/delayms;
+			DecimationBuffer[kk] = writeDelayBuffer[kk]/delayms;
 		else
 			DecimationBuffer[kk] = 0;
 	}
 
-#if (DEBUG_ACCELEROMETER == 1)
-	STLOGD("AccSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
-						setDelayBuffer[0], setDelayBuffer[1],
-						setDelayBuffer[2], setDelayBuffer[3],
-						setDelayBuffer[4], setDelayBuffer[5],
-						setDelayBuffer[6], setDelayBuffer[7]);
+#if (DEBUG_POLL_RATE == 1)
+	STLOGD("AccSensor::writeDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+						writeDelayBuffer[0], writeDelayBuffer[1],
+						writeDelayBuffer[2], writeDelayBuffer[3],
+						writeDelayBuffer[4], writeDelayBuffer[5],
+						writeDelayBuffer[6], writeDelayBuffer[7],
+						writeDelayBuffer[8], writeDelayBuffer[9]);
 	STLOGD("AccSensor::Min_delay_ms = %lld, delayms = %lld, mEnabled = %d",
 						Min_delay_ms, delayms, mEnabled);
-	STLOGD("AccSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d",
+	STLOGD("AccSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
 						DecimationBuffer[0], DecimationBuffer[1],
 						DecimationBuffer[2], DecimationBuffer[3],
 						DecimationBuffer[4], DecimationBuffer[5],
-						DecimationBuffer[6], DecimationBuffer[7]);
+						DecimationBuffer[6], DecimationBuffer[7],
+						DecimationBuffer[8], DecimationBuffer[9]);
 #endif
 
 	return err;
+
 }
 
 void AccelSensor::getAccDelay(int64_t *Acc_Delay_ms)

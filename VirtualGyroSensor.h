@@ -66,6 +66,7 @@ private:
 	static int startup_samples;
 	static int samples_to_discard;
 	static sensors_vec_t dataBuffer;
+	static int64_t MagDelay_ms;
 	static int64_t setDelayBuffer[numSensors];
 	static int DecimationBuffer[numSensors];
 	static int DecimationCount;
@@ -82,6 +83,7 @@ public:
 	virtual int readEvents(sensors_event_t *data, int count);
 	virtual bool hasPendingEvents() const;
 	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual void updateDecimations(int64_t Delay_ms);
 	virtual int setFullScale(int32_t handle, int value);
 	virtual int enable(int32_t handle, int enabled, int type);
 	static bool getBufferData(sensors_vec_t *lastBufferedValues);

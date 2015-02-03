@@ -41,7 +41,8 @@ int GyroSensor::startup_samples = DEFAULT_SAMPLES_TO_DISCARD;
 int GyroSensor::current_fullscale = 0;
 int GyroSensor::samples_to_discard = DEFAULT_SAMPLES_TO_DISCARD;
 float GyroSensor::gbias_out[3] = {0};
-int64_t GyroSensor::setDelayBuffer[numSensors] = {0};
+int64_t GyroSensor::setDelayBuffer[numSensors] = {20, 20, 10};
+int64_t GyroSensor::writeDelayBuffer[numSensors] = {0};
 int GyroSensor::DecimationBuffer[numSensors] = {0};
 int GyroSensor::DecimationCount[numSensors] = {0};
 pthread_mutex_t GyroSensor::dataMutex;
@@ -156,15 +157,21 @@ int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
 		return what;
 
 	if (flags) {
-		if (!mEnabled) {
-#if !defined(NOT_SET_INITIAL_STATE)
+		mEnabled |= (1<<what);
+		writeMinDelay();
+
+		if (mEnabled == (1<<what)) {
+#if ((GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
+			acc->enable(SENSORS_GYROSCOPE_HANDLE, flags, 1);
+			iNemoEngine_API_gbias_enable(flags);
+#endif
 			setInitialState();
 #endif
 			err = writeEnable(SENSORS_GYROSCOPE_HANDLE, flags);
 			if(err >= 0)
 				err = 0;
 		}
-		mEnabled |= (1<<what);
+
 	} else {
 		mEnabledPrev = mEnabled;
 		mEnabled &= ~(1<<what);
@@ -173,16 +180,18 @@ int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
 			err = writeEnable(SENSORS_GYROSCOPE_HANDLE, flags);
 			if(err >= 0)
 				err = 0;
-		}
-		setDelay(handle, DELAY_OFF);
-	}
 
-#if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
-  #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-	acc->enable(SENSORS_MAGNETIC_FIELD_HANDLE, flags, 1);
-  #endif
-	iNemoEngine_API_gbias_enable(flags);
+#if ((GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
+			acc->enable(SENSORS_GYROSCOPE_HANDLE, flags, 1);
+			STLOGD("GyroSensor::Acc OFF");
 #endif
+
+		}
+		//setDelay(handle, DELAY_OFF);
+		if (mEnabled) {
+			writeMinDelay();
+		}
+	}
 
 	if(err >= 0 ) {
 		STLOGD("GyroSensor::enable(%d), handle: %d, what: %d, mEnabled: %x",
@@ -206,7 +215,6 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 	int kk;
 	int err = 0;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
-	int64_t Min_delay_ms = 0;
 
 	if(delay_ms == 0)
 		return err;
@@ -214,6 +222,16 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 	what = getWhatFromHandle(handle);
 	if (what < 0)
 		return what;
+
+#if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
+  #if (SENSORS_ACCELEROMETER_ENABLE == 1)
+	if (delay_ns >= 10000000)
+		acc->setDelay(SENSORS_GYROSCOPE_HANDLE, delay_ns);
+	else
+		acc->setDelay(SENSORS_GYROSCOPE_HANDLE, 10000000);
+
+  #endif
+#endif
 
 	/**
 	 * The handled sensor is disabled. Set 0 in its setDelayBuffer position
@@ -224,16 +242,46 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 
 	// Min setDelay Definition
 	setDelayBuffer[what] = delay_ms;
+
+#if (DEBUG_POLL_RATE == 1)
+	STLOGD("GyroSensor::setDelayBuffer[] = %lld, %lld, %lld", setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2]);
+#endif
+
+	// Update sysfs
+	if(mEnabled & 1<<what)
+	{
+		writeMinDelay();
+	}
+
+	return err;
+}
+
+int GyroSensor::writeMinDelay(void)
+{
+	int err = 0;
+	int kk;
+	int64_t Min_delay_ms = 0;
+
+	for(kk = 0; kk < numSensors; kk++)
+	{
+		if ((mEnabled & 1<<kk) != 0)
+		{
+			writeDelayBuffer[kk] = setDelayBuffer[kk];
+		}
+		else
+			writeDelayBuffer[kk] = 0;
+	}
+
+	// Min setDelay Definition
 	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (Min_delay_ms != 0) {
-			if ((setDelayBuffer[kk] != 0) && (setDelayBuffer[kk] <= Min_delay_ms))
-				Min_delay_ms = setDelayBuffer[kk];
+			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
+				Min_delay_ms = writeDelayBuffer[kk];
 		} else
-			Min_delay_ms = setDelayBuffer[kk];
+			Min_delay_ms = writeDelayBuffer[kk];
 	}
 
-	// Min setDelay Writing
 	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms))
 	{
 		samples_to_discard = (int)(GYRO_STARTUP_TIME_MS/Min_delay_ms)+1;
@@ -247,8 +295,10 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 			iNemoEngine_API_gbias_set_frequency(1000.0f /
 							(float)Min_delay_ms);
   #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-			acc->setDelay(SENSORS_UNCALIB_GYROSCOPE_HANDLE,
-						1000.0f / (float)Min_delay_ms);
+			if (Min_delay_ms >= 10)
+				acc->setDelay(SENSORS_GYROSCOPE_HANDLE,(float)Min_delay_ms*1000000);
+			else
+				acc->setDelay(SENSORS_GYROSCOPE_HANDLE,10000000);
   #endif
 #endif
 		}
@@ -258,20 +308,22 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (delayms)
-			DecimationBuffer[kk] = setDelayBuffer[kk]/delayms;
+			DecimationBuffer[kk] = writeDelayBuffer[kk]/delayms;
 		else
 			DecimationBuffer[kk] = 0;
 	}
 
-#if (DEBUG_GYROSCOPE == 1)
-	STLOGD("GyroSensor::setDelayBuffer[] = %lld, %lld, %lld", setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2]);
+#if (DEBUG_POLL_RATE == 1)
+	STLOGD("GyroSensor::writeDelayBuffer[] = %lld, %lld, %lld", writeDelayBuffer[0], writeDelayBuffer[1], writeDelayBuffer[2]);
 	STLOGD("GyroSensor::Min_delay_ms = %lld, delayms = %lld, mEnabled = %d", Min_delay_ms, delayms, mEnabled);
 	STLOGD("GyroSensor::samples_to_discard = %d", samples_to_discard);
 	STLOGD("GyroSensor::DecimationBuffer = %d, %d, %d", DecimationBuffer[0], DecimationBuffer[1], DecimationBuffer[2]);
 #endif
 
 	return err;
+
 }
+
 
 void GyroSensor::getGyroDelay(int64_t *Gyro_Delay_ms)
 {

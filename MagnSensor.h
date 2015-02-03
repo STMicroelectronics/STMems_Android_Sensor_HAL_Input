@@ -79,6 +79,7 @@ class MagnSensor : public SensorBase
 private:
 	static sensors_vec_t  dataBuffer;
 	static int64_t setDelayBuffer[numSensors];
+	static int64_t writeDelayBuffer[numSensors];
 	static int DecimationBuffer[numSensors];
 	static int DecimationCount[numSensors];
 	sensors_vec_t mSensorsBufferedVectors[3];
@@ -86,8 +87,7 @@ private:
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 	static AccelSensor *acc;
 #endif
-#if ((((SENSORS_GRAVITY_ENABLE == 1) || (SENSORS_LINEAR_ACCELERATION_ENABLE == 1))\
-	&& (SENSOR_FUSION_ENABLE != 1)) || ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)))
+#if (SENSOR_GEOMAG_ENABLE == 1)
 	iNemoGeoMagSensorsData sData;
 #endif
 	float data_raw[3];
@@ -102,6 +102,8 @@ public:
 	virtual int readEvents(sensors_event_t* data, int count);
 	virtual bool hasPendingEvents() const;
 	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual int writeMinDelay(void);
+	static void getMagDelay(int64_t *Mag_Delay_ms);
 	virtual int setFullScale(int32_t handle, int value);
 	virtual int enable(int32_t handle, int enabled, int type);
 	virtual int getWhatFromHandle(int32_t handle);

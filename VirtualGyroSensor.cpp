@@ -42,6 +42,7 @@ int64_t VirtualGyroSensor::delayms = 0;
 int VirtualGyroSensor::startup_samples = 0;
 int VirtualGyroSensor::current_fullscale = 0;
 int VirtualGyroSensor::samples_to_discard = 0;
+int64_t VirtualGyroSensor::MagDelay_ms = MAG_DEFAULT_DELAY;
 int64_t VirtualGyroSensor::setDelayBuffer[numSensors] = {0};
 int VirtualGyroSensor::DecimationBuffer[numSensors] = {0};
 int VirtualGyroSensor::DecimationCount = 0;
@@ -124,8 +125,15 @@ int VirtualGyroSensor::enable(int32_t handle, int en, int type)
 	int what = -1;
 	int mEnabledPrev;
 
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 	if (VirtualGyroSensor::acc->getFd() <= 0)
 		return -1;
+#endif
+
+#if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
+	if (VirtualGyroSensor::mag->getFd() <= 0)
+		return -1;
+#endif
 
 	what = getWhatFromHandle(handle);
 	if (what < 0)
@@ -133,29 +141,36 @@ int VirtualGyroSensor::enable(int32_t handle, int en, int type)
 
 	if (flags) {
 		if (!mEnabled) {
+#if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
  			mag->enable(SENSORS_VIRTUAL_GYROSCOPE_HANDLE, flags, 1);
  			mag->setFullScale(SENSORS_VIRTUAL_GYROSCOPE_HANDLE,
  							MAG_DEFAULT_RANGE);
-
+#endif
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
  			acc->enable(SENSORS_VIRTUAL_GYROSCOPE_HANDLE, flags, 1);
  			acc->setFullScale(SENSORS_VIRTUAL_GYROSCOPE_HANDLE,
  							ACC_DEFAULT_RANGE);
 			setInitialState();
+#endif
 		}
 		mEnabled |= (1 << what);
 	} else {
 
 		mEnabledPrev = mEnabled;
 		mEnabled &= ~(1 << what);
-		if (!mEnabled) {
+		if (!mEnabled && mEnabledPrev) {
+#if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
   			mag->setFullScale(SENSORS_VIRTUAL_GYROSCOPE_HANDLE,
   							MAG_DEFAULT_RANGE);
  			mag->enable(SENSORS_VIRTUAL_GYROSCOPE_HANDLE, flags, 1);
-
+#endif
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
   			acc->setFullScale(SENSORS_VIRTUAL_GYROSCOPE_HANDLE,
   							ACC_DEFAULT_RANGE);
  			acc->enable(SENSORS_VIRTUAL_GYROSCOPE_HANDLE, flags, 1);
+#endif
 		}
+		setDelay(handle, DELAY_OFF);
 	}
 
 	if(err >= 0 ) {
@@ -176,14 +191,13 @@ bool VirtualGyroSensor::hasPendingEvents() const
 
 int VirtualGyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
-	int what = -1, err, i_sensor;
+	int what = -1, err;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
 	int64_t Min_delay_ms = 0;
 
 	if(delay_ms == 0)
 		return -1;
 
-	
 	what = getWhatFromHandle(handle);
 	if (what < 0)
 		return what;
@@ -193,62 +207,67 @@ int VirtualGyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 	 * and update decimation buffer.
 	 */
 	if (delay_ms == NSEC_TO_MSEC(DELAY_OFF))
+	{
 		delay_ms = 0;
+		Min_delay_ms = 0;
+	}
 	else {
 		if (delay_ms < VGYRO_DEFAULT_DELAY)
 			Min_delay_ms = delay_ms;
 		else
 			Min_delay_ms = VGYRO_DEFAULT_DELAY;
 	}
-
+#if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 	err = mag->setDelay(SENSORS_VIRTUAL_GYROSCOPE_HANDLE,
 			    (int64_t)MSEC_TO_NSEC(Min_delay_ms));
 	if(err < 0)
 		return -1;
-
+#endif
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 	err = acc->setDelay(SENSORS_VIRTUAL_GYROSCOPE_HANDLE,
 			    (int64_t)MSEC_TO_NSEC(Min_delay_ms));
 	if(err < 0)
 		return -1;
+#endif
 
 	/** Min setDelay Definition */
 	setDelayBuffer[what] = delay_ms;
-	Min_delay_ms = 0;
-	for(i_sensor = 0; i_sensor < numSensors; i_sensor++)
-	{
-		if (Min_delay_ms != 0) {
-			if ((setDelayBuffer[i_sensor] != 0) && (setDelayBuffer[i_sensor] <= Min_delay_ms))
-				Min_delay_ms = setDelayBuffer[i_sensor];
-		} else
-			Min_delay_ms = setDelayBuffer[i_sensor];
-	}
+	updateDecimations(MagDelay_ms);
 
-	/** Min setDelay Writing */
-	if (Min_delay_ms != delayms)
-		delayms = Min_delay_ms;
+	return 0;
+}
+
+void VirtualGyroSensor::updateDecimations(int64_t delayms)
+{
+	int kk;
+
+	if (delayms) {
+		samples_to_discard = (int)(GYRO_STARTUP_TIME_MS/delayms)+1;
+		startup_samples = samples_to_discard;
+	}
 
 	/** Decimation Definition */
-	for(i_sensor = 0; i_sensor < numSensors; i_sensor++)
+	for(kk = 0; kk < numSensors; kk++)
 	{
 		if (delayms)
-			DecimationBuffer[i_sensor] = setDelayBuffer[i_sensor] / delayms;
+			DecimationBuffer[kk] = setDelayBuffer[kk] / delayms;
 		else
-			DecimationBuffer[i_sensor] = 0;
+			DecimationBuffer[kk] = 0;
 	}
 
-#if (DEBUG_VIRTUAL_GYROSCOPE == 1)
+#if (DEBUG_POLL_RATE == 1)
 	STLOGD("VirtualGyroSensor::setDelayBuffer[] = %lld, %lld, %lld",
 			setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2]);
-	STLOGD("VirtualGyroSensor::Min_delay_ms = %lld, delayms = %lld, "
-			"mEnabled = %d", Min_delay_ms, delayms, mEnabled);
+	STLOGD("VirtualGyroSensor::delayms = %lld, "
+			"mEnabled = %d", delayms, mEnabled);
 	STLOGD("VirtualGyroSensor::samples_to_discard = %d",
 			samples_to_discard);
 	STLOGD("VirtualGyroSensor::DecimationBuffer = %d, %d, %d",
 	       DecimationBuffer[0], DecimationBuffer[1], DecimationBuffer[2]);
 #endif
 
-	return 0;
 }
+
 
 void VirtualGyroSensor::getGyroDelay(int64_t *Gyro_Delay_ms)
 {
@@ -278,6 +297,7 @@ int VirtualGyroSensor::readEvents(sensors_event_t* data, int count)
 	static int64_t pre_time = -1;
 	int64_t cur_time = 0;
 	float tmp[3];
+	int64_t newMagDelay_ms = MAG_DEFAULT_DELAY;
 
 	if (count < 1)
 		return -EINVAL;
@@ -301,6 +321,14 @@ int VirtualGyroSensor::readEvents(sensors_event_t* data, int count)
 #endif
 				goto no_data;
 			}
+
+
+			VirtualGyroSensor::mag->getMagDelay(&newMagDelay_ms);
+			if((newMagDelay_ms != MagDelay_ms) && mEnabled) {
+				updateDecimations(newMagDelay_ms);
+				MagDelay_ms = newMagDelay_ms;
+			}
+
 
 #if (SENSOR_GEOMAG_ENABLE == 0)
 			/* GeoMag library execution here only if GeoMag sensors are disabled */
