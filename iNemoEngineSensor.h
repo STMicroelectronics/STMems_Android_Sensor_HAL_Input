@@ -97,7 +97,7 @@ private:
 	static MagnSensor *mag;
 #endif
 	static int status;
-	static int64_t gyroDelay_ns;
+	static int64_t gyroDelay_ms;
 	static int64_t DelayBuffer[numSensors];
 	static int DecimationBuffer[numSensors];
 	static int DecimationCount[numSensors];

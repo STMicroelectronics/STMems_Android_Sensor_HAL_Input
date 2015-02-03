@@ -63,7 +63,7 @@ int iNemoEngineSensor::samples_to_discard = DEFAULT_SAMPLES_TO_DISCARD;
 int iNemoEngineSensor::DecimationBuffer[numSensors] = {0};
 int iNemoEngineSensor::DecimationCount[numSensors] = {0};
 int64_t iNemoEngineSensor::DelayBuffer[numSensors] = {0};
-int64_t iNemoEngineSensor::gyroDelay_ns = MSEC_TO_NSEC(GYR_DEFAULT_DELAY);
+int64_t iNemoEngineSensor::gyroDelay_ms = GYR_DEFAULT_DELAY;
 
 struct timespec old_time, new_time;
 
@@ -273,6 +273,8 @@ int iNemoEngineSensor::enable(int32_t handle, int en, int  __attribute__((unused
 	if (what < 0)
 		return what;
 
+	STLOGD( "iNemoEngineSensor: %d", what);
+
 	if(en) {
 		if(mEnabled == 0) {
 			enabled = 1;
@@ -370,25 +372,41 @@ int iNemoEngineSensor::setDelay(int32_t handle, int64_t delay_ns)
 	int err;
 	int what = -1;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
+	int64_t gyr_delay_ms;
+	int64_t mag_delay_ms;
+	int64_t acc_delay_ms;
 
 	what = getWhatFromHandle(handle);
 	if (what < 0)
 		return what;
 
+	if (delay_ms == NSEC_TO_MSEC(DELAY_OFF)) {
+		delay_ms = 0;
+		gyr_delay_ms = 0;
+		mag_delay_ms = 0;
+		acc_delay_ms = 0;
+	}
+	else{
+		gyr_delay_ms = (int64_t)MSEC_TO_NSEC(GYR_DEFAULT_DELAY);
+		mag_delay_ms = (int64_t)MSEC_TO_NSEC(MAG_DEFAULT_DELAY);
+		acc_delay_ms = (int64_t)MSEC_TO_NSEC(ACC_DEFAULT_DELAY);
+	}
+
+
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-		err = iNemoEngineSensor::gyr->setDelay(SENSORS_SENSOR_FUSION_HANDLE, (int64_t)MSEC_TO_NSEC(GYR_DEFAULT_DELAY));
+		err = iNemoEngineSensor::gyr->setDelay(SENSORS_SENSOR_FUSION_HANDLE, gyr_delay_ms);
 		if(err < 0)
 			return -1;
 #endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 		if (handle != SENSORS_GAME_ROTATION_HANDLE) {
-			err = iNemoEngineSensor::mag->setDelay(SENSORS_SENSOR_FUSION_HANDLE, (int64_t)MSEC_TO_NSEC(MAG_DEFAULT_DELAY));
+			err = iNemoEngineSensor::mag->setDelay(SENSORS_SENSOR_FUSION_HANDLE, mag_delay_ms);
 			if(err < 0)
 				return -1;
 		}
 #endif
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-		err = iNemoEngineSensor::acc->setDelay(SENSORS_SENSOR_FUSION_HANDLE, (int64_t)MSEC_TO_NSEC(ACC_DEFAULT_DELAY));
+		err = iNemoEngineSensor::acc->setDelay(SENSORS_SENSOR_FUSION_HANDLE, acc_delay_ms);
 		if(err < 0)
 			return -1;
 #endif
@@ -396,11 +414,9 @@ int iNemoEngineSensor::setDelay(int32_t handle, int64_t delay_ns)
 	 * The handled sensor is disabled. Set 0 in its setDelayBuffer position
 	 * and update decimation buffer.
 	 */
-	if (delay_ms == NSEC_TO_MSEC(DELAY_OFF))
-		delay_ms = 0;
 
 	DelayBuffer[what] = delay_ms;
-	updateDecimations(gyroDelay_ns);
+	updateDecimations(gyroDelay_ms);
 
 	return 0;
 }
@@ -425,7 +441,7 @@ void iNemoEngineSensor::updateDecimations(int64_t delayms)
 
 	memset(DecimationCount, 0, sizeof(DecimationCount));
 
-#if (DEBUG_INEMO_SENSOR == 1)
+#if (DEBUG_POLL_RATE == 1)
 	STLOGD("iNemo::Gyro Delay = %lld", delayms);
 	STLOGD("iNemo::DelayBuffer = %lld, %lld, %lld", DelayBuffer[3], DelayBuffer[4], DelayBuffer[5]);
 	STLOGD("iNemo::DelayBuffer = %lld, %lld, %lld", DelayBuffer[6], DelayBuffer[7], DelayBuffer[8]);
@@ -441,7 +457,7 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 	static int cont = 0;
 	iNemoSensorsData sdata;
 	int64_t timeElapsed;
-	int64_t newGyroDelay_ns = MSEC_TO_NSEC(GYR_DEFAULT_DELAY);
+	int64_t newGyroDelay_ms = GYR_DEFAULT_DELAY;
 	int err;
 	int numEventReceived = 0;
 	input_event const* event;
