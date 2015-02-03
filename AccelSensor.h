@@ -75,6 +75,7 @@ public:
 	virtual int readEvents(sensors_event_t *data, int count);
 	virtual bool hasPendingEvents() const;
 	virtual int setDelay(int32_t handle, int64_t ns);
+	static void getAccDelay(int64_t *Acc_Delay_ms);
 	virtual int setFullScale(int32_t handle, int value);
 	virtual int enable(int32_t handle, int enabled, int type);
 	static bool getBufferData(sensors_vec_t *lastBufferedValues);

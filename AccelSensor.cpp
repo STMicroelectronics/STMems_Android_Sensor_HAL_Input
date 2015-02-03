@@ -326,6 +326,14 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	return err;
 }
 
+void AccelSensor::getAccDelay(int64_t *Acc_Delay_ms)
+{
+	*Acc_Delay_ms = delayms;
+
+	return;
+}
+
+
 int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
 {
 	int err = -1;

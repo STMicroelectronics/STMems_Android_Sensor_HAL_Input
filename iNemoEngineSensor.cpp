@@ -493,12 +493,15 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 			}
 
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-	iNemoEngineSensor::gyr->getGyroDelay(&newGyroDelay_ns);
-	if((newGyroDelay_ns != gyroDelay_ns) && mEnabled) {
-		updateDecimations(newGyroDelay_ns);
-		gyroDelay_ns = newGyroDelay_ns;
-	}
+	iNemoEngineSensor::gyr->getGyroDelay(&newGyroDelay_ms);
+#else
+	iNemoEngineSensor::acc->getAccDelay(&newGyroDelay_ms);
 #endif
+
+	if((newGyroDelay_ms != gyroDelay_ms) && mEnabled) {
+		updateDecimations(newGyroDelay_ms);
+		gyroDelay_ms = newGyroDelay_ms;
+	}
 
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 			AccelSensor::getBufferData(&mSensorsBufferedVectors[Acceleration]);
