@@ -154,6 +154,11 @@ int AccelSensor::getWhatFromHandle(int32_t handle)
 			what = VirtualGyro;
 			break;
 #endif
+#if (SENSORS_GYROSCOPE_ENABLE == 1)
+		case SENSORS_GYROSCOPE_HANDLE:
+			what = Gbias;
+			break;
+#endif
 		default:
 			what = -1;
 	}

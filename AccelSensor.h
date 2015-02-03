@@ -46,6 +46,7 @@ class AccelSensor : public SensorBase {
 		Gravity_Accel,
 		Linear_Accel,
 		VirtualGyro,
+		Gbias,
 		numSensors
 	};
 	static int mEnabled;
