@@ -27,9 +27,9 @@
 #define SENSOR_UNCALIB_MAGN_LABEL	"LIS3MDL 3-axis Uncalibrated Magnetometer sensor"
 #define SENSOR_MAG_INCLUDE_FILE_NAME	"lis3mdl.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_MAGNETIC_FIELD	LIS3MDL_DEV_NAME			// Name of input device: struct input_dev->name
-#define MAGN_DELAY_FILE_NAME		"pollrate_ms"				// name of sysfs file for setting the pollrate
-#define MAGN_ENABLE_FILE_NAME		"enable_device"				// name of sysfs file for enable/disable the sensor state
-#define MAGN_RANGE_FILE_NAME		"full_scale"				// name of sysfs file for setting the full scale
+#define MAGN_DELAY_FILE_NAME		"device/pollrate_ms"			// name of sysfs file for setting the pollrate
+#define MAGN_ENABLE_FILE_NAME		"device/enable_device"			// name of sysfs file for enable/disable the sensor state
+#define MAGN_RANGE_FILE_NAME		"device/full_scale"			// name of sysfs file for setting the full scale
 #define CALIBRATION_ENABLE		1					// Enable Calibration -> [0]:off, [1]:on
 #define MAGN_MAX_RANGE			1000.0f					// Set Max Full-scale [uT]
 #define MAGN_MAX_ODR			80					// Set Max value of ODR [Hz]

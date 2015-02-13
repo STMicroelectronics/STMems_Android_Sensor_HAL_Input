@@ -28,9 +28,9 @@
 #define SENSOR_ACC_LABEL		"LSM330D 3-axis Accelerometer"	// Label views in Android Applications
 #define SENSOR_ACC_INCLUDE_FILE_NAME	"lsm330d.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_ACCELEROMETER	LSM330D_ACC_DEV_NAME			// Name of input device: struct input_dev->name
-#define ACCEL_DELAY_FILE_NAME		"pollrate_ms"				// name of sysfs file for setting the pollrate
-#define ACCEL_ENABLE_FILE_NAME		"enable_device"				// name of sysfs file for enable/disable the sensor state
-#define ACCEL_RANGE_FILE_NAME		"range"					// name of sysfs file for setting the full scale
+#define ACCEL_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
+#define ACCEL_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
+#define ACCEL_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE			16*GRAVITY_EARTH			// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR			400					// Set Max value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION		0.033f					// Set sensor's power consumption [mA]
@@ -41,9 +41,9 @@
 #define SENSOR_UNCALIB_GYRO_LABEL      "LSM330D 3-axis Uncalibrated Gyroscope sensor"
 #define SENSOR_GYR_INCLUDE_FILE_NAME	"lsm330d.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_GYROSCOPE	LSM330D_GYR_DEV_NAME			// Name of input device: struct input_dev->name
-#define GYRO_DELAY_FILE_NAME		"pollrate_ms"				// name of sysfs file for setting the pollrate
-#define GYRO_ENABLE_FILE_NAME		"enable_device"				// name of sysfs file for enable/disable the sensor state
-#define GYRO_RANGE_FILE_NAME		"range"					// name of sysfs file for setting the full scale
+#define GYRO_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
+#define GYRO_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
+#define GYRO_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE			(2000.0f*(float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR			800					// Set Max value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION		6.1f					// Set sensor's power consumption [mA]

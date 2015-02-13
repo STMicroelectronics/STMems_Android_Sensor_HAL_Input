@@ -27,9 +27,9 @@
 #define SENSOR_ACC_LABEL		"LSM303C 3-axis Accelerometer"		// Label views in Android Applications
 #define SENSOR_ACC_INCLUDE_FILE_NAME	"lsm303c.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_ACCELEROMETER	LSM303C_ACC_DEV_NAME			// Name of input device: struct input_dev->name
-#define ACCEL_DELAY_FILE_NAME		"pollrate_ms"				// name of sysfs file for setting the pollrate
-#define ACCEL_ENABLE_FILE_NAME		"enable_device"				// name of sysfs file for enable/disable the sensor state
-#define ACCEL_RANGE_FILE_NAME		"range"					// name of sysfs file for setting the full scale
+#define ACCEL_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
+#define ACCEL_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
+#define ACCEL_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE			8*GRAVITY_EARTH				// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR			100					// Set Max value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION		0.033f					// Set sensor's power consumption [mA]
@@ -39,9 +39,9 @@
 #define SENSOR_MAGN_LABEL		"LSM303C 3-axis Magnetometer Sensor"	// Label views in Android Applications
 #define SENSOR_MAG_INCLUDE_FILE_NAME	"lsm303c.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_MAGNETIC_FIELD	LSM303C_MAG_DEV_NAME			// Name of input device: struct input_dev->name
-#define MAGN_DELAY_FILE_NAME		"pollrate_ms"				// name of sysfs file for setting the pollrate
-#define MAGN_ENABLE_FILE_NAME		"enable_device"				// name of sysfs file for enable/disable the sensor state
-#define MAGN_RANGE_FILE_NAME		"full_scale"				// name of sysfs file for setting the full scale
+#define MAGN_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
+#define MAGN_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
+#define MAGN_RANGE_FILE_NAME		"device/full_scale"				// name of sysfs file for setting the full scale
 #define CALIBRATION_ENABLE		1					// Enable Calibration -> [0]:off, [1]:on
 #define MAGN_MAX_RANGE			1600.0f					// Set Max Full-scale [uT]
 #define MAGN_MAX_ODR			80					// Set Max value of ODR [Hz]

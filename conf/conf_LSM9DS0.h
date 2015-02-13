@@ -29,9 +29,9 @@
 #define SENSOR_ACC_LABEL		"LSM9DS0 3-axis Accelerometer Sensor"	// Label views in Android Applications
 #define SENSOR_ACC_INCLUDE_FILE_NAME	"lsm9ds0.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_ACCELEROMETER	LSM9DS0_ACC_DEV_NAME			// Name of input device: struct input_dev->name
-#define ACCEL_DELAY_FILE_NAME		"accelerometer/pollrate_ms"		// name of sysfs file for setting the pollrate
-#define ACCEL_ENABLE_FILE_NAME		"accelerometer/enable_device"		// name of sysfs file for enable/disable the sensor state
-#define ACCEL_RANGE_FILE_NAME		"accelerometer/full_scale"		// name of sysfs file for setting the full scale
+#define ACCEL_DELAY_FILE_NAME		"device/accelerometer/pollrate_ms"		// name of sysfs file for setting the pollrate
+#define ACCEL_ENABLE_FILE_NAME		"device/accelerometer/enable_device"		// name of sysfs file for enable/disable the sensor state
+#define ACCEL_RANGE_FILE_NAME		"device/accelerometer/full_scale"		// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE			16*GRAVITY_EARTH			// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR			100					// Set Max value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION		0.033f					// Set sensor's power consumption [mA]
@@ -41,9 +41,9 @@
 #define SENSOR_MAGN_LABEL		"LSM9DS0 3-axis Magnetometer Sensor"	// Label views in Android Applications
 #define SENSOR_MAG_INCLUDE_FILE_NAME	"lsm9ds0.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_MAGNETIC_FIELD	LSM9DS0_MAG_DEV_NAME			// Name of input device: struct input_dev->name
-#define MAGN_DELAY_FILE_NAME		"magnetometer/pollrate_ms"		// name of sysfs file for setting the pollrate
-#define MAGN_ENABLE_FILE_NAME		"magnetometer/enable_device"		// name of sysfs file for enable/disable the sensor state
-#define MAGN_RANGE_FILE_NAME		"magnetometer/full_scale"		// name of sysfs file for setting the full scale
+#define MAGN_DELAY_FILE_NAME		"device/magnetometer/pollrate_ms"		// name of sysfs file for setting the pollrate
+#define MAGN_ENABLE_FILE_NAME		"device/magnetometer/enable_device"		// name of sysfs file for enable/disable the sensor state
+#define MAGN_RANGE_FILE_NAME		"device/magnetometer/full_scale"		// name of sysfs file for setting the full scale
 #define MAGN_MAX_RANGE			1200.0f					// Set Max Full-scale [uT]
 #define MAGN_MAX_ODR			100					// Set Max value of ODR [Hz]
 #define MAGN_POWER_CONSUMPTION		0.077f					// Set sensor's power consumption [mA]
@@ -53,9 +53,9 @@
 #define SENSOR_GYRO_LABEL		"LSM9DS0 3-axis Gyroscope sensor"	// Label views in Android Applications
 #define SENSOR_GYR_INCLUDE_FILE_NAME	"lsm9ds0.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_GYROSCOPE	LSM9DS0_GYR_DEV_NAME			// Name of input device: struct input_dev->name
-#define GYRO_DELAY_FILE_NAME		"pollrate_ms"				// name of sysfs file for setting the pollrate
-#define GYRO_ENABLE_FILE_NAME		"enable_device"				// name of sysfs file for enable/disable the sensor state
-#define GYRO_RANGE_FILE_NAME		"range"					// name of sysfs file for setting the full scale
+#define GYRO_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
+#define GYRO_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
+#define GYRO_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE			(2000.0f*(float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR			200					// Set Max value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION		6.1f					// Set sensor's power consumption [mA]
