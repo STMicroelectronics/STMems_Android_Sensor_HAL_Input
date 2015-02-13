@@ -639,7 +639,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				/**
 				 * No calibration is available!
 				 */
-				memset(data_calibrated.v, 0, sizeof(data_calibrated.v));
+				memcpy(data_calibrated.v, data_rot, sizeof(data_calibrated.v));
 				data_calibrated.status = SENSOR_STATUS_UNRELIABLE;
 #endif
 
