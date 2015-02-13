@@ -165,6 +165,7 @@ int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
 			acc->enable(SENSORS_GYROSCOPE_HANDLE, flags, 1);
 			iNemoEngine_API_gbias_enable(flags);
 #endif
+#if !defined(NOT_SET_INITIAL_STATE)
 			setInitialState();
 #endif
 			err = writeEnable(SENSORS_GYROSCOPE_HANDLE, flags);
