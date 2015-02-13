@@ -544,7 +544,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 			} else if (event->code == EVENT_TYPE_MAG_Z) {
 				data_raw[2] = value * CONVERT_M_Z;
 			}
-#if defined(INPUT_EVENT_HAS_TIMESTAMP)
+#if defined(MAG_EVENT_HAS_TIMESTAMP)
 			else if (event->code == EVENT_TYPE_TIME_MSB) {
 				timestamp = ((int64_t)(event->value)) << 32;
 			}
@@ -566,7 +566,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 					data_raw[1] * matrix_mag[1][2] +
 					data_raw[2] * matrix_mag[2][2];
 
-#if !defined(INPUT_EVENT_HAS_TIMESTAMP)
+#if !defined(MAG_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);
 #endif
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
