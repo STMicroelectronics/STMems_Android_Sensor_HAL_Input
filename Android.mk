@@ -63,6 +63,7 @@ endef
 # - GEOMAG_FUSION                                                              #
 # - MAGCALIB                                                                   #
 # - GBIAS                                                                      #
+# - ACT_RECO                                                                   #
 #                                                                              #
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #

@@ -97,6 +97,9 @@
 #if defined(MAGCALIB)
   #include "conf_MAGCALIB.h"
 #endif
+#if defined(ACT_RECO)
+  #include "conf_ACT_RECO.h"
+#endif
 
 #ifndef SENSORS_GYROSCOPE_ENABLE
   #define SENSORS_GYROSCOPE_ENABLE 		(0)
@@ -134,7 +137,8 @@
 #define DEBUG_STEP_C				(0)
 #define DEBUG_STEP_D				(0)
 #define DEBUG_SIGN_M				(0)
-#define DEBUG_POLL_RATE				(0)
+#define DEBUG_POLL_RATE				(1)
+#define DEBUG_ACTIVITY_RECO			(0)
 
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)

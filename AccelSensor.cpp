@@ -160,6 +160,11 @@ int AccelSensor::getWhatFromHandle(int32_t handle)
 			what = Gbias;
 			break;
 #endif
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+		case SENSORS_ACTIVITY_RECOGNIZER_HANDLE:
+			what = ActivityReco;
+			break;
+#endif
 		default:
 			what = -1;
 	}
@@ -284,12 +289,13 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	setDelayBuffer[what] = delay_ms;
 
 #if (DEBUG_POLL_RATE == 1)
-	STLOGD("AccSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+	STLOGD("AccSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
 						setDelayBuffer[0], setDelayBuffer[1],
 						setDelayBuffer[2], setDelayBuffer[3],
 						setDelayBuffer[4], setDelayBuffer[5],
 						setDelayBuffer[6], setDelayBuffer[7],
-						setDelayBuffer[8], setDelayBuffer[9]);
+						setDelayBuffer[8], setDelayBuffer[9],
+						setDelayBuffer[10]);
 #endif
 
 	// Update sysfs
@@ -347,20 +353,22 @@ int AccelSensor::writeMinDelay(void)
 	}
 
 #if (DEBUG_POLL_RATE == 1)
-	STLOGD("AccSensor::writeDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+	STLOGD("AccSensor::writeDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
 						writeDelayBuffer[0], writeDelayBuffer[1],
 						writeDelayBuffer[2], writeDelayBuffer[3],
 						writeDelayBuffer[4], writeDelayBuffer[5],
 						writeDelayBuffer[6], writeDelayBuffer[7],
-						writeDelayBuffer[8], writeDelayBuffer[9]);
+						writeDelayBuffer[8], writeDelayBuffer[9],
+						writeDelayBuffer[10]);
 	STLOGD("AccSensor::Min_delay_ms = %lld, delayms = %lld, mEnabled = %d",
 						Min_delay_ms, delayms, mEnabled);
-	STLOGD("AccSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
+	STLOGD("AccSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
 						DecimationBuffer[0], DecimationBuffer[1],
 						DecimationBuffer[2], DecimationBuffer[3],
 						DecimationBuffer[4], DecimationBuffer[5],
 						DecimationBuffer[6], DecimationBuffer[7],
-						DecimationBuffer[8], DecimationBuffer[9]);
+						DecimationBuffer[8], DecimationBuffer[9],
+						DecimationBuffer[10]);
 #endif
 
 	return err;
@@ -482,7 +490,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 
 			if (mEnabled & ((1<<iNemoAcceleration) | (1<<MagCalAcceleration) |
 				(1<<GeoMagRotVectAcceleration) | (1<<Orientation) |
-				(1<<Linear_Accel) | (1<<Gravity_Accel)))
+				(1<<Linear_Accel) | (1<<Gravity_Accel) | (1<<ActivityReco)))
 			{
 				sensors_vec_t sData;
 				memcpy(sData.v, data_rot, sizeof(data_rot));

@@ -64,6 +64,9 @@
 #if (SENSORS_SIGN_MOTION_ENABLE == 1)
 #include "SignMotionSensor.h"
 #endif
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+#include "ActivityRecognizer.h"
+#endif
 
 
 /*****************************************************************************/
@@ -552,6 +555,31 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+	{
+		SENSOR_ACTIVITY_RECOGNIZERO_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_ACTIVITY_RECOGNIZER_HANDLE,
+		SENSOR_TYPE_ACTIVITY,
+		10.0f,
+		1.0f,
+		SENSORS_ACTIVITY_RECOGNIZER_POWER,
+		0,
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROIS_L)
+		SENSOR_STRING_TYPE_ACTIVITY,
+		"",
+		0,
+		SENSOR_FLAG_ON_CHANGE_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 };
 
 
@@ -634,6 +662,9 @@ private:
 #endif
 #if(SENSORS_SIGN_MOTION_ENABLE == 1)
 		sign_m,
+#endif
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+		act_reco,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -751,6 +782,10 @@ private:
 			case SENSORS_SIGN_MOTION_HANDLE:
 				return sign_m;
 #endif
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+			case SENSORS_ACTIVITY_RECOGNIZER_HANDLE:
+				return act_reco;
+#endif
 		}
 		return -EINVAL;
 	}
@@ -828,6 +863,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[sign_m].fd = mSensors[sign_m]->getFd();
 	mPollFds[sign_m].events = POLLIN;
 	mPollFds[sign_m].revents = 0;
+#endif
+
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+	mSensors[act_reco] = new ActivityRecognizerSensor();
+	mPollFds[act_reco].fd = mSensors[act_reco]->getFd();
+	mPollFds[act_reco].events = POLLIN;
+	mPollFds[act_reco].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)

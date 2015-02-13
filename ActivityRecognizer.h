@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2013 STMicroelectronics
- * Matteo Dameno, Ciocca Denis, Alberto Marinoni - Motion MEMS Product Div.
+ * Copyright (C) 2014 STMicroelectronics
+ * Alberto Marinoni, Giuseppe Barba
+ * Motion MEMS Product Div.
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,75 +17,57 @@
  * limitations under the License.
  */
 
+
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+
+#ifndef ANDROID_ACTIVITY_RECOGNIZER_SENSOR_H
+#define ANDROID_ACTIVITY_RECOGNIZER_SENSOR_H
+
 #include "configuration.h"
-#if (SENSORS_ACCELEROMETER_ENABLE == 1)
-
-#ifndef ANDROID_ACC_SENSOR_H
-#define ANDROID_ACC_SENSOR_H
-
 #include <stdint.h>
 #include <errno.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
+
 #include "sensors.h"
 #include "SensorBase.h"
 #include "InputEventReader.h"
+#include "AccelSensor.h"
+
+extern "C"
+{
+	#include "ActivityRecoLib.h"
+};
 
 /*****************************************************************************/
 
 struct input_event;
 
-class AccelSensor : public SensorBase {
-	enum {
-		Acceleration = 0,
-		SignificantMotion,
-		iNemoAcceleration,
-		MagCalAcceleration,
-		GeoMagRotVectAcceleration,
-		Orientation,
-		Gravity_Accel,
-		Linear_Accel,
-		VirtualGyro,
-		Gbias,
-		ActivityReco,
-		numSensors
-	};
-	static int mEnabled;
-	static int64_t delayms;
-	static int current_fullscale;
+class ActivityRecognizerSensor : public SensorBase
+{
+	sensors_event_t mPendingEvent;
 	InputEventCircularReader mInputReader;
-	uint32_t mPendingMask;
-	sensors_event_t mPendingEvents[numSensors];
-	bool mHasPendingEvent;
-	int setInitialState();
 
 private:
-	static sensors_vec_t  dataBuffer;
-	static int64_t setDelayBuffer[numSensors];
-	static int64_t writeDelayBuffer[numSensors];
-	static int DecimationBuffer[numSensors];
-	static int DecimationCount;
-	virtual bool setBufferData(sensors_vec_t *value);
-	float data_raw[3];
-	float data_rot[3];
-	static pthread_mutex_t dataMutex;
+	double last_activity;
+	AccelSensor *acc;
+	int mEnabled;
 	int64_t timestamp;
 
 public:
-	AccelSensor();
-	virtual ~AccelSensor();
+	ActivityRecognizerSensor();
+	virtual ~ActivityRecognizerSensor();
 	virtual int readEvents(sensors_event_t *data, int count);
 	virtual bool hasPendingEvents() const;
 	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int writeMinDelay(void);
-	static void getAccDelay(int64_t *Acc_Delay_ms);
-	virtual int setFullScale(int32_t handle, int value);
 	virtual int enable(int32_t handle, int enabled, int type);
 	static bool getBufferData(sensors_vec_t *lastBufferedValues);
+	static void getGyroDelay(int64_t *Gyro_Delay_ms);
 	virtual int getWhatFromHandle(int32_t handle);
 };
 
-#endif  // ANDROID_ACCEL_SENSOR_H
+#endif  // ANDROID_ACTIVITY_RECOGNIZER_SENSOR_H
 
-#endif /* SENSORS_ACCELEROMETER_ENABLE */
+#endif /* SENSORS_ACTIVITY_RECOGNIZER_ENABLE */
+ 
