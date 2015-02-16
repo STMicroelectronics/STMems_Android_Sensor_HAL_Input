@@ -50,7 +50,6 @@ class ActivityRecognizerSensor : public SensorBase
 	InputEventCircularReader mInputReader;
 
 private:
-	double last_activity;
 	AccelSensor *acc;
 	int mEnabled;
 	int64_t timestamp;

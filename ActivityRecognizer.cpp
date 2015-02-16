@@ -37,7 +37,6 @@ ActivityRecognizerSensor::ActivityRecognizerSensor()
 	: SensorBase(NULL, SENSOR_DATANAME_ACCELEROMETER),
 	mInputReader(4)
 {
-	last_activity = 0;
 	mEnabled = 0;
 
 	mPendingEvent.version = sizeof(sensors_event_t);
@@ -46,8 +45,6 @@ ActivityRecognizerSensor::ActivityRecognizerSensor()
 	mPendingEvent.data[0] = 1.0f;
 
 	acc = new AccelSensor();
-
-	init_ActivityRecognizer();
 }
 
 ActivityRecognizerSensor::~ActivityRecognizerSensor()
@@ -114,7 +111,8 @@ int ActivityRecognizerSensor::readEvents(sensors_event_t* data, int count)
 	int numEventReceived = 0;
 	sensors_vec_t acc_data;
 	input_event const* event;
-	double act;
+	int act;
+	int activity_changed = 0;
 
 	if (!mEnabled)
 		return 0;
@@ -145,19 +143,17 @@ int ActivityRecognizerSensor::readEvents(sensors_event_t* data, int count)
 							acc_data.y,
 							acc_data.z);
 #endif
-			set_ActivityRecognizer_data(acc_data.x,
-						    acc_data.y,
-						    acc_data.z);
-
-			act = get_ActivityRecognizer();
+			act = ActivityRecognizerFunction(acc_data.x,
+							acc_data.y,
+							acc_data.z,
+							&activity_changed);
 #if (DEBUG_ACTIVITY_RECO == 1)
-			ALOGD("ActivityRecognizerSensor::readEvents, activity = %d\t latest activity = %d",
-							act, last_activity);
+			ALOGD("ActivityRecognizerSensor::readEvents, activity = %d", act);
 #endif
-			if (act == last_activity)
+			if (activity_changed == 0)
 				return 0;
-			ALOGD("ActivityRecognizerSensor::readEvents, activity = %f\t latest activity = %f",
-							(float)act, (float)last_activity);
+
+			ALOGD("ActivityRecognizerSensor::readEvents, activity = %d", act);
 
 #if !defined(ACC_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);
@@ -168,7 +164,6 @@ int ActivityRecognizerSensor::readEvents(sensors_event_t* data, int count)
 			data++;
 			count--;
 			numEventReceived++;
-			last_activity = act;
 		}
 		mInputReader.next();
 	}
