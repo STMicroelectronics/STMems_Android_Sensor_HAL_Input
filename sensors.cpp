@@ -64,9 +64,6 @@
 #if (SENSORS_SIGN_MOTION_ENABLE == 1)
 #include "SignMotionSensor.h"
 #endif
-#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
-#include "ActivityRecognizer.h"
-#endif
 
 
 /*****************************************************************************/
@@ -663,9 +660,6 @@ private:
 #if(SENSORS_SIGN_MOTION_ENABLE == 1)
 		sign_m,
 #endif
-#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
-		act_reco,
-#endif
 		numSensorDrivers,
 		numFds,
 	};
@@ -784,7 +778,7 @@ private:
 #endif
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
 			case SENSORS_ACTIVITY_RECOGNIZER_HANDLE:
-				return act_reco;
+				return accel;
 #endif
 		}
 		return -EINVAL;
@@ -863,13 +857,6 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[sign_m].fd = mSensors[sign_m]->getFd();
 	mPollFds[sign_m].events = POLLIN;
 	mPollFds[sign_m].revents = 0;
-#endif
-
-#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
-	mSensors[act_reco] = new ActivityRecognizerSensor();
-	mPollFds[act_reco].fd = mSensors[act_reco]->getFd();
-	mPollFds[act_reco].events = POLLIN;
-	mPollFds[act_reco].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)

@@ -31,6 +31,13 @@
 #include "SensorBase.h"
 #include "InputEventReader.h"
 
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+extern "C"
+{
+	#include "ActivityRecoLib.h"
+};
+#endif
+
 /*****************************************************************************/
 
 struct input_event;

@@ -66,6 +66,13 @@ AccelSensor::AccelSensor()
 	mPendingEvents[SignificantMotion].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
 #endif
 
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+	mPendingEvents[ActivityReco].version = sizeof(sensors_event_t);
+	mPendingEvents[ActivityReco].sensor = ID_ACTIVITY_RECOGNIZER;
+	mPendingEvents[ActivityReco].type = SENSOR_TYPE_ACTIVITY;
+	mPendingEvents[ActivityReco].data[0] = 1.0f;
+#endif
+
 	if (data_fd) {
 		STLOGI("AccelSensor::AccelSensor accel_device_sysfs_path:(%s)", sysfs_device_path);
 	} else {
@@ -333,6 +340,12 @@ int AccelSensor::writeMinDelay(void)
 			Min_delay_ms = writeDelayBuffer[kk];
 	}
 
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+	if ((mEnabled & (1 << ActivityReco)) &&
+		(Min_delay_ms > (1000 / ACTIVITY_RECOGNIZER_ODR)))
+			Min_delay_ms = 1000 / ACTIVITY_RECOGNIZER_ODR;
+#endif
+
 	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms))
 	{
 		err = writeDelay(SENSORS_ACCELEROMETER_HANDLE, Min_delay_ms);
@@ -488,9 +501,32 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 				mPendingMask |= 1<<Acceleration;
 			}
 
+#if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
+			if (mEnabled & (1<<ActivityReco))
+			{
+				int activity_changed = 0;
+
+				mPendingEvents[ActivityReco].data[0] =
+						(float)ActivityRecognizerFunction(
+							data_rot[0] / 9.8,
+							data_rot[1] / 9.8,
+							data_rot[2] / 9.8,
+							&activity_changed);
+				if (activity_changed != 0) {
+#if (DEBUG_ACTIVITY_RECO == 1)
+					ALOGD("ActivityRecognizerSensor::readEvents, activity = %d",
+					      mPendingEvents[ActivityReco].data[0]);
+#endif
+
+					mPendingEvents[ActivityReco].timestamp = timestamp;
+					mPendingMask |= 1<<ActivityReco;
+				}
+			}
+#endif
+
 			if (mEnabled & ((1<<iNemoAcceleration) | (1<<MagCalAcceleration) |
 				(1<<GeoMagRotVectAcceleration) | (1<<Orientation) |
-				(1<<Linear_Accel) | (1<<Gravity_Accel) | (1<<ActivityReco)))
+				(1<<Linear_Accel) | (1<<Gravity_Accel)))
 			{
 				sensors_vec_t sData;
 				memcpy(sData.v, data_rot, sizeof(data_rot));
