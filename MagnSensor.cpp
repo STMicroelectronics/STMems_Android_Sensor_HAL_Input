@@ -421,14 +421,6 @@ int MagnSensor::writeMinDelay(void)
 			Min_delay_ms = writeDelayBuffer[kk];
 	}
 
-	for(kk = 0; kk < numSensors; kk++)
-	{
-		if (Min_delay_ms != 0) {
-			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
-				Min_delay_ms = writeDelayBuffer[kk];
-		} else
-			Min_delay_ms = writeDelayBuffer[kk];
-	}
 #if (MAG_CALIBRATION_ENABLE == 1)
 	if(Min_delay_ms > 1000 / CALIBRATION_FREQUENCY)
 		Min_delay_ms = 1000 / CALIBRATION_FREQUENCY;
