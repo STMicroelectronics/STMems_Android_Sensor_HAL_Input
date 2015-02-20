@@ -69,7 +69,7 @@ endef
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
 ENABLED_SENSORS := LSM9DS0 
-ENABLED_MODULES := SENSOR_FUSION GBIAS GEOMAG_FUSION
+ENABLED_MODULES := MAGCALIB GBIAS
 
 LOCAL_ARM_MODE := arm
 LOCAL_PRELINK_MODULE := false

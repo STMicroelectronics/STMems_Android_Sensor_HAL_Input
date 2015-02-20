@@ -99,6 +99,26 @@
 #endif
 #if defined(ACT_RECO)
   #include "conf_ACT_RECO.h"
+
+#ifdef SENSORS_ORIENTATION_ENABLE
+ #if (SENSORS_ORIENTATION_ENABLE ==1)
+  #define SENSORS_COMPASS_ORIENTATION_ENABLE (0)
+  #define GEOMAG_COMPASS_ORIENTATION_ENABLE (0)
+ #endif
+#else
+ #ifdef GEOMAG_COMPASS_ORIENTATION_ENABLE
+  #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
+    #define SENSORS_COMPASS_ORIENTATION_ENABLE (0)
+  #endif
+ #endif
+#endif
+
+#if (SENSORS_GRAVITY_ENABLE == 1)
+#define GEOMAG_GRAVITY_ENABLE (0)
+#endif
+
+#if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
+#define GEOMAG_LINEAR_ACCELERATION_ENABLE (0)
 #endif
 
 #ifndef SENSORS_GYROSCOPE_ENABLE
@@ -137,8 +157,8 @@
 #define DEBUG_STEP_C				(0)
 #define DEBUG_STEP_D				(0)
 #define DEBUG_SIGN_M				(0)
-#define DEBUG_POLL_RATE				(1)
-#define DEBUG_ACTIVITY_RECO			(0)
+#define DEBUG_POLL_RATE				(0)
+#define DEBUG_ACTIVITY_RECO                    (0)
 
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)

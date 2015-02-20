@@ -204,7 +204,7 @@ static const struct sensor_t sSensorList[] = {
     #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
 		"iNemoEngineGeoMag Orientation sensor",
     #else
-		"ST Orientation sensor",
+		"STMicroelectronics Orientation sensor",
     #endif
   #endif
 		"STMicroelectronics",

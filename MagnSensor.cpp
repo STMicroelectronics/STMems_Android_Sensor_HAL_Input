@@ -128,7 +128,7 @@ MagnSensor::MagnSensor()
 
 	memset(data_raw, 0, sizeof(data_raw));
 
-#if ((MAG_CALIBRATION_ENABLE == 1) || (SENSOR_GEOMAG_ENABLE == 1))
+#if ((MAG_CALIBRATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE) || (SENSOR_GEOMAG_ENABLE == 1))
 	acc = new AccelSensor();
 #endif
 
@@ -356,9 +356,13 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 					acc->setDelay(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
 #endif
 #if ((SENSOR_FUSION_ENABLE == 0) && (MAG_CALIBRATION_ENABLE == 1))
-  #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
+  #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
 				if (what == Orientation)
 					acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
+  #endif
+  #if (SENSORS_COMPASS_ORIENTATION_ENABLE == 1)
+				if (what == Orientation)
+					acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1.0f / COMPASS_LIB_ODR));
   #endif
   #if (GEOMAG_GRAVITY_ENABLE == 1)
 				if (what == Gravity_Accel)
@@ -384,6 +388,7 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 				setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2],
 				setDelayBuffer[3], setDelayBuffer[4], setDelayBuffer[5],
 				setDelayBuffer[6], setDelayBuffer[7]);
+	STLOGD("MagSensor::Requested_delay_ms = %lld", delay_ms);
 #endif
 
 	// Update sysfs
@@ -422,11 +427,11 @@ int MagnSensor::writeMinDelay(void)
 	}
 
 #if (MAG_CALIBRATION_ENABLE == 1)
-	if(Min_delay_ms > 1000 / CALIBRATION_FREQUENCY)
-		Min_delay_ms = 1000 / CALIBRATION_FREQUENCY;
+	if(Min_delay_ms > (1000.0f / CALIBRATION_FREQUENCY))
+		Min_delay_ms = 1000.0f / CALIBRATION_FREQUENCY;
 #endif
 #if ((SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1) || (((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) ||\
-	(SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1) ||\
+	(GEOMAG_LINEAR_ACCELERATION_ENABLE == 1) ||\
 	(GEOMAG_GRAVITY_ENABLE == 1))  && (SENSOR_FUSION_ENABLE == 0)))
 	if ((mEnabled & 1<<GeoMagRotVect_Magnetic) || (mEnabled & 1<<Orientation)
 			 || (mEnabled & 1<<Linear_Accel) || (mEnabled & 1<<Gravity_Accel)){
@@ -434,6 +439,13 @@ int MagnSensor::writeMinDelay(void)
 			Min_delay_ms = 1000 / GEOMAG_FREQUENCY;
 	}
 #endif
+#if ((SENSORS_COMPASS_ORIENTATION_ENABLE == 1) && (SENSOR_FUSION_ENABLE == 0))
+	if (mEnabled & 1<<Orientation){
+		if(Min_delay_ms > (1000.0f / COMPASS_LIB_ODR))
+			Min_delay_ms = 1000.0f / COMPASS_LIB_ODR;
+	}
+#endif
+
 	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms))
 	{
 		err = writeDelay(SENSORS_MAGNETIC_FIELD_HANDLE, Min_delay_ms);
@@ -468,6 +480,7 @@ int MagnSensor::writeMinDelay(void)
 				DecimationBuffer[0], DecimationBuffer[1], DecimationBuffer[2],
 				DecimationBuffer[3], DecimationBuffer[4], DecimationBuffer[5],
 				DecimationBuffer[6], DecimationBuffer[7]);
+	STLOGD("MagSensor::count_call_ecompass = %d", count_call_ecompass);
 #endif
 
 	return err;
@@ -565,7 +578,6 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 			AccelSensor::getBufferData(&mSensorsBufferedVectors[ID_ACCELEROMETER]);
 #endif
 #if (MAG_CALIBRATION_ENABLE == 1)
-			compass_API_SaveMag(data_rot[0], data_rot[1], data_rot[2]);
   #if (MAG_SI_COMPENSATION_ENABLED == 1)
     #if (DEBUG_MAG_SI_COMPENSATION == 1)
 			ALOGD("Mag RAW Data [uT]: %f  %f  %f", data_rot[0],
@@ -573,6 +585,7 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
     #endif
 			compass_API_getSICalibratedData(data_rot);
   #endif
+			compass_API_SaveMag(data_rot[0], data_rot[1], data_rot[2]);
 			compass_API_SaveAcc(mSensorsBufferedVectors[ID_ACCELEROMETER].x,
 						mSensorsBufferedVectors[ID_ACCELEROMETER].y,
 						mSensorsBufferedVectors[ID_ACCELEROMETER].z);
@@ -734,8 +747,8 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 							odata.pitch;
 					mPendingEvent[Orientation].orientation.roll =
 							odata.roll;
-					STLOGD("ORIENTATION:\t%f\t%f\t%f", odata.azimuth,
-						odata.pitch, odata.roll);
+
+					//STLOGD("ORIENTATION:\t%f\t%f\t%f", odata.azimuth, odata.pitch, odata.roll);
     #else
 					err = iNemoEngine_GeoMag_API_Get_Hpr(mPendingEvent[Orientation].data);
 					if (err == 0)
