@@ -99,6 +99,7 @@
 #endif
 #if defined(ACT_RECO)
   #include "conf_ACT_RECO.h"
+#endif
 
 #ifdef SENSORS_ORIENTATION_ENABLE
  #if (SENSORS_ORIENTATION_ENABLE ==1)
