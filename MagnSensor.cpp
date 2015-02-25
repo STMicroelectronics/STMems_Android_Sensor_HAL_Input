@@ -586,9 +586,6 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 			compass_API_getSICalibratedData(data_rot);
   #endif
 			compass_API_SaveMag(data_rot[0], data_rot[1], data_rot[2]);
-			compass_API_SaveAcc(mSensorsBufferedVectors[ID_ACCELEROMETER].x,
-						mSensorsBufferedVectors[ID_ACCELEROMETER].y,
-						mSensorsBufferedVectors[ID_ACCELEROMETER].z);
 			calibration_running = compass_Calibration_Run();
   #if (DEBUG_CALIBRATION == 1)
 				STLOGD("Accelerometer Data [m/s^2]:\t%f\t%f\t%f",
@@ -605,6 +602,9 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 			if(data_read >= count_call_ecompass) {
 				data_read = 0;
 
+				compass_API_SaveAcc(mSensorsBufferedVectors[ID_ACCELEROMETER].x,
+						mSensorsBufferedVectors[ID_ACCELEROMETER].y,
+						mSensorsBufferedVectors[ID_ACCELEROMETER].z);
 				compass_Run_ecompass();
 			}
 			data_read++;
