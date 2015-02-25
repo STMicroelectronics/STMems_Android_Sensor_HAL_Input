@@ -56,10 +56,11 @@ endef
 # - L3GD20H                                                                    #
 # - LIS3MDL                                                                    #
 # - LPS331AP                                                                   #
-# - V_GYRO                                                                     #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #
+# - V_GYRO                                                                     #
 # - SENSOR_FUSION                                                              #
+# - SENSOR_ST_COMPASS                                                          #
 # - GEOMAG_FUSION                                                              #
 # - MAGCALIB                                                                   #
 # - GBIAS                                                                      #

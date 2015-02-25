@@ -82,7 +82,8 @@
 #endif
 #if defined(SENSOR_FUSION)
   #include "conf_FUSION.h"
-#else
+#endif
+#if defined(SENSOR_ST_COMPASS)
   #include "conf_COMPASS.h"
 #endif
 #if defined(V_GYRO)
@@ -100,7 +101,6 @@
 #if defined(ACT_RECO)
   #include "conf_ACT_RECO.h"
 #endif
-
 #ifdef SENSORS_ORIENTATION_ENABLE
  #if (SENSORS_ORIENTATION_ENABLE ==1)
   #define SENSORS_COMPASS_ORIENTATION_ENABLE (0)
