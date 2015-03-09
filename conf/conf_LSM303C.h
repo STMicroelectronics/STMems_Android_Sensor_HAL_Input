@@ -52,7 +52,7 @@
 #define ACC_DEFAULT_RANGE		4					// full scale set to 8g (value depends on the driver sysfs file)
 #define MAG_DEFAULT_RANGE		8					// full scale set to +-2.5Gauss (value depends on the driver sysfs file)
 #define ACC_DEFAULT_DELAY		10					// 1/frequency (default: 10 -> 100 Hz) [ms]
-#define MAG_DEFAULT_DELAY		10					// 1/frequency (default: 10 -> 100 Hz) [ms]
+#define MAG_DEFAULT_DELAY		13					// 1/frequency (default: 10 -> 100 Hz) [ms]
 
 /* SENSOR FUSION */
 #define LOCAL_EARTH_MAGNETIC_FIELD	50.0f					// Value of local earth magnetic field [uT]
@@ -138,7 +138,7 @@ static short matrix_mag[3][3] = {
 /*****************************************************************************/
 // conversion of acceleration data to SI units (m/s^2)
 #define CONVERT_A			(GRAVITY_EARTH/1000000)	// (ug / 1000000) * 9.86 m/s^2
-#define CONVERT_A_X 			(CONVERT_A)
+#define CONVERT_A_X 		(CONVERT_A)
 #define CONVERT_A_Y			(CONVERT_A)
 #define CONVERT_A_Z			(CONVERT_A)
 
