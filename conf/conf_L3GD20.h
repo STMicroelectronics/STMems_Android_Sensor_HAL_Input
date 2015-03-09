@@ -32,7 +32,7 @@
 #define GYRO_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
 #define GYRO_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE			(2000.0f*(float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
-#define GYRO_MAX_ODR			800					// Set Max value of ODR [Hz]
+#define GYRO_MAX_ODR			200					// Set Max value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION		6.1f					// Set sensor's power consumption [mA]
 #define GYRO_DEFAULT_FULLSCALE		2000					// Set default full-scale (value depends on the driver sysfs file)
 
