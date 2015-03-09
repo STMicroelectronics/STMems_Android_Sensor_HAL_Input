@@ -202,15 +202,12 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 								SIGN_MOTION_ENABLE_VALUE);
 
 		}
-#endif
 		if (what == Acceleration) {
-#if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
 			errSM2 = writeSysfsCommand(SENSORS_ACCELEROMETER_HANDLE,
 								SIGN_MOTION_POLL_EN_FILE_NAME,
 								"%lld", 1);
-#endif
 		}
-
+#endif
 		mEnabled |= (1<<what);
 		writeMinDelay();
 
@@ -229,14 +226,11 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 		if (what == SignificantMotion)
 			errSM1 = writeEnable(SENSORS_SIGNIFICANT_MOTION_HANDLE,
 								SIGN_MOTION_DISABLE_VALUE);
-#endif
-		if (what == Acceleration) {
-#if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
+		if (what == Acceleration)
 			errSM2 = writeSysfsCommand(SENSORS_ACCELEROMETER_HANDLE,
 								SIGN_MOTION_POLL_EN_FILE_NAME,
 								"%lld", 0);
 #endif
-		}
 		if((!mEnabled) && (tmp != 0)) {
 			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE, flags);
 		}
