@@ -54,6 +54,7 @@ endef
 # - LSM9DS1                                                                    #
 # - L3GD20                                                                     #
 # - L3GD20H                                                                    #
+# - LIS2DG                                                                     #
 # - LIS3MDL                                                                    #
 # - LPS331AP                                                                   #
 #                                                                              #
