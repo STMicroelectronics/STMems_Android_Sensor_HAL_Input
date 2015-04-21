@@ -262,6 +262,12 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 			className = "SignMotionSensor::Enable()";
 			break;
 #endif
+#if (SENSORS_TAP_ENABLE == 1)
+		case SENSORS_TAP_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], TAP_ENABLE_FILE_NAME);
+			className = "TapSensor::Enable()";
+			break;
+#endif
 		default:
 			return -1;
 	}

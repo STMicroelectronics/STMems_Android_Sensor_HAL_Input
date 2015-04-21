@@ -553,6 +553,31 @@ static const struct sensor_t sSensorList[] = {
 	},
 #endif
 
+#if (SENSORS_TAP_ENABLE == 1)
+	{
+		SENSOR_TAP_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_TAP_HANDLE,
+		SENSOR_TYPE_TAP,
+		10.0f,
+		1.0f,
+		TAP_POWER_CONSUMPTION,
+		0,
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROIS_L)
+		SENSOR_STRING_TYPE_TAP,
+		"",
+		0,
+		SENSOR_FLAG_ON_CHANGE_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
+
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
 	{
 		SENSOR_ACTIVITY_RECOGNIZERO_LABEL,
@@ -659,6 +684,9 @@ private:
 #endif
 #if(SENSORS_SIGN_MOTION_ENABLE == 1)
 		sign_m,
+#endif
+#if(SENSORS_TAP_ENABLE == 1)
+		tap,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -779,6 +807,10 @@ private:
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
 			case SENSORS_ACTIVITY_RECOGNIZER_HANDLE:
 				return accel;
+#endif
+#if (SENSORS_TAP_ENABLE == 1)
+			case SENSORS_TAP_HANDLE:
+				return tap;
 #endif
 		}
 		return -EINVAL;
