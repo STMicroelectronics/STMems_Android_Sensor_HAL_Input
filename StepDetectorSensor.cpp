@@ -17,7 +17,7 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_TILT_ENABLE == 1)
+#if (SENSORS_STEP_DETECTOR_ENABLE == 1)
 
 #include <fcntl.h>
 #include <errno.h>
@@ -172,4 +172,4 @@ no_data:
 	return numEventReceived;
 }
 
-#endif /* SENSORS_TILT_ENABLE */
+#endif /* SENSORS_STEP_DETECTOR_ENABLE */
