@@ -25,6 +25,7 @@
 #define SENSORS_STEP_COUNTER_ENABLE		(1)
 #define SENSORS_STEP_DETECTOR_ENABLE		(1)
 #define SENSORS_SIGN_MOTION_ENABLE		(1)
+#define SENSORS_TAP_ENABLE			(1)
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL			"LIS2DG 3-axis Accelerometer Sensor"	// Label views in Android Applications
@@ -67,6 +68,13 @@
 #define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"		// name of sysfs file for enable/disable the sensor state
 #define SIGN_M_POWER_CONSUMPTION		ACCEL_POWER_CONSUMPTION
 
+/* STEP TAP SENSOR */
+#define SENSOR_TAP_LABEL			"LIS2DG Tap Sensor"	// Label views in Android Applications
+#define SENSOR_TAP_INCLUDE_FILE_NAME		"lis2dg.h"				// Name of driver header file (include subfolder)
+#define SENSOR_DATANAME_TAP			"ST LIS2DG Step Detector Sensor"		// Name of input device: struct input_dev->name
+#define TAP_ENABLE_FILE_NAME			"tap/enable"		// name of sysfs file for enable/disable the sensor state
+#define TAP_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION
+
 /* INEMO_ENGINE SENSOR */
 #define ACC_DEFAULT_RANGE			8					// full scale set to 8g (value depends on the driver sysfs file)
 #define ACC_DEFAULT_DELAY			10					// 1/frequency (default: 10 -> 100 Hz) [ms]
@@ -82,6 +90,7 @@
 #define EVENT_TYPE_STEP_C			EV_MSC
 #define EVENT_TYPE_STEP_D			EV_MSC
 #define EVENT_TYPE_SIGN_M			EV_MSC
+#define EVENT_TYPE_TAP				EV_MSC
 
 #define EVENT_TYPE_TIME_MSB			MSC_SCAN
 #define EVENT_TYPE_TIME_LSB			MSC_MAX
@@ -95,6 +104,7 @@
 #define EVENT_TYPE_STEP_C_DATA			MSC_SERIAL
 #define EVENT_TYPE_STEP_D_DATA			MSC_SERIAL
 #define EVENT_TYPE_SIGN_M_DATA			MSC_SERIAL
+#define EVENT_TYPE_TAP_DATA			MSC_SERIAL
 
 /*****************************************************************************/
 /* AXIS MAPPING */
