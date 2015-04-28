@@ -387,9 +387,15 @@ int iNemoEngineSensor::setDelay(int32_t handle, int64_t delay_ns)
 		acc_delay_ms = 0;
 	}
 	else{
+#if (SENSORS_GYROSCOPE_ENABLE == 1)
 		gyr_delay_ms = (int64_t)MSEC_TO_NSEC(GYR_DEFAULT_DELAY);
+#endif
+#if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 		mag_delay_ms = (int64_t)MSEC_TO_NSEC(MAG_DEFAULT_DELAY);
+#endif
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 		acc_delay_ms = (int64_t)MSEC_TO_NSEC(ACC_DEFAULT_DELAY);
+#endif
 	}
 
 
