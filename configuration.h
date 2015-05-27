@@ -27,10 +27,10 @@
 
 /* ANDROID API VERSION */
 #define ANDROID_ICS				(14)
-#define ANDROIS_JB				(16)
-#define ANDROIS_JBMR2				(18)
-#define ANDROIS_KK				(19)
-#define ANDROIS_L				(21)
+#define ANDROID_JB				(16)
+#define ANDROID_JBMR2				(18)
+#define ANDROID_KK				(19)
+#define ANDROID_L				(21)
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
   #define OS_VERSION_ENABLE			(1)

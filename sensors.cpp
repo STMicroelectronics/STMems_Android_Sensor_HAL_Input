@@ -90,7 +90,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_ACCELEROMETER,
 		"",
 		0,
@@ -114,7 +114,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_MAGNETIC_FIELD,
 		"",
 		0,
@@ -138,7 +138,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_GYROSCOPE,
 		"",
 		0,
@@ -162,7 +162,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_GYROSCOPE_UNCALIBRATED,
 		"",
 		0,
@@ -186,7 +186,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_SIGNIFICANT_MOTION,
 		"",
 		-1,
@@ -218,7 +218,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_ORIENTATION,
 		"",
 		0,
@@ -242,7 +242,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_GRAVITY,
 		"",
 		0,
@@ -266,7 +266,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_LINEAR_ACCELERATION,
 		"",
 		0,
@@ -294,7 +294,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_ROTATION_VECTOR,
 		"",
 		0,
@@ -322,7 +322,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_GAME_ROTATION_VECTOR,
 		"",
 		0,
@@ -346,7 +346,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_PRESSURE,
 		"",
 		0,
@@ -370,7 +370,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_TEMPERATURE,
 		"",
 		0,
@@ -394,7 +394,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
 		"",
 		0,
@@ -418,7 +418,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
 		"",
 		0,
@@ -442,7 +442,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_GYROSCOPE,
 		"",
 		0,
@@ -467,7 +467,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_TILT_DETECTOR,
 		"",
 		0,
@@ -492,7 +492,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_STEP_COUNTER,
 		"",
 		0,
@@ -517,7 +517,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_STEP_DETECTOR,
 		"",
 		0,
@@ -542,7 +542,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_SIGNIFICANT_MOTION,
 		"",
 		0,
@@ -567,7 +567,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_TAP,
 		"",
 		0,
@@ -592,7 +592,7 @@ static const struct sensor_t sSensorList[] = {
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
-#if (ANDROID_VERSION >= ANDROIS_L)
+#if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_ACTIVITY,
 		"",
 		0,
@@ -1067,7 +1067,7 @@ static int open_sensors(const struct hw_module_t* module,
 
 	dev->device.common.tag		= HARDWARE_DEVICE_TAG;
 
-#if (ANDROID_VERSION > ANDROIS_KK)
+#if (ANDROID_VERSION > ANDROID_KK)
 	dev->device.common.version	= SENSORS_DEVICE_API_VERSION_1_3;
 #else
 #if (ANDROID_VERSION > ANDROID_JBMR2)
