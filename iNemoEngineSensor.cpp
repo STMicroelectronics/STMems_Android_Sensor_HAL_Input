@@ -561,10 +561,7 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 					mPendingEvents[Orientation].orientation.status = mSensorsBufferedVectors[MagneticField].status;
 					mPendingMask |= 1<<Orientation;
   #if (DEBUG_INEMO_SENSOR == 1)
-					STLOGD("time =  %lld, menabled = %d", timeElapsed, mEnabled);
-					STLOGD("Acc_x=%f [m/s^2], Acc_y=%f [m/s^2], Acc_z=%f [m/s^2]", sdata.accel[0], sdata.accel[1], sdata.accel[2]);
-					STLOGD("Mag_x=%f [uT], Mag_y=%f [uT], Mag_z=%f [uT]", sdata.magn[0], sdata.magn[1], sdata.magn[2]);
-					STLOGD("Gyr_x=%f [rad/sec], Gyr_y=%f [rad/sec], Gyr_z=%f [rad/sec]", sdata.gyro[0], sdata.gyro[1], sdata.gyro[2]);
+					STLOGD("time =  %lld, menabled = %d, orientation = %f", timeElapsed, mEnabled, mPendingEvents[Orientation].data);
   #endif
 				}
 #endif
