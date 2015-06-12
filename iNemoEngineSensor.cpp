@@ -488,6 +488,20 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 #endif
 
 	while (count && mInputReader.readEvent(&event)) {
+#if (defined(GYRO_EVENT_HAS_TIMESTAMP) || defined(ACC_EVENT_HAS_TIMESTAMP))
+  #if (!SENSORS_GYROSCOPE_ENABLE && SENSORS_VIRTUAL_GYROSCOPE_ENABLE)
+		if (event->type == EVENT_TYPE_ACCEL) {
+  #else
+		if (event->type == EVENT_TYPE_GYRO) {
+  #endif
+			if (event->code == EVENT_TYPE_TIME_MSB) {
+				timestamp = ((int64_t)(event->value)) << 32;
+			}
+			else if (event->code == EVENT_TYPE_TIME_LSB) {
+				timestamp |= (uint32_t)(event->value);
+			}
+		}
+#endif
 		if(event->type == EV_SYN) {
 
 			if (startup_samples) {
@@ -497,7 +511,9 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 #endif
 				goto no_data;
 			}
-
+#if !(defined(GYRO_EVENT_HAS_TIMESTAMP) || defined(ACC_EVENT_HAS_TIMESTAMP))
+	timestamp = timevalToNano(event->time);
+#endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
 	iNemoEngineSensor::gyr->getGyroDelay(&newGyroDelay_ms);
 #else
@@ -645,11 +661,10 @@ int iNemoEngineSensor::readEvents(sensors_event_t *data, int count)
 			}
 
 no_data:
-			int64_t time = timevalToNano(event->time);
 			for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
 				if (mPendingMask & (1<<j)) {
 					mPendingMask &= ~(1<<j);
-					mPendingEvents[j].timestamp = time;
+					mPendingEvents[j].timestamp = timestamp;
 					if (mEnabled & (1<<j)) {
 						*data++ = mPendingEvents[j];
 						count--;

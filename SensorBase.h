@@ -49,7 +49,7 @@ protected:
 
 
 	static int64_t timevalToNano(timeval const& t) {
-		return t.tv_sec*1000000000LL + t.tv_usec*1000;
+		return t.tv_sec*1000000000L + t.tv_usec*1000L;
 	}
 
 	int open_device();

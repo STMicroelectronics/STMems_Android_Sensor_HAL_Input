@@ -102,6 +102,8 @@ private:
 	static int DecimationBuffer[numSensors];
 	static int DecimationCount[numSensors];
 
+	int64_t timestamp;
+
 public:
 	iNemoEngineSensor();
 	virtual ~iNemoEngineSensor();
