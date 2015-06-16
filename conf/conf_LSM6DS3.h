@@ -34,7 +34,7 @@
 #define SENSOR_DATANAME_ACCELEROMETER		"ST LSM6DS3 Accelerometer Sensor"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"						// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"							// name of sysfs file for enable/disable the sensor state
-#define ACCEL_RANGE_FILE_NAME			"accel/range"							// name of sysfs file for setting the full scale
+#define ACCEL_RANGE_FILE_NAME			"accel/scale"							// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE				8 * GRAVITY_EARTH									// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR				200					// Set Max value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION			0.6f				// Set sensor's power consumption [mA]
@@ -46,7 +46,7 @@
 #define SENSOR_DATANAME_GYROSCOPE		"ST LSM6DS3 Gyroscope Sensor"		// Name of input device: struct input_dev->name
 #define GYRO_DELAY_FILE_NAME			"gyro/polling_rate"			// name of sysfs file for setting the pollrate
 #define GYRO_ENABLE_FILE_NAME			"gyro/enable"		// name of sysfs file for enable/disable the sensor state
-#define GYRO_RANGE_FILE_NAME			"gyro/range"			// name of sysfs file for setting the full scale
+#define GYRO_RANGE_FILE_NAME			"gyro/scale"			// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE				(2000.0f * (float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR				200					// Set Max value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION			4.0f					// Set sensor's power consumption [mA]
