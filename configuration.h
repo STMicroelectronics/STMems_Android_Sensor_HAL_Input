@@ -185,4 +185,25 @@
   #define STLOGE_IF(...)			LOGE_IF(__VA_ARGS__)
 #endif
 
+#if !defined(ACCEL_MIN_ODR)
+  #define ACCEL_MIN_ODR			1
+#endif
+#if !defined(MAGN_MIN_ODR)
+  #define MAGN_MIN_ODR				1
+#endif
+#if !defined(GYRO_MIN_ODR)
+  #define GYRO_MIN_ODR				1
+#endif
+#if !defined(ORIENTATION_MIN_ODR)
+  #define ORIENTATION_MIN_ODR			1
+#endif
+#if !defined(FUSION_MIN_ODR)
+  #define FUSION_MIN_ODR			1
+#endif
+#if !defined(PRESS_TEMP_MIN_ODR)
+  #define PRESS_TEMP_MIN_ODR			1
+#endif
+#if !defined(VIRTUAL_GYRO_MIN_ODR)
+  #define VIRTUAL_GYRO_MIN_ODR			1
+#endif
 #endif	/*	CONFIGURATION_HAL_H	*/
