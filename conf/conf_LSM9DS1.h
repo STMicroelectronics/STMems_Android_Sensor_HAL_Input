@@ -34,6 +34,7 @@
 #define ACCEL_RANGE_FILE_NAME		"device/accelerometer/range"			// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE			8 * GRAVITY_EARTH			// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR			952					// Set Max value of ODR [Hz]
+#define ACCEL_MIN_ODR			10					// Set Min value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION		0.6f					// Set sensor's power consumption [mA]
 #define ACCEL_DEFAULT_FULLSCALE		4					// Set default full-scale (value depends on the driver sysfs file)
 
@@ -46,6 +47,7 @@
 #define MAGN_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
 #define MAGN_MAX_RANGE			810.0f					// Set Max Full-scale [uT]
 #define MAGN_MAX_ODR			80					// Set Max value of ODR [Hz]
+#define MAGN_MIN_ODR			1					// Set Max value of ODR [Hz]
 #define MAGN_POWER_CONSUMPTION		0.6f					// Set sensor's power consumption [mA]
 #define MAGN_DEFAULT_FULLSCALE		4					// Set default full-scale (value depends on the driver sysfs file)
 #define TO_MGAUS(x)			(x / 1000.0f)
@@ -59,6 +61,7 @@
 #define GYRO_RANGE_FILE_NAME		"device/gyroscope/range"			// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE			(2000.0f * (float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR			952					// Set Max value of ODR [Hz]
+#define GYRO_MIN_ODR			14					// Set Max value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION		4.0f					// Set sensor's power consumption [mA]
 #define GYRO_DEFAULT_FULLSCALE		2000					// Set default full-scale (value depends on the driver sysfs file)
 #define TO_MDPS(x)			(x / 1000000.0f)
