@@ -56,6 +56,7 @@ endef
 # - L3GD20H                                                                    #
 # - LIS2DG                                                                     #
 # - LIS3MDL                                                                    #
+# - LIS3DH                                                                     #
 # - LPS331AP                                                                   #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #

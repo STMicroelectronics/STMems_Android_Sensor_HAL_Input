@@ -50,6 +50,9 @@
 #if defined(LIS3MDL)
   #include "conf_LIS3MDL.h"
 #endif
+#if defined(LIS3DH)
+#include "conf_LIS3DH.h"
+#endif
 #if defined(LSM6DS0)
   #include "conf_LSM6DS0.h"
 #endif
@@ -186,7 +189,7 @@
 #endif
 
 #if !defined(ACCEL_MIN_ODR)
-  #define ACCEL_MIN_ODR			1
+  #define ACCEL_MIN_ODR				1
 #endif
 #if !defined(MAGN_MIN_ODR)
   #define MAGN_MIN_ODR				1
