@@ -169,7 +169,7 @@
 #define DEBUG_STEP_D				(0)
 #define DEBUG_SIGN_M				(0)
 #define DEBUG_POLL_RATE				(0)
-#define DEBUG_ACTIVITY_RECO                    (0)
+#define DEBUG_ACTIVITY_RECO			(0)
 
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)

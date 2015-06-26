@@ -85,25 +85,25 @@ MagnSensor::MagnSensor()
 	mPendingEvent[UncalibMagneticField].magnetic.status = SENSOR_STATUS_UNRELIABLE;
 #endif
 #if ((GEOMAG_COMPASS_ORIENTATION_ENABLE == 1) || (SENSORS_COMPASS_ORIENTATION_ENABLE == 1))
-mPendingEvent[Orientation].version = sizeof(sensors_event_t);
-mPendingEvent[Orientation].sensor = ID_ORIENTATION;
-mPendingEvent[Orientation].type = SENSOR_TYPE_ORIENTATION;
-memset(mPendingEvent[Orientation].data, 0, sizeof(mPendingEvent[Orientation].data));
-mPendingEvent[Orientation].orientation.status = SENSOR_STATUS_UNRELIABLE;
+	mPendingEvent[Orientation].version = sizeof(sensors_event_t);
+	mPendingEvent[Orientation].sensor = ID_ORIENTATION;
+	mPendingEvent[Orientation].type = SENSOR_TYPE_ORIENTATION;
+	memset(mPendingEvent[Orientation].data, 0, sizeof(mPendingEvent[Orientation].data));
+	mPendingEvent[Orientation].orientation.status = SENSOR_STATUS_UNRELIABLE;
 #endif
 #if (GEOMAG_GRAVITY_ENABLE == 1)
-mPendingEvent[Gravity_Accel].version = sizeof(sensors_event_t);
-mPendingEvent[Gravity_Accel].sensor = ID_GRAVITY;
-mPendingEvent[Gravity_Accel].type = SENSOR_TYPE_GRAVITY;
-memset(mPendingEvent[Gravity_Accel].data, 0, sizeof(mPendingEvent[Gravity_Accel].data));
-mPendingEvent[Gravity_Accel].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
+	mPendingEvent[Gravity_Accel].version = sizeof(sensors_event_t);
+	mPendingEvent[Gravity_Accel].sensor = ID_GRAVITY;
+	mPendingEvent[Gravity_Accel].type = SENSOR_TYPE_GRAVITY;
+	memset(mPendingEvent[Gravity_Accel].data, 0, sizeof(mPendingEvent[Gravity_Accel].data));
+	mPendingEvent[Gravity_Accel].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
 #endif
 #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
-mPendingEvent[Linear_Accel].version = sizeof(sensors_event_t);
-mPendingEvent[Linear_Accel].sensor = ID_LINEAR_ACCELERATION;
-mPendingEvent[Linear_Accel].type = SENSOR_TYPE_LINEAR_ACCELERATION;
-memset(mPendingEvent[Linear_Accel].data, 0, sizeof(mPendingEvent[Linear_Accel].data));
-mPendingEvent[Linear_Accel].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
+	mPendingEvent[Linear_Accel].version = sizeof(sensors_event_t);
+	mPendingEvent[Linear_Accel].sensor = ID_LINEAR_ACCELERATION;
+	mPendingEvent[Linear_Accel].type = SENSOR_TYPE_LINEAR_ACCELERATION;
+	memset(mPendingEvent[Linear_Accel].data, 0, sizeof(mPendingEvent[Linear_Accel].data));
+	mPendingEvent[Linear_Accel].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
 #endif
 #if (SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)
 	mPendingEvent[GeoMagRotVect_Magnetic].version = sizeof(sensors_event_t);
