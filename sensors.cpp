@@ -64,6 +64,9 @@
 #if (SENSORS_SIGN_MOTION_ENABLE == 1)
 #include "SignMotionSensor.h"
 #endif
+#if (SENSORS_TAP_ENABLE == 1)
+#include "TapSensor.h"
+#endif
 
 
 /*****************************************************************************/
@@ -890,6 +893,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[sign_m].fd = mSensors[sign_m]->getFd();
 	mPollFds[sign_m].events = POLLIN;
 	mPollFds[sign_m].revents = 0;
+#endif
+
+#if (SENSORS_TAP_ENABLE == 1)
+	mSensors[tap] = new TapSensor();
+	mPollFds[tap].fd = mSensors[tap]->getFd();
+	mPollFds[tap].events = POLLIN;
+	mPollFds[tap].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
