@@ -47,6 +47,7 @@ endef
 # - LSM330DLC                                                                  #
 # - LSM303AGR                                                                  #
 # - LSM303AH                                                                   #
+# - LSM303A                                                                    #
 # - LSM303C                                                                    #
 # - LSM303D                                                                    #
 # - LSM303DLHC                                                                 #
