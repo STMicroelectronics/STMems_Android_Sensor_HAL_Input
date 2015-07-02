@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 STMicroelectronics
+ * Copyright (C) 2015 STMicroelectronics
  * Giuseppe Barba - Motion MEMS Product Div.
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -31,7 +31,6 @@
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL			"LSM303AH 3-axis Accelerometer Sensor"
-#define SENSOR_ACC_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_ACCELEROMETER		"lsm303ah_acc_accel"
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"
@@ -44,7 +43,6 @@
 /* MAGNETOMETER SENSOR */
 #define SENSOR_MAGN_LABEL			"LSM303AH 3-axis Magnetometer Sensor"
 #define SENSOR_UNCALIB_MAGN_LABEL		"LSM303AH 3-axis Uncalibrated Magnetometer sensor"
-#define SENSOR_MAG_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_MAGNETIC_FIELD		"ST LSM303AH Magnetometer Sensor"
 #define MAGN_DELAY_FILE_NAME			"magn/polling_rate"
 #define MAGN_ENABLE_FILE_NAME			"magn/enable"
@@ -57,14 +55,12 @@
 
 /* TILT SENSOR */
 #define SENSOR_TILT_LABEL			"LSM303AH Tilt Detector sensor"
-#define SENSOR_TILT_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_TILT			"lsm303ah_acc_tilt"
 #define TILT_ENABLE_FILE_NAME			"tilt/enable"
 #define TILT_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION
 
 /* STEP COUNTER SENSOR */
 #define SENSOR_STEP_C_LABEL			"LSM303AH Step Counter sensor"
-#define SENSOR_STEP_C_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_STEP_C			"lsm303ah_acc_step_c"
 #define STEP_C_ENABLE_FILE_NAME			"step_c/enable"
 #define STEP_C_DELAY_FILE_NAME			"step_c/max_delivery_rate"
@@ -72,21 +68,18 @@
 
 /* STEP DETECTOR SENSOR */
 #define SENSOR_STEP_D_LABEL			"LSM303AH Step Detector Sensor"
-#define SENSOR_STEP_D_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_STEP_D			"lsm303ah_acc_step_d"
 #define STEP_D_ENABLE_FILE_NAME			"step_d/enable"
 #define STEP_D_POWER_CONSUMPTION		ACCEL_POWER_CONSUMPTION
 
 /* SIGNIFICANT MOTION SENSOR */
 #define SENSOR_SIGN_M_LABEL			"LSM303AH Significant Motion Sensor"
-#define SENSOR_SIGN_M_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_SIGN_M			"lsm303ah_acc_sign_m"
 #define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"
 #define SIGN_M_POWER_CONSUMPTION		ACCEL_POWER_CONSUMPTION
 
 /* STEP TAP SENSOR */
 #define SENSOR_TAP_LABEL			"LSM303AH Tap Sensor"
-#define SENSOR_TAP_INCLUDE_FILE_NAME		"lsm303ah.h"
 #define SENSOR_DATANAME_TAP			"lsm303ah_acc_tap"
 #define TAP_ENABLE_FILE_NAME			"tap/enable"
 #define TAP_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION

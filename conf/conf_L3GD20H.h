@@ -24,8 +24,7 @@
 #define SENSORS_UNCALIB_GYROSCOPE_ENABLE	(1 & SENSORS_GYROSCOPE_ENABLE & OS_VERSION_ENABLE)
 
 #define SENSOR_GYRO_LABEL		"L3GD20H 3-axis Gyroscope sensor"	// Label views in Android Applications
-#define SENSOR_GYR_INCLUDE_FILE_NAME	"l3gd20h.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_GYROSCOPE	L3GD20H_GYR_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_GYROSCOPE	"l3gd20h_gyr"				// Name of input device: struct input_dev->name
 #define GYRO_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
 #define GYRO_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
 #define GYRO_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale

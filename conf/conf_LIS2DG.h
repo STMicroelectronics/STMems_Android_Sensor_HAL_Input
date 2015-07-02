@@ -29,7 +29,6 @@
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL			"LIS2DG 3-axis Accelerometer Sensor"	// Label views in Android Applications
-#define SENSOR_ACC_INCLUDE_FILE_NAME		"lis2dg.h"								// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_ACCELEROMETER		"ST LIS2DG Accelerometer Sensor"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"						// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"							// name of sysfs file for enable/disable the sensor state
@@ -41,14 +40,12 @@
 
 /* TILT SENSOR */
 #define SENSOR_TILT_LABEL			"LIS2DG Tilt Detector sensor"	// Label views in Android Applications
-#define SENSOR_TILT_INCLUDE_FILE_NAME		"lis2dg.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_TILT			"ST LIS2DG Tilt Sensor"		// Name of input device: struct input_dev->name
 #define TILT_ENABLE_FILE_NAME			"tilt/enable"		// name of sysfs file for enable/disable the sensor state
 #define TILT_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION
 
 /* STEP COUNTER SENSOR */
 #define SENSOR_STEP_C_LABEL			"LIS2DG Step Counter sensor"	// Label views in Android Applications
-#define SENSOR_STEP_C_INCLUDE_FILE_NAME		"lis2dg.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_STEP_C			"ST LIS2DG Step Counter Sensor"		// Name of input device: struct input_dev->name
 #define STEP_C_ENABLE_FILE_NAME			"step_c/enable"		// name of sysfs file for enable/disable the sensor state
 #define STEP_C_DELAY_FILE_NAME			"step_c/max_delivery_rate"
@@ -56,21 +53,18 @@
 
 /* STEP DETECTOR SENSOR */
 #define SENSOR_STEP_D_LABEL			"LIS2DG Step Detector Sensor"	// Label views in Android Applications
-#define SENSOR_STEP_D_INCLUDE_FILE_NAME		"lis2dg.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_STEP_D			"ST LIS2DG Step Detector Sensor"		// Name of input device: struct input_dev->name
 #define STEP_D_ENABLE_FILE_NAME			"step_d/enable"		// name of sysfs file for enable/disable the sensor state
 #define STEP_D_POWER_CONSUMPTION		ACCEL_POWER_CONSUMPTION
 
 /* SIGNIFICANT MOTION SENSOR */
 #define SENSOR_SIGN_M_LABEL			"LIS2DG Significant Motion Sensor"	// Label views in Android Applications
-#define SENSOR_SIGN_M_INCLUDE_FILE_NAME		"lis2dg.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_SIGN_M			"ST LIS2DG Significant Motion Sensor"		// Name of input device: struct input_dev->name
 #define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"		// name of sysfs file for enable/disable the sensor state
 #define SIGN_M_POWER_CONSUMPTION		ACCEL_POWER_CONSUMPTION
 
 /* STEP TAP SENSOR */
 #define SENSOR_TAP_LABEL			"LIS2DG Tap Sensor"	// Label views in Android Applications
-#define SENSOR_TAP_INCLUDE_FILE_NAME		"lis2dg.h"				// Name of driver header file (include subfolder)
 #define SENSOR_DATANAME_TAP			"ST LIS2DG Step Detector Sensor"		// Name of input device: struct input_dev->name
 #define TAP_ENABLE_FILE_NAME			"tap/enable"		// name of sysfs file for enable/disable the sensor state
 #define TAP_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION

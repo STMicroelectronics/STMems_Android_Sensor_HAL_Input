@@ -26,7 +26,6 @@
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL		"LSM303AGR 3-axis Accelerometer"
-#define SENSOR_ACC_INCLUDE_FILE_NAME	"lsm303agr_acc.h"
 #define SENSOR_DATANAME_ACCELEROMETER	"lsm303agr_acc"
 #define ACCEL_DELAY_FILE_NAME		"device/pollrate_ms"
 #define ACCEL_ENABLE_FILE_NAME		"device/enable_device"
@@ -38,7 +37,6 @@
 
 /* MAGNETOMETER SENSOR */
 #define SENSOR_MAGN_LABEL		"LSM303AGR 3-axis Magnetometer Sensor"
-#define SENSOR_MAG_INCLUDE_FILE_NAME	"lsm303agr_mag.h"
 #define SENSOR_DATANAME_MAGNETIC_FIELD	"lsm303agr_mag"
 #define MAGN_DELAY_FILE_NAME		"device/pollrate_ms"
 #define MAGN_ENABLE_FILE_NAME		"device/enable_device"

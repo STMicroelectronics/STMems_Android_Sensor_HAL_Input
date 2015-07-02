@@ -26,8 +26,7 @@
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL		"LSM330DLC 3-axis Accelerometer"	// Label views in Android Applications
-#define SENSOR_ACC_INCLUDE_FILE_NAME	"lsm330dlc.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_ACCELEROMETER	LSM330DLC_ACC_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_ACCELEROMETER	"lsm330dlc_acc"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
 #define ACCEL_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale
@@ -39,8 +38,7 @@
 /* GYROSCOPE SENSOR */
 #define SENSOR_GYRO_LABEL		"LSM330DLC 3-axis Gyroscope sensor"	// Label views in Android Applications
 #define SENSOR_UNCALIB_GYRO_LABEL      	"LSM330DLC 3-axis Uncalibrated Gyroscope sensor"
-#define SENSOR_GYR_INCLUDE_FILE_NAME	"lsm330dlc.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_GYROSCOPE	LSM330DLC_GYR_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_GYROSCOPE	"lsm330dlc_gyr"				// Name of input device: struct input_dev->name
 #define GYRO_DELAY_FILE_NAME		"device/pollrate_ms"				// name of sysfs file for setting the pollrate
 #define GYRO_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
 #define GYRO_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale

@@ -32,18 +32,6 @@
 #include "iNemoEngineSensor.h"
 #include "iNemoEngineAPI.h"
 
-#if (SENSORS_ACCELEROMETER_ENABLE == 1)
-#include SENSOR_ACC_INCLUDE_FILE_NAME
-#endif
-
-#if (SENSORS_GYROSCOPE_ENABLE == 1)
-#include SENSOR_GYR_INCLUDE_FILE_NAME
-#endif
-
-#if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
-#include SENSOR_MAG_INCLUDE_FILE_NAME
-#endif
-
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0
 
 /*****************************************************************************/

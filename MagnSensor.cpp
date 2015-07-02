@@ -30,7 +30,6 @@
 #include <linux/time.h>
 
 #include "MagnSensor.h"
-#include SENSOR_MAG_INCLUDE_FILE_NAME
 
 #if (SENSOR_GEOMAG_ENABLE == 1)
 #include "iNemoEngineGeoMagAPI.h"

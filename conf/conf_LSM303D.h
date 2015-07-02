@@ -25,8 +25,7 @@
 
 /* ACCELEROMETER SENSOR */
 #define SENSOR_ACC_LABEL		"LSM303D 3-axis Accelerometer"	// Label views in Android Applications
-#define SENSOR_ACC_INCLUDE_FILE_NAME	"lsm303d.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_ACCELEROMETER	LSM303D_ACC_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_ACCELEROMETER	"lsm303d_acc"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME		"device/accelerometer/pollrate_ms"		// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME		"device/accelerometer/enable_device"		// name of sysfs file for enable/disable the sensor state
 #define ACCEL_RANGE_FILE_NAME		"device/accelerometer/full_scale"		// name of sysfs file for setting the full scale
@@ -37,8 +36,7 @@
 
 /* MAGNETOMETER SENSOR */
 #define SENSOR_MAGN_LABEL		"LSM303D 3-axis Magnetometer Sensor"	// Label views in Android Applications
-#define SENSOR_MAG_INCLUDE_FILE_NAME	"lsm303d.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_MAGNETIC_FIELD	LSM303D_MAG_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_MAGNETIC_FIELD	"lsm303d_mag"				// Name of input device: struct input_dev->name
 #define MAGN_DELAY_FILE_NAME		"device/magnetometer/pollrate_ms"		// name of sysfs file for setting the pollrate
 #define MAGN_ENABLE_FILE_NAME		"device/magnetometer/enable_device"		// name of sysfs file for enable/disable the sensor state
 #define MAGN_RANGE_FILE_NAME		"device/magnetometer/full_scale"		// name of sysfs file for setting the full scale

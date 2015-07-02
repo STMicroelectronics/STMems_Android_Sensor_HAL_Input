@@ -25,8 +25,7 @@
 /* PRESSURE SENSOR */
 #define SENSOR_PRESS_LABEL		"LPS331AP Pressure sensor"		// Label views in Android Applications
 #define SENSOR_TEMP_LABEL		"LPS331AP Temperature sensor"		// Label views in Android Applications
-#define SENSOR_PRESS_INCLUDE_FILE_NAME	"lps331ap.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_BAROMETER	LPS331AP_PRS_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_BAROMETER	"lps331ap_prs"				// Name of input device: struct input_dev->name
 #define PRESS_DELAY_FILE_NAME		"device/poll_period_ms"			// name of sysfs file for setting the pollrate
 #define PRESS_ENABLE_FILE_NAME		"device/enable_device"				// name of sysfs file for enable/disable the sensor state
 #define PRESS_RANGE_FILE_NAME		"device/range"					// name of sysfs file for setting the full scale

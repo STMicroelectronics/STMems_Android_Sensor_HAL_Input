@@ -30,8 +30,7 @@
 #include <cutils/log.h>
 
 #include "VirtualGyroSensor.h"
-#include SENSOR_MAG_INCLUDE_FILE_NAME
-#include SENSOR_ACC_INCLUDE_FILE_NAME
+
 #define DEG_TO_RAD(x)		(x * 3.14f / 180.0f)
 
 /****************************************************************************/

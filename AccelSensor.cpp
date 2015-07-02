@@ -29,7 +29,6 @@
 #include <cutils/log.h>
 
 #include "AccelSensor.h"
-#include SENSOR_ACC_INCLUDE_FILE_NAME
 
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0
 

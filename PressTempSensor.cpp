@@ -29,7 +29,6 @@
 #include <cutils/log.h>
 
 #include "PressTempSensor.h"
-#include SENSOR_PRESS_INCLUDE_FILE_NAME
 
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0
 

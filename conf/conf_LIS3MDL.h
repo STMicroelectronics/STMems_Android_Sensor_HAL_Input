@@ -25,8 +25,7 @@
 /* MAGNETOMETER SENSOR */
 #define SENSOR_MAGN_LABEL		"LIS3MDL 3-axis Magnetometer Sensor"	// Label views in Android Applications
 #define SENSOR_UNCALIB_MAGN_LABEL	"LIS3MDL 3-axis Uncalibrated Magnetometer sensor"
-#define SENSOR_MAG_INCLUDE_FILE_NAME	"lis3mdl.h"				// Name of driver header file (include subfolder)
-#define SENSOR_DATANAME_MAGNETIC_FIELD	LIS3MDL_DEV_NAME			// Name of input device: struct input_dev->name
+#define SENSOR_DATANAME_MAGNETIC_FIELD	"lis3mdl_mag"				// Name of input device: struct input_dev->name
 #define MAGN_DELAY_FILE_NAME		"device/pollrate_ms"			// name of sysfs file for setting the pollrate
 #define MAGN_ENABLE_FILE_NAME		"device/enable_device"			// name of sysfs file for enable/disable the sensor state
 #define MAGN_RANGE_FILE_NAME		"device/full_scale"			// name of sysfs file for setting the full scale
