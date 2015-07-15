@@ -45,7 +45,6 @@ protected:
 	int data_fd;
 
 	int openInput(const char* inputDeviceName);
-	static int64_t getTimestamp();
 
 
 	static int64_t timevalToNano(timeval const& t) {
@@ -59,6 +58,8 @@ protected:
 public:
 	SensorBase(const char* dev_name, const char* data_name);
 	virtual ~SensorBase();
+
+	static int64_t getTimestamp();
 
 	virtual int readEvents(sensors_event_t* data, int count) = 0;
 	virtual bool hasPendingEvents() const;

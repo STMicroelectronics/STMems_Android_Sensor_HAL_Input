@@ -92,6 +92,8 @@ __BEGIN_DECLS
 
 #define SENSOR_STRING_TYPE_TAP			"com.st.tap"
 
+#define TRACE_FUNCTION_START			ALOGD("%s:start at %lld", __func__, SensorBase::getTimestamp());
+#define TRACE_FUNCTION_END			ALOGD("%s:end at %lld", __func__, SensorBase::getTimestamp());
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/

@@ -932,27 +932,42 @@ sensors_poll_context_t::~sensors_poll_context_t()
 
 int sensors_poll_context_t::activate(int handle, int enabled)
 {
+	TRACE_FUNCTION_START
+
 	int index = handleToDriver(handle);
 	if(index < 0)
 		return index;
 
 	int err =  mSensors[index]->enable(handle, enabled, 0);
+
+	TRACE_FUNCTION_END
+
 	return err;
 }
 
 int sensors_poll_context_t::setDelay(int handle, int64_t ns)
 {
+	TRACE_FUNCTION_START
+
 	int index = handleToDriver(handle);
+	int ret;
+
 	if(index < 0)
 		return index;
 
-	return mSensors[index]->setDelay(handle, ns);
+	ret = mSensors[index]->setDelay(handle, ns);
+
+	TRACE_FUNCTION_END
+
+	return ret;
 }
 
 int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 {
 	int nbEvents = 0;
 	int n = 0;
+
+	TRACE_FUNCTION_START
 
 	do {
 		if (count) {
@@ -987,6 +1002,8 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 #endif
 	} while (n && count);
 
+	TRACE_FUNCTION_END
+
 	return nbEvents;
 }
 
@@ -995,7 +1012,11 @@ int sensors_poll_context_t::batch(int sensor_handle, int __attribute__((unused))
 						int64_t sampling_period_ns,
 				  int64_t __attribute__((unused))max_report_latency_ns)
 {
+	TRACE_FUNCTION_START
+
 	this->setDelay(sensor_handle, sampling_period_ns);
+
+	TRACE_FUNCTION_END
 
 	return 0;
 }
@@ -1004,6 +1025,8 @@ int sensors_poll_context_t::flush(int sensor_handle)
 {
 	sensors_event_t flush_event;
 	int err;
+
+	TRACE_FUNCTION_START
 
 	flush_event.timestamp = 0;
 	flush_event.meta_data.sensor = sensor_handle;
@@ -1017,6 +1040,8 @@ int sensors_poll_context_t::flush(int sensor_handle)
 		ALOGE("Failed to write flush data. %d", err);
 		return -EINVAL;
 	}
+
+	TRACE_FUNCTION_END
 
 	return 0;
 }
