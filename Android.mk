@@ -74,8 +74,8 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LSM303C  L3GD20
-ENABLED_MODULES := SENSOR_FUSION GEOMAG_FUSION MAGCALIB GBIAS
+ENABLED_SENSORS := LSM6DS3  LIS3MDL
+ENABLED_MODULES :=
 
 LOCAL_ARM_MODE := arm
 LOCAL_PRELINK_MODULE := false
