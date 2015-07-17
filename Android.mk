@@ -70,6 +70,7 @@ endef
 # - MAGCALIB                                                                   #
 # - GBIAS                                                                      #
 # - ACT_RECO                                                                   #
+# - FILE_CALIB                                                                 #
 #                                                                              #
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #

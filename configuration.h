@@ -116,7 +116,9 @@
 #if defined(ACT_RECO)
   #include "conf_ACT_RECO.h"
 #endif
-
+#if defined(FILE_CALIB)
+  #include "conf_FILE_CALIB.h"
+#endif
 
 #ifdef SENSORS_ORIENTATION_ENABLE
  #if (SENSORS_ORIENTATION_ENABLE ==1)
