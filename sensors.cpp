@@ -34,6 +34,13 @@
 #include "sensors.h"
 #include "configuration.h"
 
+#if defined(DEBUG_TS)
+#include <linux/ioctl.h>
+#include <linux/rtc.h>
+#include <utils/Atomic.h>
+#include <linux/android_alarm.h>
+#endif
+
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 #include "MagnSensor.h"
 #endif
@@ -608,6 +615,82 @@ static const struct sensor_t sSensorList[] = {
 #endif
 };
 
+#if defined(DEBUG_TS)
+/*
+ * The following functions are the same used by Android to retrieve system
+ * boot time (system/core/libutils/SystemClock.cpp).
+ * These function are here reported to be consistent with the
+ * timestamp check used into CTS tests.
+ */
+enum {
+	SYSTEM_TIME_REALTIME = 0,  // system-wide realtime clock
+	SYSTEM_TIME_MONOTONIC = 1, // monotonic time since unspecified starting point
+	SYSTEM_TIME_PROCESS = 2,   // high-resolution per-process clock
+	SYSTEM_TIME_THREAD = 3,    // high-resolution per-thread clock
+	SYSTEM_TIME_BOOTTIME = 4   // same as SYSTEM_TIME_MONOTONIC, but including CPU suspend time
+};
+
+int64_t systemTime(int clock)
+{
+	static const clockid_t clocks[] = {
+		CLOCK_REALTIME,
+		CLOCK_MONOTONIC,
+		CLOCK_PROCESS_CPUTIME_ID,
+		CLOCK_THREAD_CPUTIME_ID,
+		CLOCK_BOOTTIME
+	};
+	struct timespec t;
+	t.tv_sec = t.tv_nsec = 0;
+	clock_gettime(clocks[clock], &t);
+	return int64_t(t.tv_sec)*1000000000LL + t.tv_nsec;
+}
+
+int64_t elapsedRealtimeNano()
+{
+	struct timespec ts;
+	int result;
+	int64_t timestamp;
+
+	static int s_fd = -1;
+
+	if (s_fd == -1) {
+		int fd = open("/dev/alarm", O_RDONLY);
+		if (android_atomic_cmpxchg(-1, fd, &s_fd)) {
+			close(fd);
+		}
+	}
+
+	result = ioctl(s_fd, ANDROID_ALARM_GET_TIME(ANDROID_ALARM_ELAPSED_REALTIME), &ts);
+
+	if (result == 0) {
+		timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
+
+		return timestamp;
+	}
+
+	// /dev/alarm doesn't exist, fallback to CLOCK_BOOTTIME
+	result = clock_gettime(CLOCK_BOOTTIME, &ts);
+	if (result == 0) {
+		timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
+
+		return timestamp;
+	}
+
+	// XXX: there was an error, probably because the driver didn't
+	// exist ... this should return
+	// a real error, like an exception!
+	timestamp = systemTime(SYSTEM_TIME_MONOTONIC);
+
+	return timestamp;
+}
+#define DEBUG_TS_FUNC_START()	ALOGD("DebugTS: START %s at %lld nsec", __func__, elapsedRealtimeNano())
+#define DEBUG_TS_FUNC_END()	ALOGD("DebugTS: END %s at %lld nsec", __func__, elapsedRealtimeNano())
+#define DEBUG_TS_POLL_EVENT()	ALOGD("DebugTS: Polled event at %lld nsec", elapsedRealtimeNano())
+#else
+#define DEBUG_TS_FUNC_START()
+#define DEBUG_TS_FUNC_END()
+#define DEBUG_TS_POLL_EVENT()
+#endif
 
 static int open_sensors(const struct hw_module_t* module, const char* id, struct hw_device_t** device);
 
@@ -932,7 +1015,7 @@ sensors_poll_context_t::~sensors_poll_context_t()
 
 int sensors_poll_context_t::activate(int handle, int enabled)
 {
-	TRACE_FUNCTION_START
+	DEBUG_TS_FUNC_START();
 
 	int index = handleToDriver(handle);
 	if(index < 0)
@@ -940,14 +1023,14 @@ int sensors_poll_context_t::activate(int handle, int enabled)
 
 	int err =  mSensors[index]->enable(handle, enabled, 0);
 
-	TRACE_FUNCTION_END
+	DEBUG_TS_FUNC_END();
 
 	return err;
 }
 
 int sensors_poll_context_t::setDelay(int handle, int64_t ns)
 {
-	TRACE_FUNCTION_START
+	DEBUG_TS_FUNC_START();
 
 	int index = handleToDriver(handle);
 	int ret;
@@ -957,7 +1040,7 @@ int sensors_poll_context_t::setDelay(int handle, int64_t ns)
 
 	ret = mSensors[index]->setDelay(handle, ns);
 
-	TRACE_FUNCTION_END
+	DEBUG_TS_FUNC_END();
 
 	return ret;
 }
@@ -967,7 +1050,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 	int nbEvents = 0;
 	int n = 0;
 
-	TRACE_FUNCTION_START
+// 	DEBUG_TS_FUNC_START();
 
 	do {
 		if (count) {
@@ -977,6 +1060,9 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 				return -errno;
 			}
 		}
+
+// 		DEBUG_TS_POLL_EVENT();
+
 		for (int i=0 ; count && i<numSensorDrivers ; i++) {
 			SensorBase* const sensor(mSensors[i]);
 			if((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents()))
@@ -1002,7 +1088,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 #endif
 	} while (n && count);
 
-	TRACE_FUNCTION_END
+// 	DEBUG_TS_FUNC_END();
 
 	return nbEvents;
 }
@@ -1012,11 +1098,11 @@ int sensors_poll_context_t::batch(int sensor_handle, int __attribute__((unused))
 						int64_t sampling_period_ns,
 				  int64_t __attribute__((unused))max_report_latency_ns)
 {
-	TRACE_FUNCTION_START
+	DEBUG_TS_FUNC_START();
 
 	this->setDelay(sensor_handle, sampling_period_ns);
 
-	TRACE_FUNCTION_END
+	DEBUG_TS_FUNC_END();
 
 	return 0;
 }
@@ -1026,7 +1112,7 @@ int sensors_poll_context_t::flush(int sensor_handle)
 	sensors_event_t flush_event;
 	int err;
 
-	TRACE_FUNCTION_START
+	DEBUG_TS_FUNC_START();
 
 	flush_event.timestamp = 0;
 	flush_event.meta_data.sensor = sensor_handle;
@@ -1041,7 +1127,7 @@ int sensors_poll_context_t::flush(int sensor_handle)
 		return -EINVAL;
 	}
 
-	TRACE_FUNCTION_END
+	DEBUG_TS_FUNC_END();
 
 	return 0;
 }
