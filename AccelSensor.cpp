@@ -72,6 +72,10 @@ AccelSensor::AccelSensor()
 	mPendingEvents[ActivityReco].data[0] = 1.0f;
 #endif
 
+#if defined(STORE_CALIB_ACCEL_ENABLED)
+	pStoreCalibration = StoreCalibration::getInstance();
+#endif
+
 	if (data_fd) {
 		STLOGI("AccelSensor::AccelSensor accel_device_sysfs_path:(%s)", sysfs_device_path);
 	} else {
@@ -478,7 +482,26 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 			data_rot[2] = data_raw[0]*matrix_acc[0][2] +
 					data_raw[1]*matrix_acc[1][2] +
 					data_raw[2]*matrix_acc[2][2];
-
+#if defined(STORE_CALIB_ACCEL_ENABLED)
+			data_rot[0] -= pStoreCalibration->getCalibration(
+					StoreCalibration::ACCELEROMETER_BIAS,
+					StoreCalibration::XAxis);
+			data_rot[1] -= pStoreCalibration->getCalibration(
+					StoreCalibration::ACCELEROMETER_BIAS,
+					StoreCalibration::YAxis);
+			data_rot[2] -= pStoreCalibration->getCalibration(
+					StoreCalibration::ACCELEROMETER_BIAS,
+					StoreCalibration::ZAxis);
+			data_rot[0] *= pStoreCalibration->getCalibration(
+					StoreCalibration::ACCELEROMETER_SENS,
+					StoreCalibration::XAxis);
+			data_rot[1] *= pStoreCalibration->getCalibration(
+					StoreCalibration::ACCELEROMETER_SENS,
+					StoreCalibration::YAxis);
+			data_rot[2] *= pStoreCalibration->getCalibration(
+					StoreCalibration::ACCELEROMETER_SENS,
+					StoreCalibration::ZAxis);
+#endif
 #if !defined(ACC_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);
 #endif

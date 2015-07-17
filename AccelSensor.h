@@ -31,6 +31,10 @@
 #include "SensorBase.h"
 #include "InputEventReader.h"
 
+#if defined(STORE_CALIB_ACCEL_ENABLED)
+#include "StoreCalibration.h"
+#endif
+
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
 extern "C"
 {
@@ -77,6 +81,9 @@ private:
 	float data_rot[3];
 	static pthread_mutex_t dataMutex;
 	int64_t timestamp;
+#if defined(STORE_CALIB_ACCEL_ENABLED)
+	StoreCalibration *pStoreCalibration;
+#endif
 
 public:
 	AccelSensor();
