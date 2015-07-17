@@ -70,6 +70,10 @@ GyroSensor::GyroSensor()
   #endif
 #endif
 
+#if defined(STORE_CALIB_GYRO_ENABLED)
+	pStoreCalibration = StoreCalibration::getInstance();
+#endif
+
 	if (data_fd) {
 		STLOGI("GyroSensor::GyroSensor gyro_device_sysfs_path:(%s)", sysfs_device_path);
 	} else {
@@ -422,6 +426,27 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 			data_rot[2] = data_raw[0]*matrix_gyr[0][2] +
 					data_raw[1]*matrix_gyr[1][2] +
 					data_raw[2]*matrix_gyr[2][2];
+
+#if defined(STORE_CALIB_GYRO_ENABLED)
+			data_rot[0] -= pStoreCalibration->getCalibration(
+					StoreCalibration::GYROSCOPE_BIAS,
+					StoreCalibration::XAxis);
+			data_rot[1] -= pStoreCalibration->getCalibration(
+					StoreCalibration::GYROSCOPE_BIAS,
+					StoreCalibration::YAxis);
+			data_rot[2] -= pStoreCalibration->getCalibration(
+					StoreCalibration::GYROSCOPE_BIAS,
+					StoreCalibration::ZAxis);
+			data_rot[0] *= pStoreCalibration->getCalibration(
+					StoreCalibration::GYROSCOPE_SENS,
+					StoreCalibration::XAxis);
+			data_rot[1] *= pStoreCalibration->getCalibration(
+					StoreCalibration::GYROSCOPE_SENS,
+					StoreCalibration::YAxis);
+			data_rot[2] *= pStoreCalibration->getCalibration(
+					StoreCalibration::GYROSCOPE_SENS,
+					StoreCalibration::ZAxis);
+#endif
 
 #if !defined(GYRO_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);

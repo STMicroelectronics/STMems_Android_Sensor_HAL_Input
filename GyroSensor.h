@@ -27,11 +27,14 @@
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
-
 #include "sensors.h"
 #include "SensorBase.h"
 #include "InputEventReader.h"
 #include "AccelSensor.h"
+
+#if defined(STORE_CALIB_GYRO_ENABLED)
+#include "StoreCalibration.h"
+#endif
 
 #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
 extern "C"
@@ -74,7 +77,9 @@ private:
 	float data_rot[3];
 	static pthread_mutex_t dataMutex;
 	int64_t timestamp;
-
+#if defined(STORE_CALIB_GYRO_ENABLED)
+	StoreCalibration *pStoreCalibration;
+#endif
 #if ((SENSORS_ACCELEROMETER_ENABLE == 1) && (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1))
 	static AccelSensor *acc;
 	float data_acc[3];
