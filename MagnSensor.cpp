@@ -112,6 +112,10 @@ MagnSensor::MagnSensor()
 	mPendingEvent[GeoMagRotVect_Magnetic].magnetic.status = SENSOR_STATUS_UNRELIABLE;
 #endif
 
+#if defined(STORE_CALIB_MAG_ENABLED)
+	pStoreCalibration = StoreCalibration::getInstance();
+#endif
+
 #if (SENSOR_GEOMAG_ENABLE == 1)
 	memset(&sData, 0, sizeof(iNemoGeoMagSensorsData));
 	iNemoEngine_GeoMag_API_Initialization();
@@ -564,6 +568,27 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 			data_rot[2] = 	data_raw[0] * matrix_mag[0][2] +
 					data_raw[1] * matrix_mag[1][2] +
 					data_raw[2] * matrix_mag[2][2];
+
+#if defined(STORE_CALIB_MAG_ENABLED)
+			data_rot[0] -= pStoreCalibration->getCalibration(
+					StoreCalibration::MAGNETOMETER_BIAS,
+					StoreCalibration::XAxis);
+			data_rot[1] -= pStoreCalibration->getCalibration(
+					StoreCalibration::MAGNETOMETER_BIAS,
+					StoreCalibration::YAxis);
+			data_rot[2] -= pStoreCalibration->getCalibration(
+					StoreCalibration::MAGNETOMETER_BIAS,
+					StoreCalibration::ZAxis);
+			data_rot[0] *= pStoreCalibration->getCalibration(
+					StoreCalibration::MAGNETOMETER_SENS,
+					StoreCalibration::XAxis);
+			data_rot[1] *= pStoreCalibration->getCalibration(
+					StoreCalibration::MAGNETOMETER_SENS,
+					StoreCalibration::YAxis);
+			data_rot[2] *= pStoreCalibration->getCalibration(
+					StoreCalibration::MAGNETOMETER_SENS,
+					StoreCalibration::ZAxis);
+#endif
 
 #if !defined(MAG_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);

@@ -33,6 +33,10 @@
 #include "InputEventReader.h"
 #include "AccelSensor.h"
 
+#if defined(STORE_CALIB_MAG_ENABLED)
+#include "StoreCalibration.h"
+#endif
+
 #if MAG_CALIBRATION_ENABLE == 1
 extern "C"
 {
@@ -95,6 +99,9 @@ private:
 	sensors_vec_t data_calibrated;
 	static pthread_mutex_t dataMutex;
 	int64_t timestamp;
+#if defined(STORE_CALIB_MAG_ENABLED)
+	StoreCalibration *pStoreCalibration;
+#endif
 
 public:
 	MagnSensor();
