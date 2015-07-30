@@ -52,7 +52,7 @@ int MagnSensor::current_fullscale = 0;
 AccelSensor* MagnSensor::acc = NULL;
 #endif
 static int calibration_running;
-int64_t MagnSensor::setDelayBuffer[numSensors] = {20, 20, 10, 10, 10, 10, 10, 10};
+int64_t MagnSensor::setDelayBuffer[numSensors] = {0};
 int64_t MagnSensor::writeDelayBuffer[numSensors] = {0};
 int MagnSensor::DecimationBuffer[numSensors] = {0};
 int MagnSensor::DecimationCount[numSensors] = {0};

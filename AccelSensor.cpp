@@ -38,7 +38,7 @@ sensors_vec_t  AccelSensor::dataBuffer;
 int AccelSensor::mEnabled = 0;
 int64_t AccelSensor::delayms = 0;
 int AccelSensor::current_fullscale = 0;
-int64_t AccelSensor::setDelayBuffer[numSensors] = {200, 20, 10, 40, 10, 10, 10, 10, 10, 20};
+int64_t AccelSensor::setDelayBuffer[numSensors] = {0};
 int64_t AccelSensor::writeDelayBuffer[numSensors] = {0};
 int AccelSensor::DecimationBuffer[numSensors] = {0};
 int AccelSensor::DecimationCount = 0;
@@ -382,7 +382,6 @@ int AccelSensor::writeMinDelay(void)
 #endif
 
 	return err;
-
 }
 
 void AccelSensor::getAccDelay(int64_t *Acc_Delay_ms)

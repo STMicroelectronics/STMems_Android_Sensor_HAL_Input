@@ -98,8 +98,7 @@ LOCAL_CFLAGS := 		\
 				-DLOG_TAG=\"Sensors\" \
 				-DANDROID_VERSION=$(PLATFORM_SDK_VERSION) \
 				$(call def_macro, $(ENABLED_SENSORS)) \
-				$(call def_macro, $(ENABLED_MODULES)) \
-				-DDEBUG_TS
+				$(call def_macro, $(ENABLED_MODULES))
 
 
 LOCAL_SRC_FILES := $(call all-cpp-source-files)

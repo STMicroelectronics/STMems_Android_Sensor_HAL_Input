@@ -34,13 +34,6 @@
 #include "sensors.h"
 #include "configuration.h"
 
-#if defined(DEBUG_TS)
-#include <linux/ioctl.h>
-#include <linux/rtc.h>
-#include <utils/Atomic.h>
-#include <linux/android_alarm.h>
-#endif
-
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 #include "MagnSensor.h"
 #endif
@@ -616,76 +609,10 @@ static const struct sensor_t sSensorList[] = {
 };
 
 #if defined(DEBUG_TS)
-/*
- * The following functions are the same used by Android to retrieve system
- * boot time (system/core/libutils/SystemClock.cpp).
- * These function are here reported to be consistent with the
- * timestamp check used into CTS tests.
- */
-enum {
-	SYSTEM_TIME_REALTIME = 0,  // system-wide realtime clock
-	SYSTEM_TIME_MONOTONIC = 1, // monotonic time since unspecified starting point
-	SYSTEM_TIME_PROCESS = 2,   // high-resolution per-process clock
-	SYSTEM_TIME_THREAD = 3,    // high-resolution per-thread clock
-	SYSTEM_TIME_BOOTTIME = 4   // same as SYSTEM_TIME_MONOTONIC, but including CPU suspend time
-};
 
-int64_t systemTime(int clock)
-{
-	static const clockid_t clocks[] = {
-		CLOCK_REALTIME,
-		CLOCK_MONOTONIC,
-		CLOCK_PROCESS_CPUTIME_ID,
-		CLOCK_THREAD_CPUTIME_ID,
-		CLOCK_BOOTTIME
-	};
-	struct timespec t;
-	t.tv_sec = t.tv_nsec = 0;
-	clock_gettime(clocks[clock], &t);
-	return int64_t(t.tv_sec)*1000000000LL + t.tv_nsec;
-}
-
-int64_t elapsedRealtimeNano()
-{
-	struct timespec ts;
-	int result;
-	int64_t timestamp;
-
-	static int s_fd = -1;
-
-	if (s_fd == -1) {
-		int fd = open("/dev/alarm", O_RDONLY);
-		if (android_atomic_cmpxchg(-1, fd, &s_fd)) {
-			close(fd);
-		}
-	}
-
-	result = ioctl(s_fd, ANDROID_ALARM_GET_TIME(ANDROID_ALARM_ELAPSED_REALTIME), &ts);
-
-	if (result == 0) {
-		timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
-
-		return timestamp;
-	}
-
-	// /dev/alarm doesn't exist, fallback to CLOCK_BOOTTIME
-	result = clock_gettime(CLOCK_BOOTTIME, &ts);
-	if (result == 0) {
-		timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
-
-		return timestamp;
-	}
-
-	// XXX: there was an error, probably because the driver didn't
-	// exist ... this should return
-	// a real error, like an exception!
-	timestamp = systemTime(SYSTEM_TIME_MONOTONIC);
-
-	return timestamp;
-}
-#define DEBUG_TS_FUNC_START()	ALOGD("DebugTS: START %s at %lld nsec", __func__, elapsedRealtimeNano())
-#define DEBUG_TS_FUNC_END()	ALOGD("DebugTS: END %s at %lld nsec", __func__, elapsedRealtimeNano())
-#define DEBUG_TS_POLL_EVENT()	ALOGD("DebugTS: Polled event at %lld nsec", elapsedRealtimeNano())
+#define DEBUG_TS_FUNC_START()	ALOGD("DebugTS: START %s at %lld nsec", __func__, SensorBase::elapsedRealtimeNano())
+#define DEBUG_TS_FUNC_END()	ALOGD("DebugTS: END %s at %lld nsec", __func__, SensorBase::elapsedRealtimeNano())
+#define DEBUG_TS_POLL_EVENT()	ALOGD("DebugTS: Polled event at %lld nsec", SensorBase::elapsedRealtimeNano())
 #else
 #define DEBUG_TS_FUNC_START()
 #define DEBUG_TS_FUNC_END()

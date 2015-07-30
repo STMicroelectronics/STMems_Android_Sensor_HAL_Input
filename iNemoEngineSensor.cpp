@@ -261,8 +261,6 @@ int iNemoEngineSensor::enable(int32_t handle, int en, int  __attribute__((unused
 	if (what < 0)
 		return what;
 
-	STLOGD( "iNemoEngineSensor: %d", what);
-
 	if(en) {
 		if(mEnabled == 0) {
 			enabled = 1;
