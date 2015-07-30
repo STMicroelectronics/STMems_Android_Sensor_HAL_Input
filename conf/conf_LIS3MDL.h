@@ -48,12 +48,14 @@
 /* EVENT TYPE */
 /*****************************************************************************/
 /* Event Type in magnetometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_MAG			EV_ABS
+#define EVENT_TYPE_MAG			EV_MSC
 
-#define EVENT_TYPE_MAG_X		ABS_X
-#define EVENT_TYPE_MAG_Y		ABS_Y
-#define EVENT_TYPE_MAG_Z		ABS_Z
-
+#define EVENT_TYPE_MAG_X		MSC_SERIAL
+#define EVENT_TYPE_MAG_Y		MSC_PULSELED
+#define EVENT_TYPE_MAG_Z		MSC_GESTURE
+#define EVENT_TYPE_TIME_MSB		MSC_SCAN
+#define EVENT_TYPE_TIME_LSB		MSC_MAX
+#define MAG_EVENT_HAS_TIMESTAMP		1
 /*****************************************************************************/
 /* AXIS MAPPING */
 /*****************************************************************************/
