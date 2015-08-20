@@ -182,7 +182,7 @@ static short matrix_gyr[3][3] = {
 #define CONVERT_A_Z			(CONVERT_A)
 
 // conversion of magnetic data to uT units
-#define CONVERT_M			(1.0f/10000000.0f)
+#define CONVERT_M			(1.0f/10000.0f)
 #define CONVERT_M_X			(CONVERT_M)
 #define CONVERT_M_Y			(CONVERT_M)
 #define CONVERT_M_Z			(CONVERT_M)
