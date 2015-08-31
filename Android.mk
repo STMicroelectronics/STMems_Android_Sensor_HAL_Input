@@ -89,8 +89,7 @@ LOCAL_C_INCLUDES := 		\
 				$(call all-dir-under-lib) \
 				$(LOCAL_PATH)/include/ \
 				$(LOCAL_PATH)/conf/ \
-				bionic \
-				external/stlport/stlport
+				bionic
 LOCAL_STATIC_LIBRARIES :=
 
 include $(call all-module-under-lib)
@@ -104,7 +103,7 @@ LOCAL_CFLAGS := 		\
 
 LOCAL_SRC_FILES := $(call all-cpp-source-files)
 
-LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl libc libstlport libselinux
+LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl libc
 
 include $(BUILD_SHARED_LIBRARY)
 include $(call all-makefiles-under,$(LOCAL_PATH))

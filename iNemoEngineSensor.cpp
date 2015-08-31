@@ -28,7 +28,7 @@
 #include <sys/select.h>
 #include <cutils/log.h>
 #include <linux/time.h>
-
+#include <string.h>
 #include "iNemoEngineSensor.h"
 #include "iNemoEngineAPI.h"
 

@@ -11,7 +11,7 @@ LOCAL_CPPFLAGS := \
     -Wunused \
     -Werror \
 
-LOCAL_SHARED_LIBRARIES := libc libstlport liblog
+LOCAL_SHARED_LIBRARIES := libc liblog
 
 LOCAL_CFLAGS += -DLOG_TAG=\"STCalibrationD\"
 

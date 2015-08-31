@@ -27,7 +27,7 @@
 #include <dirent.h>
 #include <sys/select.h>
 #include <cutils/log.h>
-
+#include <string.h>
 #include "GyroSensor.h"
 
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0

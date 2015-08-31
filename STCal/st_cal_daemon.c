@@ -14,6 +14,9 @@
 #include <sys/inotify.h>
 #include <stdio.h>
 #include <cutils/log.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
 
 #define concat(first, second) first second
 
