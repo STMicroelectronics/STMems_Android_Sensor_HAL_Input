@@ -35,7 +35,7 @@
 #define CAL_FILE 			"calibration.txt"
 #define CAL_DIR				"/data/"
 #define OBS_MASK 			(IN_MODIFY | IN_DELETE | IN_CREATE)
-#define NUM_OF_SENSORS			4
+#define NUM_OF_SENSORS			6
 #define NUM_OF_AXIS			3
 #define THD_SLEEP_USEC			3000000
 #define EVENT_SIZE			(sizeof(struct inotify_event))
@@ -43,7 +43,6 @@
 #define DELIMITER			" "
 #define MAX_TOKENS_PER_LINE		4
 #define EVENT_BUF_SIZE			512
-
 
 typedef float calib_out_t[NUM_OF_SENSORS][NUM_OF_AXIS];
 
