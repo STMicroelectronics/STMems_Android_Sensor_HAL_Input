@@ -1,3 +1,13 @@
+/*
+ * STMicroelectronics calibration daemon
+ *
+ * Copyright 2015 STMicroelectronics Inc.
+ *
+ * Giuseppe Barba <giuseppe.barba@st.com>
+ *
+ * Licensed under the GPL-2.
+ */
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -7,7 +17,7 @@
 
 #define concat(first, second) first second
 
-#define PACKAGENAME		"com.st.mems.st_gyrocal"
+#define PACKAGENAME		"com.st.mems.st_calibrationtool"
 #define CAL_FILE 		"calibration.txt"
 
 #define APP_DATA_DIR		"/data/data/"
@@ -90,7 +100,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char* argv[])
 	int observer_fd = 0;
 	int ret;
 
-	ALOGI("Start ST Gyro Calibration Daemon");
+	ALOGI("Start ST Calibration Daemon");
 	while (stat(APP_PRIVATE_DATA_DIR, &s) < 0) {
 		/* sleep until the calibration directory is present */
 		usleep(THD_SLEEP_USEC);
@@ -116,17 +126,12 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char* argv[])
 	}
 
 	while (1) {
-/*
-		ret = copy_file(CAL_FILE_PATH, CAL_OUT_FILE_PATH);
-		if (ret)
-			ALOGE("Error while coping file (%d)", ret);
-*/
 		ret = eventCheck(observer_fd);
 		if (ret) {
 			num_bytes = read(observer_fd, event_buf, EVENT_BUF_SIZE);
 			event_pos = 0;
 
-			while (num_bytes >= (int)sizeof(*event)) {				
+			while (num_bytes >= (int)sizeof(*event)) {
 				event = (struct inotify_event *)(event_buf + event_pos);
 				if (event->len) {
 					if (event->mask & (IN_MODIFY | IN_CREATE)) {
@@ -150,5 +155,5 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char* argv[])
 		}
 		usleep(THD_SLEEP_USEC);
 	}
-	ALOGI("Exit from ST Gyro Calibration Daemon");
+	ALOGI("Exit from ST Calibration Daemon");
 }

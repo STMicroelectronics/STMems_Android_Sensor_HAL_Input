@@ -3,7 +3,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-    gyro_cal_daemon.c
+    st_cal_daemon.c
 
 LOCAL_CPPFLAGS := \
     -std=gnu++11 \
@@ -13,9 +13,9 @@ LOCAL_CPPFLAGS := \
 
 LOCAL_SHARED_LIBRARIES := libc libstlport liblog
 
-LOCAL_CFLAGS += -DLOG_TAG=\"ST_GYRO_CAL_D\"
+LOCAL_CFLAGS += -DLOG_TAG=\"STCalibrationD\"
 
-LOCAL_MODULE := stgyrod
+LOCAL_MODULE := stcald
 
 include $(BUILD_EXECUTABLE)
 
