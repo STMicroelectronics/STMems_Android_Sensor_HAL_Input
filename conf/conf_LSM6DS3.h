@@ -36,7 +36,7 @@
 #define ACCEL_RANGE_FILE_NAME			"accel/scale"							// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE				8 * GRAVITY_EARTH									// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR				200					// Set Max value of ODR [Hz]
-#define ACCEL_MIN_ODR				26					// Set Min value of ODR [Hz]
+#define ACCEL_MIN_ODR				13					// Set Min value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION			0.6f				// Set sensor's power consumption [mA]
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
@@ -48,7 +48,7 @@
 #define GYRO_RANGE_FILE_NAME			"gyro/scale"			// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE				(2000.0f * (float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR				200					// Set Max value of ODR [Hz]
-#define GYRO_MIN_ODR				26					// Set Min value of ODR [Hz]
+#define GYRO_MIN_ODR				13					// Set Min value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION			4.0f					// Set sensor's power consumption [mA]
 #define GYRO_DEFAULT_FULLSCALE			2000					// Set default full-scale (value depends on the driver sysfs file)
 #define TO_MDPS(x)				(x / 1000000.0f)
@@ -80,7 +80,7 @@
 
 /* INEMO_ENGINE SENSOR */
 #define GYRO_DEFAULT_RANGE			2000					// full scale set to 2000 DPS (value depends on the driver sysfs file)
-#define ACC_DEFAULT_RANGE			8					// full scale set to 8g (value depends on the driver sysfs file)
+#define ACC_DEFAULT_RANGE			4					// full scale set to 8g (value depends on the driver sysfs file)
 #define ACC_DEFAULT_DELAY			10					// 1/frequency (default: 10 -> 100 Hz) [ms]
 #define GYR_DEFAULT_DELAY			10					// 1/frequency (default: 9.523809f -> 105 Hz) [ms]
 
@@ -201,6 +201,6 @@ static short matrix_gyr[3][3] = {
 #define GYRO_EVENT_HAS_TIMESTAMP		1
 #define ACC_EVENT_HAS_TIMESTAMP			1
 #define INPUT_EVENT_HAS_TIMESTAMP		1
-#define NOT_SET_ACC_INITIAL_STATE		1
-#define NOT_SET_GYRO_INITIAL_STATE		1
+//#define NOT_SET_ACC_INITIAL_STATE		1
+//#define NOT_SET_GYRO_INITIAL_STATE		1
 #endif	/*	CONFIGURATION_LSM6DS3_H	*/
