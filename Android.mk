@@ -58,6 +58,7 @@ endef
 # - L3GD20                                                                     #
 # - L3GD20H                                                                    #
 # - LIS2DG                                                                     #
+# - LIS2DS12                                                                   #
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #
 # - LPS331AP                                                                   #
