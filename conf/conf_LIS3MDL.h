@@ -106,7 +106,7 @@ static short matrix_mag[3][3] = {
 /* DATA CONVERSION */
 /*****************************************************************************/
 // conversion of magnetic data to uT units
-#define CONVERT_M			(0.029231219f)		// 1uTESLA = 10 mGauss
+#define CONVERT_M			(0.01f)		// 1uTESLA = 10 mGauss
 #define CONVERT_M_X			(CONVERT_M)
 #define CONVERT_M_Y			(CONVERT_M)
 #define CONVERT_M_Z			(CONVERT_M)
