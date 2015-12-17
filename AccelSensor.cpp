@@ -31,6 +31,7 @@
 #include "AccelSensor.h"
 
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0
+#define MS2_TO_G(x)				(x / 9.8)
 
 /*****************************************************************************/
 
@@ -83,7 +84,6 @@ AccelSensor::AccelSensor()
 	}
 
 	data_raw[0] = data_raw[1] = data_raw[2] = 0.0;
-
 }
 
 AccelSensor::~AccelSensor()
@@ -523,9 +523,9 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 
 				mPendingEvents[ActivityReco].data[0] =
 						(float)ActivityRecognizerFunction(
-							data_rot[0] / 9.8,
-							data_rot[1] / 9.8,
-							data_rot[2] / 9.8,
+							-MS2_TO_G(data_rot[0]),
+							-MS2_TO_G(data_rot[1]),
+							-MS2_TO_G(data_rot[2]),
 							&activity_changed);
 				if (activity_changed != 0) {
 #if (DEBUG_ACTIVITY_RECO == 1)
