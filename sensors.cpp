@@ -608,16 +608,6 @@ static const struct sensor_t sSensorList[] = {
 #endif
 };
 
-#if defined(DEBUG_TS)
-
-#define DEBUG_TS_FUNC_START()	ALOGD("DebugTS: START %s at %lld nsec", __func__, SensorBase::elapsedRealtimeNano())
-#define DEBUG_TS_FUNC_END()	ALOGD("DebugTS: END %s at %lld nsec", __func__, SensorBase::elapsedRealtimeNano())
-#define DEBUG_TS_POLL_EVENT()	ALOGD("DebugTS: Polled event at %lld nsec", SensorBase::elapsedRealtimeNano())
-#else
-#define DEBUG_TS_FUNC_START()
-#define DEBUG_TS_FUNC_END()
-#define DEBUG_TS_POLL_EVENT()
-#endif
 
 static int open_sensors(const struct hw_module_t* module, const char* id, struct hw_device_t** device);
 
@@ -942,42 +932,27 @@ sensors_poll_context_t::~sensors_poll_context_t()
 
 int sensors_poll_context_t::activate(int handle, int enabled)
 {
-	DEBUG_TS_FUNC_START();
-
 	int index = handleToDriver(handle);
 	if(index < 0)
 		return index;
 
 	int err =  mSensors[index]->enable(handle, enabled, 0);
-
-	DEBUG_TS_FUNC_END();
-
 	return err;
 }
 
 int sensors_poll_context_t::setDelay(int handle, int64_t ns)
 {
-	DEBUG_TS_FUNC_START();
-
 	int index = handleToDriver(handle);
-	int ret;
-
 	if(index < 0)
 		return index;
 
-	ret = mSensors[index]->setDelay(handle, ns);
-
-	DEBUG_TS_FUNC_END();
-
-	return ret;
+	return mSensors[index]->setDelay(handle, ns);
 }
 
 int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 {
 	int nbEvents = 0;
 	int n = 0;
-
-// 	DEBUG_TS_FUNC_START();
 
 	do {
 		if (count) {
@@ -987,9 +962,6 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 				return -errno;
 			}
 		}
-
-// 		DEBUG_TS_POLL_EVENT();
-
 		for (int i=0 ; count && i<numSensorDrivers ; i++) {
 			SensorBase* const sensor(mSensors[i]);
 			if((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents()))
@@ -1015,8 +987,6 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 #endif
 	} while (n && count);
 
-// 	DEBUG_TS_FUNC_END();
-
 	return nbEvents;
 }
 
@@ -1025,11 +995,7 @@ int sensors_poll_context_t::batch(int sensor_handle, int __attribute__((unused))
 						int64_t sampling_period_ns,
 				  int64_t __attribute__((unused))max_report_latency_ns)
 {
-	DEBUG_TS_FUNC_START();
-
 	this->setDelay(sensor_handle, sampling_period_ns);
-
-	DEBUG_TS_FUNC_END();
 
 	return 0;
 }
@@ -1038,8 +1004,6 @@ int sensors_poll_context_t::flush(int sensor_handle)
 {
 	sensors_event_t flush_event;
 	int err;
-
-	DEBUG_TS_FUNC_START();
 
 	flush_event.timestamp = 0;
 	flush_event.meta_data.sensor = sensor_handle;
@@ -1053,8 +1017,6 @@ int sensors_poll_context_t::flush(int sensor_handle)
 		ALOGE("Failed to write flush data. %d", err);
 		return -EINVAL;
 	}
-
-	DEBUG_TS_FUNC_END();
 
 	return 0;
 }
