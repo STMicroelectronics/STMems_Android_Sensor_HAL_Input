@@ -53,6 +53,9 @@
 #if defined(LIS3DH)
 #include "conf_LIS3DH.h"
 #endif
+#if defined(ASM330LXH)
+  #include "conf_ASM330LXH.h"
+#endif
 #if defined(LSM6DS0)
   #include "conf_LSM6DS0.h"
 #endif
