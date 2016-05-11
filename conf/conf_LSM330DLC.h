@@ -64,19 +64,19 @@
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/
-#define EVENT_TYPE_ACCEL		EV_ABS
-#define EVENT_TYPE_GYRO		EV_ABS
+#define EVENT_TYPE_ACCEL		EV_MSC
+#define EVENT_TYPE_GYRO			EV_MSC
 
 /* Event Type in accelerometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_ACCEL_X		ABS_X
-#define EVENT_TYPE_ACCEL_Y		ABS_Y
-#define EVENT_TYPE_ACCEL_Z		ABS_Z
+#define EVENT_TYPE_ACCEL_X		MSC_SERIAL
+#define EVENT_TYPE_ACCEL_Y		MSC_PULSELED
+#define EVENT_TYPE_ACCEL_Z		MSC_GESTURE
 
 
 /* Event Type in gyroscope sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_GYRO_X		ABS_X
-#define EVENT_TYPE_GYRO_Y		ABS_Y
-#define EVENT_TYPE_GYRO_Z		ABS_Z
+#define EVENT_TYPE_GYRO_X		MSC_SERIAL
+#define EVENT_TYPE_GYRO_Y		MSC_PULSELED
+#define EVENT_TYPE_GYRO_Z		MSC_GESTURE
 
 /*****************************************************************************/
 /* AXIS MAPPING */
