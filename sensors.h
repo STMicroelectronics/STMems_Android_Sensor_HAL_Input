@@ -101,9 +101,6 @@ __BEGIN_DECLS
 /* Event Type in temperature sensor: see input_set_abs_params() function in your input driver */
 #define EVENT_TYPE_TEMPERATURE		ABS_TEMP
 
-/* Event Type in temperature sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_SIGNIFICANT_MOTION	ABS_WHEEL
-
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
 #define SENSOR_POLL_DEVICE sensors_poll_device_1
 #else

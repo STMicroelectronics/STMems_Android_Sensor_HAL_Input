@@ -56,8 +56,8 @@
 
 /* SIGNIFICANT MOTION SENSOR */
 #define SENSOR_SIGNIFICANT_MOTION_LABEL	"LSM330 Significant Motion sensor"	// Label views in Android Applications
-#define SIGN_MOTION_ENABLE_FILE_NAME	"enable_state_prog"			// Name of sysfs file for enabling the feature
-#define SIGN_MOTION_POLL_EN_FILE_NAME	"enable_polling"
+#define SIGN_MOTION_ENABLE_FILE_NAME	"device/enable_state_prog"		// Name of sysfs file for enabling the feature
+#define SIGN_MOTION_POLL_EN_FILE_NAME	"device/enable_polling"
 #define SIGN_MOTION_ENABLE_VALUE	0x02					// Value to be passed to enable HW Sign Motion Feature
 #define SIGN_MOTION_DISABLE_VALUE	0x00					// Value to be passed to disable HW Sign Motion Feature
 
@@ -74,19 +74,21 @@
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/
-#define EVENT_TYPE_ACCEL		EV_ABS
-#define EVENT_TYPE_GYRO		EV_ABS
+#define EVENT_TYPE_ACCEL		EV_MSC
+#define EVENT_TYPE_GYRO			EV_MSC
 
 /* Event Type in accelerometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_ACCEL_X		ABS_X
-#define EVENT_TYPE_ACCEL_Y		ABS_Y
-#define EVENT_TYPE_ACCEL_Z		ABS_Z
+#define EVENT_TYPE_ACCEL_X		MSC_SERIAL
+#define EVENT_TYPE_ACCEL_Y		MSC_PULSELED
+#define EVENT_TYPE_ACCEL_Z		MSC_GESTURE
 
 
 /* Event Type in gyroscope sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_GYRO_X		ABS_X
-#define EVENT_TYPE_GYRO_Y		ABS_Y
-#define EVENT_TYPE_GYRO_Z		ABS_Z
+#define EVENT_TYPE_GYRO_X		MSC_SERIAL
+#define EVENT_TYPE_GYRO_Y		MSC_PULSELED
+#define EVENT_TYPE_GYRO_Z		MSC_GESTURE
+
+#define EVENT_TYPE_SIGNIFICANT_MOTION	MSC_SCAN
 
 /*****************************************************************************/
 /* AXIS MAPPING */
