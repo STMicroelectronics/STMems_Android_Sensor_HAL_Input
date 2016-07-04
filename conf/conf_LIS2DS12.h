@@ -14,6 +14,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This configuration file is valid for LIS2DS and LIS2DS12 sensors because
+ * share the same driver
  */
 
 #ifndef CONFIGURATION_LIS2DS12_H
@@ -26,8 +29,8 @@
 #define SENSORS_TAP_ENABLE			(1)
 
 /* ACCELEROMETER SENSOR */
-#define SENSOR_ACC_LABEL			"LIS2DS12 3-axis Accelerometer Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_ACCELEROMETER		"ST LIS2DS12 Accelerometer Sensor"				// Name of input device: struct input_dev->name
+#define SENSOR_ACC_LABEL			"LIS2DS(12) 3-axis Accelerometer Sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_ACCELEROMETER		"ST LIS2DS Accelerometer Sensor"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"						// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"							// name of sysfs file for enable/disable the sensor state
 #define ACCEL_RANGE_FILE_NAME			"accel/range"							// name of sysfs file for setting the full scale
@@ -37,20 +40,20 @@
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
 /* TILT SENSOR */
-#define SENSOR_TILT_LABEL			"LIS2DS12 Tilt Detector sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_TILT			"ST LIS2DS12 Tilt Sensor"		// Name of input device: struct input_dev->name
+#define SENSOR_TILT_LABEL			"LIS2DS(12) Tilt Detector sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_TILT			"ST LIS2DS Tilt Sensor"		// Name of input device: struct input_dev->name
 #define TILT_ENABLE_FILE_NAME			"tilt/enable"		// name of sysfs file for enable/disable the sensor state
 #define TILT_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION
 
 /* SIGNIFICANT MOTION SENSOR */
-#define SENSOR_SIGN_M_LABEL			"LIS2DS12 Significant Motion Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_SIGN_M			"ST LIS2DS12 Significant Motion Sensor"		// Name of input device: struct input_dev->name
+#define SENSOR_SIGN_M_LABEL			"LIS2DS(12) Significant Motion Sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_SIGN_M			"ST LIS2DS Significant Motion Sensor"		// Name of input device: struct input_dev->name
 #define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"		// name of sysfs file for enable/disable the sensor state
 #define SIGN_M_POWER_CONSUMPTION		ACCEL_POWER_CONSUMPTION
 
 /* STEP TAP SENSOR */
-#define SENSOR_TAP_LABEL			"LIS2DS12 Tap Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_TAP			"ST LIS2DS12 Step Detector Sensor"		// Name of input device: struct input_dev->name
+#define SENSOR_TAP_LABEL			"LIS2DS(12) Tap Sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_TAP			"ST LIS2DS Step Detector Sensor"		// Name of input device: struct input_dev->name
 #define TAP_ENABLE_FILE_NAME			"tap/enable"		// name of sysfs file for enable/disable the sensor state
 #define TAP_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION
 
@@ -121,8 +124,8 @@
  *
 */
 static short matrix_acc[3][3] = {
-				{ 1, 0, 0 },
-				{ 0, 1, 0 },
+				{ 0, -1, 0 },
+				{ -1, 0, 0 },
 				{ 0, 0, 1 }
 				};
 

@@ -506,6 +506,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 #endif
 #if !defined(ACC_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);
+
 #endif
 
 			DecimationCount++;
