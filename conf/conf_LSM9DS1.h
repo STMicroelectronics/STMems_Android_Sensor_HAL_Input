@@ -33,7 +33,7 @@
 #define ACCEL_RANGE_FILE_NAME		"device/accelerometer/range"		// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE			8 * GRAVITY_EARTH			// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR			952					// Set Max value of ODR [Hz]
-#define ACCEL_MIN_ODR			10					// Set Min value of ODR [Hz]
+#define ACCEL_MIN_ODR			1					// Set Min value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION		0.6f					// Set sensor's power consumption [mA]
 #define ACCEL_DEFAULT_FULLSCALE		4					// Set default full-scale (value depends on the driver sysfs file)
 
@@ -58,7 +58,7 @@
 #define GYRO_RANGE_FILE_NAME		"device/gyroscope/range"		// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE			(2000.0f * (float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR			952					// Set Max value of ODR [Hz]
-#define GYRO_MIN_ODR			14					// Set Max value of ODR [Hz]
+#define GYRO_MIN_ODR			1					// Set Max value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION		4.0f					// Set sensor's power consumption [mA]
 #define GYRO_DEFAULT_FULLSCALE		2000					// Set default full-scale (value depends on the driver sysfs file)
 #define TO_MDPS(x)			(x / 1000000.0f)
@@ -84,24 +84,27 @@
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/
-#define EVENT_TYPE_ACCEL		EV_ABS
-#define EVENT_TYPE_MAG			EV_ABS
-#define EVENT_TYPE_GYRO		EV_ABS
+#define EVENT_TYPE_ACCEL		EV_MSC
+#define EVENT_TYPE_MAG			EV_MSC
+#define EVENT_TYPE_GYRO			EV_MSC
 
 /* Event Type in accelerometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_ACCEL_X		ABS_X
-#define EVENT_TYPE_ACCEL_Y		ABS_Y
-#define EVENT_TYPE_ACCEL_Z		ABS_Z
+#define EVENT_TYPE_ACCEL_X		MSC_SERIAL
+#define EVENT_TYPE_ACCEL_Y		MSC_PULSELED
+#define EVENT_TYPE_ACCEL_Z		MSC_GESTURE
 
 /* Event Type in magnetometer sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_MAG_X		ABS_X
-#define EVENT_TYPE_MAG_Y		ABS_Y
-#define EVENT_TYPE_MAG_Z		ABS_Z
+#define EVENT_TYPE_MAG_X		MSC_SERIAL
+#define EVENT_TYPE_MAG_Y		MSC_PULSELED
+#define EVENT_TYPE_MAG_Z		MSC_GESTURE
 
 /* Event Type in gyroscope sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_GYRO_X		ABS_X
-#define EVENT_TYPE_GYRO_Y		ABS_Y
-#define EVENT_TYPE_GYRO_Z		ABS_Z
+#define EVENT_TYPE_GYRO_X		MSC_SERIAL
+#define EVENT_TYPE_GYRO_Y		MSC_PULSELED
+#define EVENT_TYPE_GYRO_Z		MSC_GESTURE
+
+#define EVENT_TYPE_TIME_MSB		MSC_SCAN
+#define EVENT_TYPE_TIME_LSB		MSC_MAX
 
 /*****************************************************************************/
 /* AXIS MAPPING */
@@ -198,5 +201,9 @@ static short matrix_gyr[3][3] = {
 #define CONVERT_GYRO_X			(CONVERT_GYRO)
 #define CONVERT_GYRO_Y			(CONVERT_GYRO)
 #define CONVERT_GYRO_Z			(CONVERT_GYRO)
+
+#define MAG_EVENT_HAS_TIMESTAMP		1
+#define ACC_EVENT_HAS_TIMESTAMP		1
+#define GYRO_EVENT_HAS_TIMESTAMP	1
 
 #endif	/*	CONFIGURATION_LSM9DS1_H	*/
