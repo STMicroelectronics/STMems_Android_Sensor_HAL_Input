@@ -311,6 +311,9 @@ int GyroSensor::writeMinDelay(void)
 	// Decimation Definition
 	for(kk = 0; kk < numSensors; kk++)
 	{
+		if (kk == Gyro || kk == GyroUncalib)
+			continue;
+
 		if (delayms)
 			DecimationBuffer[kk] = writeDelayBuffer[kk]/delayms;
 		else

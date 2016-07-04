@@ -68,6 +68,8 @@ MagnSensor::MagnSensor()
 
 	pthread_mutex_init(&dataMutex, NULL);
 
+	refFreq = (MAGN_MAX_ODR < GEOMAG_FREQUENCY) ? MAGN_MAX_ODR : GEOMAG_FREQUENCY;
+
 	memset(mPendingEvent, 0, sizeof(mPendingEvent));
 	memset(DecimationCount, 0, sizeof(DecimationCount));
 
@@ -351,12 +353,12 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 #endif
 #if (SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)
 	if (what == GeoMagRotVect_Magnetic)
-		acc->setDelay(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
+		acc->setDelay(SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE, SEC_TO_NSEC(1.0f / refFreq));
 #endif
 #if (MAG_CALIBRATION_ENABLE == 1)
 #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
 	if (what == Orientation)
-		acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
+		acc->setDelay(SENSORS_ORIENTATION_HANDLE, SEC_TO_NSEC(1.0f / refFreq));
 #endif
 #if (SENSORS_COMPASS_ORIENTATION_ENABLE == 1)
 	if (what == Orientation)
@@ -364,11 +366,11 @@ int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 #endif
 #if (GEOMAG_GRAVITY_ENABLE == 1)
 	if (what == Gravity_Accel)
-		acc->setDelay(SENSORS_GRAVITY_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
+		acc->setDelay(SENSORS_GRAVITY_HANDLE, SEC_TO_NSEC(1.0f / refFreq));
 #endif
 #if (GEOMAG_LINEAR_ACCELERATION_ENABLE == 1)
 	if (what == Linear_Accel)
-		acc->setDelay(SENSORS_LINEAR_ACCELERATION_HANDLE, SEC_TO_NSEC(1.0f / GEOMAG_FREQUENCY));
+		acc->setDelay(SENSORS_LINEAR_ACCELERATION_HANDLE, SEC_TO_NSEC(1.0f / refFreq));
 #endif
 #endif
 	/**
@@ -434,8 +436,8 @@ int MagnSensor::writeMinDelay(void)
 	 (GEOMAG_GRAVITY_ENABLE == 1))
 	if ((mEnabled & 1<<GeoMagRotVect_Magnetic) || (mEnabled & 1<<Orientation)
 			 || (mEnabled & 1<<Linear_Accel) || (mEnabled & 1<<Gravity_Accel)){
-		if(Min_delay_ms > (1000.0f / GEOMAG_FREQUENCY))
-			Min_delay_ms = 1000.0f / GEOMAG_FREQUENCY;
+		if(Min_delay_ms > (1000.0f / refFreq))
+			Min_delay_ms = 1000.0f / refFreq;
 	}
 #endif
 #if (SENSORS_COMPASS_ORIENTATION_ENABLE == 1)
@@ -462,6 +464,9 @@ int MagnSensor::writeMinDelay(void)
 	// Decimation Definition
 	for(kk = 0; kk < numSensors; kk++)
 	{
+		if (kk == MagneticField || kk == UncalibMagneticField)
+			continue;
+
 		if (delayms)
 			DecimationBuffer[kk] = writeDelayBuffer[kk]/delayms;
 		else

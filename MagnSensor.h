@@ -75,6 +75,7 @@ class MagnSensor : public SensorBase
 	bool mHasPendingEvent;
 	int data_read;
 	int setInitialState();
+	int refFreq;
 #if MAG_CALIBRATION_ENABLE == 1
 	CalibFactor cf;
 	int data_accelerometer[3];

@@ -356,6 +356,9 @@ int AccelSensor::writeMinDelay(void)
 	// Decimation Definition
 	for(kk = 0; kk < numSensors; kk++)
 	{
+		if (kk == Acceleration || kk == Gbias)
+			continue;
+
 		if (delayms)
 			DecimationBuffer[kk] = writeDelayBuffer[kk]/delayms;
 		else
