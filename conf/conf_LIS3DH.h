@@ -28,7 +28,7 @@
 #define ACCEL_ENABLE_FILE_NAME		"device/enable_device"		// name of sysfs file for enable/disable the sensor state
 #define ACCEL_RANGE_FILE_NAME		"device/range"			// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE			16*GRAVITY_EARTH		// Set Max Full-scale [m/s^2]
-#define ACCEL_MAX_ODR			100				// Set Max value of ODR [Hz] - driver uses delayed works (min tick 1 jiffies)
+#define ACCEL_MAX_ODR			200				// Set Max value of ODR [Hz] - driver uses delayed works (min tick 1 jiffies)
 #define ACCEL_POWER_CONSUMPTION		0.033f				// Set sensor's power consumption [mA]
 #define ACCEL_DEFAULT_FULLSCALE		4				// Set default full-scale (value depends on the driver sysfs file)
 #define ACC_DEFAULT_DELAY		10				// 1/frequency (default: 10 -> 100 Hz) [ms]
@@ -41,6 +41,9 @@
 #define EVENT_TYPE_ACCEL_X		MSC_SERIAL
 #define EVENT_TYPE_ACCEL_Y		MSC_PULSELED
 #define EVENT_TYPE_ACCEL_Z		MSC_GESTURE
+
+#define EVENT_TYPE_TIME_MSB		MSC_SCAN
+#define EVENT_TYPE_TIME_LSB		MSC_MAX
 
 /*****************************************************************************/
 /* AXIS MAPPING */
@@ -95,5 +98,7 @@ static short matrix_acc[3][3] = {
 #define CONVERT_A_X 			(CONVERT_A)
 #define CONVERT_A_Y			(CONVERT_A)
 #define CONVERT_A_Z			(CONVERT_A)
+
+#define ACC_EVENT_HAS_TIMESTAMP		1
 
 #endif	/*	CONFIGURATION_LIS3DH_H	*/
