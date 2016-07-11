@@ -303,7 +303,7 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 #endif
 
 	// Update sysfs
-	if(mEnabled & 1<<what)
+	if(mEnabled & 1 << what)
 	{
 		writeMinDelay();
 	}
