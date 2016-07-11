@@ -36,7 +36,7 @@
 #define ACCEL_RANGE_FILE_NAME			"accel/scale"							// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE				8 * GRAVITY_EARTH									// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR				200					// Set Max value of ODR [Hz]
-#define ACCEL_MIN_ODR				13					// Set Min value of ODR [Hz]
+#define ACCEL_MIN_ODR				12					// Set Min value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION			0.6f				// Set sensor's power consumption [mA]
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
@@ -48,7 +48,7 @@
 #define GYRO_RANGE_FILE_NAME			"gyro/scale"			// name of sysfs file for setting the full scale
 #define GYRO_MAX_RANGE				(2000.0f * (float)M_PI/180.0f)		// Set Max Full-scale [rad/sec]
 #define GYRO_MAX_ODR				200					// Set Max value of ODR [Hz]
-#define GYRO_MIN_ODR				13					// Set Min value of ODR [Hz]
+#define GYRO_MIN_ODR				12					// Set Min value of ODR [Hz]
 #define GYRO_POWER_CONSUMPTION			4.0f					// Set sensor's power consumption [mA]
 #define GYRO_DEFAULT_FULLSCALE			2000					// Set default full-scale (value depends on the driver sysfs file)
 #define TO_MDPS(x)				(x / 1000000.0f)
