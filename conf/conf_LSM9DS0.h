@@ -150,20 +150,20 @@
  *
 */
 static short matrix_acc[3][3] = {
-				{ 1, 0, 0 },
-				{ 0, 1, 0 },
+				{ -1, 0, 0 },
+				{ 0, -1, 0 },
 				{ 0, 0, 1 }
 				};
 
 static short matrix_mag[3][3] = {
-				{ 1, 0, 0 },
-				{ 0, 1, 0 },
+				{ -1, 0, 0 },
+				{ 0, -1, 0 },
 				{ 0, 0, -1 }
 				};
 
 static short matrix_gyr[3][3] = {
-				{ 1, 0, 0 },
-				{ 0, 1, 0 },
+				{ -1, 0, 0 },
+				{ 0, -1, 0 },
 				{ 0, 0, 1 }
 				};
 
@@ -182,8 +182,14 @@ static short matrix_gyr[3][3] = {
 #define CONVERT_M_Y			(CONVERT_M)
 #define CONVERT_M_Z			(CONVERT_M)
 
-// conversion of gyro data to SI units (radian/sec)
-#define CONVERT_GYRO			((7.0f*((float)M_PI)) / 18000.0f)
+/**
+ * Conversion of gyro data to SI units (radian/sec)
+ * FS = 2000dps, sensitivity conversion applied into the driver.
+ * Driver output as udps
+ */
+#define DPS2RAD				((float)M_PI/180.0f)
+#define G_SENSITIVITY			(1.0f) //Already applied into the driver
+#define CONVERT_GYRO			(DPS2RAD * (G_SENSITIVITY / (1000.0f * 1000.0f)))
 #define CONVERT_GYRO_X			(CONVERT_GYRO)
 #define CONVERT_GYRO_Y			(CONVERT_GYRO)
 #define CONVERT_GYRO_Z			(CONVERT_GYRO)
