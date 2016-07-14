@@ -36,6 +36,7 @@
 #define ACCEL_RANGE_FILE_NAME			"accel/range"							// name of sysfs file for setting the full scale
 #define ACCEL_MAX_RANGE				8 * GRAVITY_EARTH									// Set Max Full-scale [m/s^2]
 #define ACCEL_MAX_ODR				200					// Set Max value of ODR [Hz]
+#define ACCEL_MIN_ODR				1					// Set Max value of ODR [Hz]
 #define ACCEL_POWER_CONSUMPTION			0.6f				// Set sensor's power consumption [mA]
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
