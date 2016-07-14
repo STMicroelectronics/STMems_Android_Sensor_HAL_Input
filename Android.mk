@@ -53,6 +53,7 @@ endef
 # - LSM303DLHC                                                                 #
 # - LSM6DS0                                                                    #
 # - LSM6DS3                                                                    #
+# - LSM6DSM                                                                    #
 # - LSM9DS0                                                                    #
 # - LSM9DS1                                                                    #
 # - L3GD20                                                                     #
@@ -77,7 +78,7 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := ASM330LXH
+ENABLED_SENSORS := LSM6DSM
 ENABLED_MODULES :=
 
 LOCAL_ARM_MODE := arm
