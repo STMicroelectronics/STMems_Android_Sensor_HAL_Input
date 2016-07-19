@@ -54,6 +54,8 @@
 /* Event Type in gyroscope sensor: see input_set_abs_params() function in your input driver */
 #define EVENT_TYPE_GYRO		EV_MSC
 
+#define EVENT_TYPE_TIME_MSB		MSC_SCAN
+#define EVENT_TYPE_TIME_LSB		MSC_MAX
 #define EVENT_TYPE_GYRO_X		MSC_SERIAL
 #define EVENT_TYPE_GYRO_Y		MSC_PULSELED
 #define EVENT_TYPE_GYRO_Z		MSC_GESTURE
@@ -113,5 +115,7 @@ static short matrix_gyr[3][3] = {
 #define CONVERT_GYRO_Y			(CONVERT_GYRO)
 #define CONVERT_GYRO_Z			(CONVERT_GYRO)
 
+#define GYRO_EVENT_HAS_TIMESTAMP		1
+#define INPUT_EVENT_HAS_TIMESTAMP		1
 
 #endif	/*	CONFIGURATION_L3GD20_H	*/
