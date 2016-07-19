@@ -63,6 +63,7 @@ endef
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #
 # - LPS331AP                                                                   #
+# - LIS2DH12                                                                   #
 # - ASM330LXH                                                                  #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #
@@ -78,7 +79,7 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LSM6DSM
+ENABLED_SENSORS := LIS2DH12
 ENABLED_MODULES :=
 
 LOCAL_ARM_MODE := arm
