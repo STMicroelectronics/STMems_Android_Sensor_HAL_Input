@@ -29,7 +29,7 @@
 #define SENSORS_SIGN_MOTION_ENABLE		(1)
 
 /* ACCELEROMETER SENSOR */
-#define SENSOR_ACC_LABEL			"LSM6DS3 3-axis Accelerometer Sensor"	// Label views in Android Applications
+#define SENSOR_ACC_LABEL			"LSM6DS3(H) 3-axis Accelerometer Sensor"	// Label views in Android Applications
 #define SENSOR_DATANAME_ACCELEROMETER		"ST LSM6DS3 Accelerometer Sensor"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"						// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"							// name of sysfs file for enable/disable the sensor state
@@ -41,7 +41,7 @@
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
 /* GYROSCOPE SENSOR */
-#define SENSOR_GYRO_LABEL			"LSM6DS3 3-axis Gyroscope sensor"	// Label views in Android Applications
+#define SENSOR_GYRO_LABEL			"LSM6DS3(H) 3-axis Gyroscope sensor"	// Label views in Android Applications
 #define SENSOR_DATANAME_GYROSCOPE		"ST LSM6DS3 Gyroscope Sensor"		// Name of input device: struct input_dev->name
 #define GYRO_DELAY_FILE_NAME			"gyro/polling_rate"			// name of sysfs file for setting the pollrate
 #define GYRO_ENABLE_FILE_NAME			"gyro/enable"		// name of sysfs file for enable/disable the sensor state
@@ -54,26 +54,26 @@
 #define TO_MDPS(x)				(x / 1000000.0f)
 
 /* TILT SENSOR */
-#define SENSOR_TILT_LABEL			"LSM6DS3 Tilt Detector sensor"	// Label views in Android Applications
+#define SENSOR_TILT_LABEL			"LSM6DS3(H) Tilt Detector sensor"	// Label views in Android Applications
 #define SENSOR_DATANAME_TILT			"ST LSM6DS3 Tilt Sensor"		// Name of input device: struct input_dev->name
 #define TILT_ENABLE_FILE_NAME			"tilt/enable"		// name of sysfs file for enable/disable the sensor state
 #define TILT_POWER_CONSUMPTION			0.6f
 
 /* STEP COUNTER SENSOR */
-#define SENSOR_STEP_C_LABEL			"LSM6DS3 Step Counter sensor"	// Label views in Android Applications
+#define SENSOR_STEP_C_LABEL			"LSM6DS3(H) Step Counter sensor"	// Label views in Android Applications
 #define SENSOR_DATANAME_STEP_C			"ST LSM6DS3 Step Counter Sensor"		// Name of input device: struct input_dev->name
 #define STEP_C_ENABLE_FILE_NAME			"step_c/enable"		// name of sysfs file for enable/disable the sensor state
 #define STEP_C_DELAY_FILE_NAME			"step_c/max_delivery_rate"
 #define STEP_C_POWER_CONSUMPTION		0.6f
 
 /* STEP DETECTOR SENSOR */
-#define SENSOR_STEP_D_LABEL			"LSM6DS3 Step Detector Sensor"	// Label views in Android Applications
+#define SENSOR_STEP_D_LABEL			"LSM6DS3(H) Step Detector Sensor"	// Label views in Android Applications
 #define SENSOR_DATANAME_STEP_D			"ST LSM6DS3 Step Detector Sensor"		// Name of input device: struct input_dev->name
 #define STEP_D_ENABLE_FILE_NAME			"step_d/enable"		// name of sysfs file for enable/disable the sensor state
 #define STEP_D_POWER_CONSUMPTION		0.6f
 
 /* SIGNIFICANT MOTION SENSOR */
-#define SENSOR_SIGN_M_LABEL			"LSM6DS3 Significant Motion Sensor"	// Label views in Android Applications
+#define SENSOR_SIGN_M_LABEL			"LSM6DS3(H) Significant Motion Sensor"	// Label views in Android Applications
 #define SENSOR_DATANAME_SIGN_M			"ST LSM6DS3 Significant Motion Sensor"		// Name of input device: struct input_dev->name
 #define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"		// name of sysfs file for enable/disable the sensor state
 #define SIGN_M_POWER_CONSUMPTION		0.6f
