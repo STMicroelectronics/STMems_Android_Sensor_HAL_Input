@@ -98,6 +98,9 @@
 #if defined(LIS2DS12)
   #include "conf_LIS2DS12.h"
 #endif
+#if defined(LIS2HH)
+  #include "conf_LIS2HH.h"
+#endif
 #if defined(L3GD20)
   #include "conf_L3GD20.h"
 #endif
