@@ -34,7 +34,7 @@
 #define SENSOR_DATANAME_ACCELEROMETER		"lsm303ah_acc_accel"
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"
-#define ACCEL_RANGE_FILE_NAME			"accel/range"
+#define ACCEL_RANGE_FILE_NAME			"accel/scale"
 #define ACCEL_MAX_RANGE				8 * GRAVITY_EARTH
 #define ACCEL_MAX_ODR				200
 #define ACCEL_POWER_CONSUMPTION			0.6f
