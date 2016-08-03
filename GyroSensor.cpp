@@ -83,7 +83,7 @@ GyroSensor::GyroSensor()
 	memset(data_raw, 0, sizeof(data_raw));
 
 #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
-	iNemoEngine_API_gbias_Initialization(NULL);
+	iNemoEngine_API_gbias_Initialization(NULL, false);
   #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 	acc = new AccelSensor();
   #endif
@@ -188,6 +188,7 @@ int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
 #if ((GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1) && (SENSORS_ACCELEROMETER_ENABLE == 1))
 			acc->enable(SENSORS_GYROSCOPE_HANDLE, flags, 1);
 			STLOGD("GyroSensor::Acc OFF");
+			iNemoEngine_API_gbias_enable(false);
 #endif
 
 		}
@@ -457,19 +458,18 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 
 #if !(GYROSCOPE_GBIAS_ESTIMATION_FUSION == 1)
 			memset(gbias_out, 0, sizeof(gbias_out));
-  #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
+#if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
 			int bias_meas;
-    #if (SENSORS_ACCELEROMETER_ENABLE == 1)
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 			sensors_vec_t tmp_data_acc;
 			AccelSensor::getBufferData(&tmp_data_acc);
 			memcpy(data_acc, tmp_data_acc.v, sizeof(float) * 3);
-    #else
+#else
 			memset(data_acc, 0, sizeof(data_acc));
-    #endif
-			iNemoEngine_API_set_accel_data(data_acc);
-			iNemoEngine_API_gbias_Run(data_rot);
+#endif
+			iNemoEngine_API_gbias_Run(data_acc, data_rot);
 			iNemoEngine_API_Get_gbias(gbias_out);
-  #endif
+#endif
 			DecimationCount[Gyro]++;
 			if(mEnabled & (1<<Gyro) && (DecimationCount[Gyro] >= DecimationBuffer[Gyro])) {
 				DecimationCount[Gyro] = 0;

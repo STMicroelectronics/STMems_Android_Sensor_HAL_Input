@@ -39,7 +39,7 @@
 #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
 extern "C"
 {
-	#include <iNemoEngine_gbias_API.h>
+#include <iNemoEngineAPI_gbias_estimation.h>
 };
 #endif
 
