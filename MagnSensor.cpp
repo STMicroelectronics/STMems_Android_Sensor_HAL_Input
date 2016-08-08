@@ -68,7 +68,9 @@ MagnSensor::MagnSensor()
 
 	pthread_mutex_init(&dataMutex, NULL);
 
+#if GEOMAG_FUSION == 1
 	refFreq = (MAGN_MAX_ODR < GEOMAG_FREQUENCY) ? MAGN_MAX_ODR : GEOMAG_FREQUENCY;
+#endif
 
 	memset(mPendingEvent, 0, sizeof(mPendingEvent));
 	memset(DecimationCount, 0, sizeof(DecimationCount));
