@@ -144,7 +144,7 @@ int AccelSensor::getWhatFromHandle(int32_t handle)
 			break;
 #endif
 #if (SENSOR_FUSION_ENABLE == 0)
-  #if ((SENSORS_COMPASS_ORIENTATION_ENABLE == 1) || (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1))
+  #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
 		case SENSORS_ORIENTATION_HANDLE:
 			what = Orientation;
 			break;

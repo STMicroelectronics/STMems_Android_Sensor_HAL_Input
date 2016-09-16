@@ -33,14 +33,10 @@
 #include "InputEventReader.h"
 #include "AccelSensor.h"
 
-#if defined(STORE_CALIB_MAG_ENABLED)
-#include "StoreCalibration.h"
-#endif
-
 #if MAG_CALIBRATION_ENABLE == 1
 extern "C"
 {
-	#include "sensors_compass_API.h"
+	#include "STMagCalibration_API.h"
 };
 #endif
 #if (SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE == 1)
@@ -75,12 +71,12 @@ class MagnSensor : public SensorBase
 	bool mHasPendingEvent;
 	int data_read;
 	int setInitialState();
-#if GEOMAG_FUSION == 1
+#if SENSOR_GEOMAG_ENABLE == 1
 	int refFreq;
 #endif
 #if MAG_CALIBRATION_ENABLE == 1
-	CalibFactor cf;
-	int data_accelerometer[3];
+	STMagCalibration_Input magCalibIn;
+	STMagCalibration_Output magCalibOut;
 #endif
 
 private:
@@ -102,9 +98,6 @@ private:
 	sensors_vec_t data_calibrated;
 	static pthread_mutex_t dataMutex;
 	int64_t timestamp;
-#if defined(STORE_CALIB_MAG_ENABLED)
-	StoreCalibration *pStoreCalibration;
-#endif
 
 public:
 	MagnSensor();
