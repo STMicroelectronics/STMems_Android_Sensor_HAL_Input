@@ -590,13 +590,6 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 #if (DEBUG_MAGNETOMETER == 1)
 				STLOGD("MagnSensor::MagCalibData: %f, %f, %f", data_calibrated.v[0], data_calibrated.v[1], data_calibrated.v[2]);
 #endif
-
-
-#if (DEBUG_CALIBRATION == 1)
-				STLOGD("Calibration accuracy = %d\tmag offset = %f\t%f\t%f",
-						data_calibrated.status,
-						cf.magOffX, cf.magOffY, cf.magOffZ);
-  #endif
 #else
 				/**
 				 * No calibration is available!
