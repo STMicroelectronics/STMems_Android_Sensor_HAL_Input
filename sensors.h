@@ -99,7 +99,7 @@ __BEGIN_DECLS
 /*****************************************************************************/
 
 /* Event Type in temperature sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_TEMPERATURE		ABS_TEMP
+#define EVENT_TYPE_TEMPERATURE		MSC_PULSELED
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
 #define SENSOR_POLL_DEVICE sensors_poll_device_1

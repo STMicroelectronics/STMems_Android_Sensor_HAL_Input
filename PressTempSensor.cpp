@@ -25,6 +25,7 @@
 #include <poll.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <string.h>
 #include <sys/select.h>
 #include <cutils/log.h>
 
@@ -34,7 +35,6 @@
 
 /*****************************************************************************/
 
-int64_t PressTempSensor::delayms = 0;
 int PressTempSensor::current_fullscale = 0;
 int unsigned PressTempSensor::mEnabled = 0;
 
@@ -123,6 +123,12 @@ int PressTempSensor::getWhatFromHandle(int32_t handle)
 	return what;
 }
 
+int PressTempSensor::writeSensorDelay(int handle)
+{
+	int err = writeDelay(handle, delayms);
+	return (err >= 0) ? 0 : err;
+}
+
 int PressTempSensor::enable(int32_t handle, int en, int type)
 {
 	int err = 0;
@@ -134,6 +140,10 @@ int PressTempSensor::enable(int32_t handle, int en, int type)
 		return what;
 
 	if(en) {
+		err = writeSensorDelay(handle);
+		if (err < 0)
+			return err;
+
 		if(mEnabled == 0) {
 			enabled = 1;
 			err = writeEnable(SENSORS_PRESSURE_HANDLE, 1);
@@ -165,27 +175,24 @@ bool PressTempSensor::hasPendingEvents() const {
 	return mHasPendingEvent;
 }
 
-int PressTempSensor::setDelay(int32_t __attribute__((unused))handle, int64_t delay_ns)
+int PressTempSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
-	int err = -1;
-	int64_t delay_ms = 0;
+	int err = -1, what;
+	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
 
-	if((mEnabled & (1<<Pressure)) || (mEnabled & (1<<Temperature)))
-	{
-		delay_ms = delay_ns/1000000;
-	}
-
-	if(delay_ms == 0)
+	if (delay_ms == 0)
 		return err;
 
-	if(delay_ms != delayms)
-	{
-		err = writeDelay(SENSORS_PRESSURE_HANDLE, delay_ms);
-		if(err >= 0) {
-			err = 0;
-			delayms = delay_ms;
-		}
-	}
+	what = getWhatFromHandle(handle);
+	if (what < 0)
+		return what;
+
+	delayms = delay_ms;
+
+	// Update sysfs
+	if (mEnabled & (1 << what))
+		err = writeSensorDelay(handle);
+
 	return err;
 }
 
@@ -244,7 +251,7 @@ int PressTempSensor::readEvents(sensors_event_t* data, int count)
 		STLOGD("PressTempSensor::readEvents (count=%d),type(%d)",count,event->type);
 #endif
 
-		if (event->type == EV_ABS) {
+		if (event->type == EV_MSC) {
 			float value = (float) event->value;
 
 			if (event->code == EVENT_TYPE_PRESSURE) {

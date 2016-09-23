@@ -63,6 +63,7 @@ endef
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #
 # - LPS331AP                                                                   #
+# - LPS22HB
 # - LIS2DH12                                                                   #
 # - ASM330LXH                                                                  #
 #                                                                              #

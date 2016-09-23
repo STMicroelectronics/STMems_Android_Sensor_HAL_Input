@@ -51,7 +51,6 @@ class PressTempSensor : public SensorBase {
 		numSensors
 	};
 	static unsigned int mEnabled;
-	static int64_t delayms;
 	static int current_fullscale;
 	uint32_t mPendingMask;
 	InputEventCircularReader mInputReader;
@@ -65,6 +64,7 @@ private:
 		pressChan = 0,
 		tempChan
 	};
+	int64_t delayms;
 
 	char device_sysfs_path_prs[PATH_MAX];
 	int device_sysfs_path_prs_len;
@@ -73,6 +73,7 @@ private:
 	struct CalibrationPackage calvalues;
 	virtual int initCompensationAlgo(void);
 #endif
+	int writeSensorDelay(int handle);
 
 public:
 	PressTempSensor();

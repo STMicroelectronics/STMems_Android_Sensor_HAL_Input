@@ -114,6 +114,9 @@
 #if defined(LPS331AP)
   #include "conf_LPS331AP.h"
 #endif
+#if defined(LPS22HB)
+  #include "conf_LPS22HB.h"
+#endif
 #if defined(SENSOR_FUSION)
   #include "conf_FUSION.h"
 #endif

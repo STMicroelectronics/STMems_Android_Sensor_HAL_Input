@@ -317,6 +317,13 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 			className = "StepCounterSensor::Delay()";
 			break;
 #endif
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMPERATURE_ENABLE == 1))
+		case SENSORS_PRESSURE_HANDLE:
+		case SENSORS_TEMPERATURE_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], PRESS_DELAY_FILE_NAME);
+			className = "PressTempSensor::Delay()";
+			break;
+#endif
 		default:
 			return -1;
 	}
