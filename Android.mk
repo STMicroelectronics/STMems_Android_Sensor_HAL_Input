@@ -63,10 +63,11 @@ endef
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #
 # - LPS331AP                                                                   #
-# - LPS22HB
-# - LPS25H
+# - LPS22HB                                                                    #
+# - LPS25H                                                                     #
 # - LIS2DH12                                                                   #
 # - ASM330LXH                                                                  #
+# - A3G4250D                                                                   #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #
 # - V_GYRO                                                                     #

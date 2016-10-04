@@ -92,6 +92,9 @@
 #if defined(L3GD20H)
   #include "conf_L3GD20H.h"
 #endif
+#if defined(A3G4250D)
+  #include "conf_A3G4250D.h"
+#endif
 #if defined(LIS2DG)
   #include "conf_LIS2DG.h"
 #endif
