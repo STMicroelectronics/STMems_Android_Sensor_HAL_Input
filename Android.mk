@@ -68,6 +68,7 @@ endef
 # - LIS2DH12                                                                   #
 # - ASM330LXH                                                                  #
 # - A3G4250D                                                                   #
+# - AIS328DQ                                                                   #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #
 # - V_GYRO                                                                     #
