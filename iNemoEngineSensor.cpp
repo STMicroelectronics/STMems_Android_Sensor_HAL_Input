@@ -30,7 +30,6 @@
 #include <linux/time.h>
 #include <string.h>
 #include "iNemoEngineSensor.h"
-#include "iNemoEngineAPI.h"
 
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0
 
@@ -311,12 +310,12 @@ int iNemoEngineSensor::enable(int32_t handle, int en, int  __attribute__((unused
 		    (mEnabled & (1<<UncalibGyro)) ||
 		    (mEnabled & (1<<CalibGyro)))
 		{
-				iNemoEngine_API_enable_6X(true);
+				iNemoEngine_API_enable6X(true);
 #if (DEBUG_INEMO_SENSOR == 1)
 				STLOGD( "iNemoEngineSensor: Fusion 6axis enabled");
 #endif
 		} else {
-				iNemoEngine_API_enable_6X(false);
+				iNemoEngine_API_enable6X(false);
 #if (DEBUG_INEMO_SENSOR == 1)
 				STLOGD( "iNemoEngineSensor: Fusion 6axis disabled");
 #endif
@@ -327,12 +326,12 @@ int iNemoEngineSensor::enable(int32_t handle, int en, int  __attribute__((unused
 			(mEnabled & (1<<LinearAcceleration)) ||
 			(mEnabled & (1<<RotationMatrix)))
 		{
-			iNemoEngine_API_enable_9X(true);
+			iNemoEngine_API_enable9X(true);
 #if (DEBUG_INEMO_SENSOR == 1)
 			STLOGD( "iNemoEngineSensor: Fusion 9axis enabled");
 #endif
 		} else {
-			iNemoEngine_API_enable_9X(false);
+			iNemoEngine_API_enable9X(false);
 #if (DEBUG_INEMO_SENSOR == 1)
 			STLOGD( "iNemoEngineSensor: Fusion 9axis disabled");
 #endif
