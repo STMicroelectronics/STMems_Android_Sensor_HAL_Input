@@ -118,7 +118,7 @@ MagnSensor::MagnSensor()
 
 #if (SENSOR_GEOMAG_ENABLE == 1)
 	memset(&sData, 0, sizeof(iNemoGeoMagSensorsData));
-	iNemoEngine_GeoMag_API_Initialization();
+	iNemoEngine_GeoMag_API_Initialization(100);
 #endif
 
 	if (data_fd) {
@@ -656,48 +656,50 @@ int MagnSensor::readEvents(sensors_event_t *data, int count)
 				}
 #endif
 #if ((GEOMAG_LINEAR_ACCELERATION_ENABLE == 1))
-			DecimationCount[Linear_Accel]++;
-			if((mEnabled & (1<<Linear_Accel)) && (DecimationCount[Linear_Accel] >= DecimationBuffer[Linear_Accel])) {
-				DecimationCount[Linear_Accel] = 0;
-				err = iNemoEngine_GeoMag_API_Get_LinAcc(mPendingEvent[Linear_Accel].data);
-				if (err == 0) {
-					mPendingEvent[Linear_Accel].timestamp = timestamp;
-					*data++ = mPendingEvent[Linear_Accel];
-					count--;
-					numEventReceived++;
+				DecimationCount[Linear_Accel]++;
+				if((mEnabled & (1<<Linear_Accel)) && (DecimationCount[Linear_Accel] >= DecimationBuffer[Linear_Accel])) {
+					DecimationCount[Linear_Accel] = 0;
+					err = iNemoEngine_GeoMag_API_Get_LinAcc(mPendingEvent[Linear_Accel].data);
+					if (err == 0) {
+						mPendingEvent[Linear_Accel].timestamp = timestamp;
+						*data++ = mPendingEvent[Linear_Accel];
+						count--;
+						numEventReceived++;
+					}
 				}
-			}
 #endif
 #if ((GEOMAG_GRAVITY_ENABLE == 1))
-			DecimationCount[Gravity_Accel]++;
-			if((mEnabled & (1<<Gravity_Accel)) && (DecimationCount[Gravity_Accel] >= DecimationBuffer[Gravity_Accel])) {
-				DecimationCount[Gravity_Accel] = 0;
-				err = iNemoEngine_GeoMag_API_Get_Gravity(mPendingEvent[Gravity_Accel].data);
-				if (err == 0) {
-					mPendingEvent[Gravity_Accel].timestamp = timestamp;
-					*data++ = mPendingEvent[Gravity_Accel];
-					count--;
-					numEventReceived++;
+				DecimationCount[Gravity_Accel]++;
+				if((mEnabled & (1<<Gravity_Accel)) && (DecimationCount[Gravity_Accel] >= DecimationBuffer[Gravity_Accel])) {
+					DecimationCount[Gravity_Accel] = 0;
+					err = iNemoEngine_GeoMag_API_Get_Gravity(mPendingEvent[Gravity_Accel].data);
+					if (err == 0) {
+						mPendingEvent[Gravity_Accel].timestamp = timestamp;
+						*data++ = mPendingEvent[Gravity_Accel];
+						count--;
+						numEventReceived++;
+					}
 				}
-			}
 #endif
 #if (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1)
-			DecimationCount[Orientation]++;
-			if((mEnabled & (1<<Orientation)) && (DecimationCount[Orientation] >= DecimationBuffer[Orientation])) {
-				DecimationCount[Orientation] = 0;
-				err = iNemoEngine_GeoMag_API_Get_Hpr(mPendingEvent[Orientation].data);
-				if (err == 0) {
-					mPendingEvent[Orientation].orientation.status =
-						data_calibrated.status;
-					mPendingEvent[Orientation].timestamp = timestamp;
-					*data++ = mPendingEvent[Orientation];
-					count--;
-					numEventReceived++;
+				DecimationCount[Orientation]++;
+				if((mEnabled & (1<<Orientation)) && (DecimationCount[Orientation] >= DecimationBuffer[Orientation])) {
+					DecimationCount[Orientation] = 0;
+					err = iNemoEngine_GeoMag_API_Get_Hpr(mPendingEvent[Orientation].data);
+					if (err == 0) {
+						mPendingEvent[Orientation].orientation.status =
+							data_calibrated.status;
+						mPendingEvent[Orientation].timestamp = timestamp;
+						*data++ = mPendingEvent[Orientation];
+						count--;
+						numEventReceived++;
+					}
 				}
-			}
 #endif
-#if (SENSOR_FUSION_ENABLE == 1)
-				if(mEnabled & (1<<iNemoMagnetic))
+#if (SENSOR_FUSION_ENABLE == 1) || \
+    (SENSORS_VIRTUAL_GYROSCOPE_ENABLE == 1)
+				if(mEnabled & ((1<<iNemoMagnetic) |
+					       (1<<VirtualGyro)))
 					setBufferData(&data_calibrated);
 #endif
 #if DEBUG_MAGNETOMETER == 1

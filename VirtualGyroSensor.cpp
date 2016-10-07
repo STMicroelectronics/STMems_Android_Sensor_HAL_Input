@@ -28,6 +28,7 @@
 #include <dirent.h>
 #include <sys/select.h>
 #include <cutils/log.h>
+#include <string.h>
 
 #include "VirtualGyroSensor.h"
 
@@ -73,7 +74,7 @@ VirtualGyroSensor::VirtualGyroSensor()
 	mag = new MagnSensor();
 	acc = new AccelSensor();
 #if (SENSOR_GEOMAG_ENABLE == 0)
-	iNemoEngine_GeoMag_API_Initialization();
+	iNemoEngine_GeoMag_API_Initialization(100);
 #endif
 }
 

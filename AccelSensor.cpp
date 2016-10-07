@@ -545,7 +545,8 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 
 			if (mEnabled & ((1<<iNemoAcceleration) | (1<<MagCalAcceleration) |
 				(1<<GeoMagRotVectAcceleration) | (1<<Orientation) |
-				(1<<Linear_Accel) | (1<<Gravity_Accel) | (1<<Gbias)))
+				(1<<Linear_Accel) | (1<<Gravity_Accel) | (1<<Gbias) |
+				(1<<VirtualGyro)))
 			{
 				sensors_vec_t sData;
 				memcpy(sData.v, data_rot, sizeof(data_rot));
