@@ -25,10 +25,10 @@
 #include <sys/types.h>
 
 #define DELAY_OFF		(-1000000)
-#define MSEC_TO_SEC(x)		(x / 1000)
-#define NSEC_TO_MSEC(x)		(x / 1000000)
-#define MSEC_TO_NSEC(x)		(x * 1000000)
-#define SEC_TO_MSEC(x)		(x * 1000)
+#define MSEC_TO_SEC(x)		((x) / 1000)
+#define NSEC_TO_MSEC(x)		((x) / 1000000)
+#define MSEC_TO_NSEC(x)		((x) * 1000000)
+#define SEC_TO_MSEC(x)		((x) * 1000)
 #define SEC_TO_NSEC(x)		(MSEC_TO_NSEC(SEC_TO_MSEC(x)))
 /*****************************************************************************/
 
