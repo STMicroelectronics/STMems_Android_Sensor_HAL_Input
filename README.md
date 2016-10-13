@@ -47,6 +47,102 @@ STM Sensor HAL is written in *C++* language using the object-oriented approach, 
 
 Configuration parameters for each device (such as the name of the sensor, default full scale, names of the sysfs files, etc.) are specified in a dedicated file placed in *conf* directory and named *conf_<sensor_name\>.h* (e.g. *conf_LSM6DSM.h*)
 
+	/* ACCELEROMETER SENSOR */
+	#define SENSOR_ACC_LABEL				"LSM6DSM 3-axis Accelerometer Sensor"
+	#define SENSOR_DATANAME_ACCELEROMETER	"ST LSM6DSM Accelerometer Sensor"
+	#define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"
+	#define ACCEL_ENABLE_FILE_NAME			"accel/enable"
+	#define ACCEL_RANGE_FILE_NAME			"accel/scale"
+	#define ACCEL_MAX_RANGE					8 * GRAVITY_EARTH
+	#define ACCEL_MAX_ODR					200
+	#define ACCEL_MIN_ODR					13
+	#define ACCEL_POWER_CONSUMPTION			0.6f
+	#define ACCEL_DEFAULT_FULLSCALE			4
+	
+	/* GYROSCOPE SENSOR */
+	#define SENSOR_GYRO_LABEL				"LSM6DSM 3-axis Gyroscope sensor"
+	#define SENSOR_DATANAME_GYROSCOPE		"ST LSM6DSM Gyroscope Sensor"
+	#define GYRO_DELAY_FILE_NAME			"gyro/polling_rate"
+	#define GYRO_ENABLE_FILE_NAME			"gyro/enable"
+	#define GYRO_RANGE_FILE_NAME			"gyro/scale"
+	#define GYRO_MAX_RANGE					(2000.0f * (float)M_PI/180.0f)
+	#define GYRO_MAX_ODR					200
+	#define GYRO_MIN_ODR					13
+	#define GYRO_POWER_CONSUMPTION			4.0f
+	#define GYRO_DEFAULT_FULLSCALE			2000
+	
+...
+
+	#define EVENT_TYPE_ACCEL			EV_MSC
+	#define EVENT_TYPE_GYRO				EV_MSC
+	
+	#define EVENT_TYPE_TIME_MSB			MSC_SCAN
+	#define EVENT_TYPE_TIME_LSB			MSC_MAX
+	
+	#define EVENT_TYPE_ACCEL_X			MSC_SERIAL
+	#define EVENT_TYPE_ACCEL_Y			MSC_PULSELED
+	#define EVENT_TYPE_ACCEL_Z			MSC_GESTURE
+	
+	#define EVENT_TYPE_GYRO_X			MSC_SERIAL
+	#define EVENT_TYPE_GYRO_Y			MSC_PULSELED
+	#define EVENT_TYPE_GYRO_Z			MSC_GESTURE
+	
+...
+		
+	/* In this section you must define the axis mapping for individuate one only coordinate system ENU
+	 *
+	 * Example:
+	 *                                                 y'     /| z'
+	 *                                                  ^   /
+	 *                                                  |  / 
+	 *                                                  | /
+	 *                                                  |/ 
+	 *   +----------------------------------------------+---------> x'
+	 *   |          ^ x                                 |
+	 *   |          |                       ^ z         |
+	 *   |          |                       |           |
+	 *   |    +-----+---> y                 |           |
+	 *   |    | ACC |             <---+-----+           |
+	 *   |    |     |             x   | GYR |           |
+	 *   |    +-----+                 |     |           |
+	 *   |   /                        +-----+           |
+	 *   | |/       y ^  /| z              /            |
+	 *   |  z         | /                |/             |
+	 *   |            |/                   y            |
+	 *   |      +-----+---> x                           |
+	 *   |      | MAG |                                 |
+	 *   |      |     |                                 |
+	 *   |      +-----+                                 |
+	 *   |                                        BOARD |
+	 *   +----------------------------------------------+
+	 *
+	 *
+	 *   ACCELEROMETER:
+	 *
+	 *     board        acc     |  0  1  0 |
+	 *   [x' y' z'] = [x y z] * |  1  0  0 |
+	 *                          |  0  0 -1 |
+	 *
+	 *   GYROSCOPE:
+	 *
+	 *     board        gyr     | -1  0  0 |
+	 *   [x' y' z'] = [x y z] * |  1  0  0 |
+	 *                          |  0  -1 0 |
+	 *
+	*/
+	static short matrix_acc[3][3] = {
+					{ 0, 1, 0 },
+					{ -1, 0, 0 },
+					{ 0, 0, 1 }
+					};
+	
+	static short matrix_gyr[3][3] = {
+					{ 0, 1, 0 },
+					{ -1, 0, 0 },
+					{ 0, 0, 1 }
+					};
+	
+	
 
 Integration details
 =============
