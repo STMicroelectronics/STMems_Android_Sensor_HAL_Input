@@ -54,6 +54,7 @@ endef
 # - LSM6DS0                                                                    #
 # - LSM6DS3                                                                    #
 # - LSM6DSM                                                                    #
+# - LSM6DSL                                                                    #
 # - LSM9DS0                                                                    #
 # - LSM9DS1                                                                    #
 # - L3GD20                                                                     #
