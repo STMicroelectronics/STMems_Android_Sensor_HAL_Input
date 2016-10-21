@@ -116,12 +116,14 @@
 #if defined(LIS2HH12)
   #include "conf_LIS2HH12.h"
 #endif
-
 #if defined(L3GD20)
   #include "conf_L3GD20.h"
 #endif
 #if defined(LPS331AP)
   #include "conf_LPS331AP.h"
+#endif
+#if defined(LIS2DW12)
+  #include "conf_LIS2DW12.h"
 #endif
 #if defined(LPS22HB)
   #include "conf_LPS22HB.h"
