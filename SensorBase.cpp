@@ -29,7 +29,6 @@
 #include <linux/ioctl.h>
 #include <linux/rtc.h>
 #include <utils/Atomic.h>
-#include <linux/android_alarm.h>
 
 #include "SensorBase.h"
 #include "configuration.h"
@@ -412,39 +411,3 @@ int64_t systemTime(int clock)
 	return int64_t(t.tv_sec)*1000000000LL + t.tv_nsec;
 }
 
-int64_t SensorBase::elapsedRealtimeNano()
-{
-	struct timespec ts;
-	int result;
-	int64_t timestamp;
-
-	static int s_fd = -1;
-
-	if (s_fd == -1) {
-		int fd = open("/dev/alarm", O_RDONLY);
-		if (android_atomic_cmpxchg(-1, fd, &s_fd)) {
-			close(fd);
-		}
-	}
-
-	result = ioctl(s_fd, ANDROID_ALARM_GET_TIME(ANDROID_ALARM_ELAPSED_REALTIME), &ts);
-
-	if (result == 0) {
-		timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
-		return timestamp;
-	}
-
-	// /dev/alarm doesn't exist, fallback to CLOCK_BOOTTIME
-	result = clock_gettime(CLOCK_BOOTTIME, &ts);
-	if (result == 0) {
-		timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
-		return timestamp;
-	}
-
-	// XXX: there was an error, probably because the driver didn't
-	// exist ... this should return
-	// a real error, like an exception!
-	timestamp = systemTime(SYSTEM_TIME_MONOTONIC);
-
-	return timestamp;
-}

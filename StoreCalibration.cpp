@@ -25,7 +25,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <private/android_filesystem_config.h>
-#include <selinux/android.h>
 
 #if defined(STORE_CALIB_ENABLED)
 
