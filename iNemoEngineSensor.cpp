@@ -170,13 +170,13 @@ iNemoEngineSensor::iNemoEngineSensor()
 iNemoEngineSensor::~iNemoEngineSensor()
 {
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-	iNemoEngineSensor::gyr->~SensorBase();
+	iNemoEngineSensor::gyr->~GyroSensor();
 #endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
-	iNemoEngineSensor::mag->~SensorBase();
+	iNemoEngineSensor::mag->~MagnSensor();
 #endif
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-	iNemoEngineSensor::acc->~SensorBase();
+	iNemoEngineSensor::acc->~AccelSensor();
 #endif
 }
 
