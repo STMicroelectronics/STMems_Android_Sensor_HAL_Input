@@ -21,6 +21,15 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_PRELINK_MODULE := false
+LOCAL_PROPRIETARY_MODULE := true
+LOCAL_MODULE_OWNER := STMicroelectronics
+
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
+
 define all-module-under-lib
 	$(wildcard $(LOCAL_PATH)/lib/*/module.mk)
 endef
@@ -28,11 +37,6 @@ endef
 define all-dir-under-lib
 	$(foreach directory,$(shell cd $(LOCAL_PATH);find lib/ -type d),\
 		$(addprefix $(LOCAL_PATH)/,$(directory)))
-endef
-
-define all-cpp-source-files
-	$(patsubst ./%,%, \
-		$(shell cd $(LOCAL_PATH); find . -name "*.cpp"))
 endef
 
 define def_macro
@@ -87,29 +91,22 @@ endef
 ENABLED_SENSORS := LIS2DH12
 ENABLED_MODULES :=
 
-LOCAL_ARM_MODE := arm
-LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
-LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_MODULE_TAGS := optional
+LOCAL_C_INCLUDES := $(call all-dir-under-lib) \
+		    $(LOCAL_PATH)/include/ \
+		    $(LOCAL_PATH)/conf/ \
+		    bionic
 
-LOCAL_C_INCLUDES := 		\
-				$(call all-dir-under-lib) \
-				$(LOCAL_PATH)/include/ \
-				$(LOCAL_PATH)/conf/ \
-				bionic
 LOCAL_STATIC_LIBRARIES :=
 
 include $(call all-module-under-lib)
 
-LOCAL_CFLAGS := 		\
-				-DLOG_TAG=\"Sensors\" \
-				-DANDROID_VERSION=$(PLATFORM_SDK_VERSION) \
-				$(call def_macro, $(ENABLED_SENSORS)) \
-				$(call def_macro, $(ENABLED_MODULES))
+LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\" \
+		-DANDROID_VERSION=$(PLATFORM_SDK_VERSION) \
+		$(call def_macro, $(ENABLED_SENSORS)) \
+		$(call def_macro, $(ENABLED_MODULES))
 
 
-LOCAL_SRC_FILES := $(call all-cpp-source-files)
+LOCAL_SRC_FILES := $(call all-cpp-files-under,.)
 
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl libc
 
