@@ -51,7 +51,6 @@ endef
 # - LSM330DLC                                                                  #
 # - LSM303AGR                                                                  #
 # - LSM303AH                                                                   #
-# - LSM303A                                                                    #
 # - LSM303C                                                                    #
 # - LSM303D                                                                    #
 # - LSM303DLHC                                                                 #
@@ -63,7 +62,6 @@ endef
 # - LSM9DS1                                                                    #
 # - L3GD20                                                                     #
 # - L3GD20H                                                                    #
-# - LIS2DG                                                                     #
 # - LIS2DE                                                                     #
 # - LIS2DS12                                                                   #
 # - LIS3MDL                                                                    #
