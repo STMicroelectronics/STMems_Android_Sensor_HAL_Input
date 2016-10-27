@@ -74,6 +74,7 @@ endef
 # - ASM330LXH                                                                  #
 # - A3G4250D                                                                   #
 # - AIS328DQ                                                                   #
+# - HTS221                                                                     #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #
 # - V_GYRO                                                                     #
