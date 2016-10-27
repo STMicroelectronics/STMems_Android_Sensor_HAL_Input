@@ -20,7 +20,7 @@
 #define CONFIGURATION_LPS25H_H
 
 #define SENSORS_PRESSURE_ENABLE		(1)
-#define SENSORS_TEMPERATURE_ENABLE	(1)
+#define SENSORS_TEMP_PRESS_ENABLE	(1)
 
 /* PRESSURE SENSOR */
 #define SENSOR_PRESS_LABEL		"LPS25H Pressure sensor"		// Label views in Android Applications
@@ -32,9 +32,12 @@
 #define PRESS_MAX_RANGE			1260					// Set Max Full-scale [hPa]
 #define TEMP_MAX_RANGE			105					// Set Max Full-scale [Celsius]
 #define TEMPERATURE_OFFSET		42.5f
-#define PRESS_TEMP_MAX_ODR		25					// Set Max value of ODR [Hz]
-#define PRESS_TEMP_MIN_ODR		1					// Set Min value of ODR [Hz]
-#define PRESS_TEMP_POWER_CONSUMPTION	0.015f					// Set sensor's power consumption [mA]
+#define PRESS_MAX_ODR			25					// Set Max value of ODR [Hz]
+#define PRESS_MIN_ODR			1					// Set Min value of ODR [Hz]
+#define PRESS_POWER_CONSUMPTION		0.015f					// Set sensor's power consumption [mA]
+#define TEMP_MAX_ODR			PRESS_MAX_ODR				// Set Max value of ODR [Hz]
+#define TEMP_MIN_ODR			PRESS_MIN_ODR				// Set Min value of ODR [Hz]
+#define TEMP_POWER_CONSUMPTION		PRESS_POWER_CONSUMPTION			// Set sensor's power consumption [mA]
 
 /*****************************************************************************/
 /* EVENT TYPE */
@@ -42,6 +45,7 @@
 
 /* Event Type in pressure sensor: see input_set_abs_params() function in your input driver */
 #define EVENT_TYPE_PRESSURE		MSC_SERIAL
+#define EVENT_TYPE_TEMPERATURE		MSC_PULSELED
 
 /*****************************************************************************/
 /* DATA CONVERSION */

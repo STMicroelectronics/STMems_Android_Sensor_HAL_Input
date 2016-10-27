@@ -17,7 +17,7 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_TEMPERATURE_ENABLE == 1) || (SENSORS_PRESSURE_ENABLE == 1)
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 
 #ifndef ANDROID_PRESS_SENSOR_H
 #define ANDROID_PRESS_SENSOR_H
@@ -43,8 +43,8 @@ extern "C" {
 
 struct input_event;
 
-class PressTempSensor : public SensorBase {
-
+class PressSensor : public SensorBase {
+private:
 	enum {
 		Pressure = 0,
 		Temperature,
@@ -59,7 +59,6 @@ class PressTempSensor : public SensorBase {
 
 	int setInitialState();
 
-private:
 	enum channelid{
 		pressChan = 0,
 		tempChan
@@ -74,12 +73,11 @@ private:
 	virtual int initCompensationAlgo(void);
 #endif
 	int writeSensorDelay(int handle);
-
 public:
-	PressTempSensor();
-	virtual ~PressTempSensor();
+	PressSensor();
+	virtual ~PressSensor();
 	virtual int readEvents(sensors_event_t* data, int count);
-	virtual bool hasPendingEvents() const;
+	virtual bool hasPendingEvents() const { return mHasPendingEvent; }
 	virtual int setDelay(int32_t handle, int64_t ns);
 	virtual int setFullScale(int32_t handle, int value);
 	virtual int enable(int32_t handle, int enabled, int type);
@@ -88,4 +86,4 @@ public:
 
 #endif  // ANDROID_PRESS_SENSOR_H
 
-#endif /* SENSORS_TEMPERATURE_ENABLE | SENSORS_PRESSURE_ENABLE */
+#endif /* SENSORS_TEMP_PRESS_ENABLE | SENSORS_PRESSURE_ENABLE */

@@ -17,7 +17,7 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_PRESSURE_ENABLE == 1)
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 
 #include <fcntl.h>
 #include <errno.h>
@@ -29,17 +29,17 @@
 #include <sys/select.h>
 #include <cutils/log.h>
 
-#include "PressTempSensor.h"
+#include "PressSensor.h"
 
 #define FETCH_FULL_EVENT_BEFORE_RETURN		0
 
 /*****************************************************************************/
 
-int PressTempSensor::current_fullscale = 0;
-int unsigned PressTempSensor::mEnabled = 0;
+int PressSensor::current_fullscale = 0;
+int unsigned PressSensor::mEnabled = 0;
 
-PressTempSensor::PressTempSensor()
-	: SensorBase(NULL, SENSOR_DATANAME_BAROMETER),
+PressSensor::PressSensor() :
+	SensorBase(NULL, SENSOR_DATANAME_BAROMETER),
 	mPendingMask(0),
 	mInputReader(4),
 	mHasPendingEvent(false)
@@ -50,33 +50,33 @@ PressTempSensor::PressTempSensor()
 	mPendingEvents[Pressure].sensor = ID_PRESSURE;
 	mPendingEvents[Pressure].type = SENSOR_TYPE_PRESSURE;
 
-#if (SENSORS_TEMPERATURE_ENABLE == 1)
+#if (SENSORS_TEMP_PRESS_ENABLE == 1)
 	mPendingEvents[Temperature].version = sizeof(sensors_event_t);
 	mPendingEvents[Temperature].sensor = ID_TEMPERATURE;
 	mPendingEvents[Temperature].type = SENSOR_TYPE_TEMPERATURE;
 #endif
 
 	if (data_fd) {
-		STLOGI("PressTempSensor::PressTempSensor press_device_sysfs_path:(%s)", sysfs_device_path);
+		STLOGI("PressSensor::PressSensor press_device_sysfs_path:(%s)", sysfs_device_path);
 #if PRESS_COMPENSATION_ENABLE == 1
 		initCompensationAlgo();
 #endif
 	} else {
-		STLOGE("PressTempSensor::PressTempSensor press_device_sysfs_path:(%s) not found", sysfs_device_path);
+		STLOGE("PressSensor::PressSensor press_device_sysfs_path:(%s) not found", sysfs_device_path);
 	}
 }
 
-PressTempSensor::~PressTempSensor()
+PressSensor::~PressSensor()
 {
 	if (mEnabled) {
 		enable(SENSORS_PRESSURE_HANDLE, 0, 0);
-#if (SENSORS_TEMPERATURE_ENABLE == 1)
+#if (SENSORS_TEMP_PRESS_ENABLE == 1)
 		enable(SENSORS_TEMPERATURE_HANDLE, 0, 0);
 #endif
 	}
 }
 
-int PressTempSensor::setInitialState()
+int PressSensor::setInitialState()
 {
 	struct input_absinfo absinfo_pressure;
 	struct input_absinfo absinfo_temperature;
@@ -103,7 +103,7 @@ int PressTempSensor::setInitialState()
 	return 0;
 }
 
-int PressTempSensor::getWhatFromHandle(int32_t handle)
+int PressSensor::getWhatFromHandle(int32_t handle)
 {
 	int what = -1;
 
@@ -111,7 +111,7 @@ int PressTempSensor::getWhatFromHandle(int32_t handle)
 		case SENSORS_PRESSURE_HANDLE:
 			what = Pressure;
 			break;
-#if (SENSORS_TEMPERATURE_ENABLE == 1)
+#if (SENSORS_TEMP_PRESS_ENABLE == 1)
 		case SENSORS_TEMPERATURE_HANDLE:
 			what = Temperature;
 			break;
@@ -123,13 +123,14 @@ int PressTempSensor::getWhatFromHandle(int32_t handle)
 	return what;
 }
 
-int PressTempSensor::writeSensorDelay(int handle)
+int PressSensor::writeSensorDelay(int handle)
 {
 	int err = writeDelay(handle, delayms);
-	return (err >= 0) ? 0 : err;
+
+	return err >= 0 ? 0 : err;
 }
 
-int PressTempSensor::enable(int32_t handle, int en, int type)
+int PressSensor::enable(int32_t handle, int en, int type)
 {
 	int err = 0;
 	int what = -1;
@@ -171,11 +172,7 @@ int PressTempSensor::enable(int32_t handle, int en, int type)
 	return err;
 }
 
-bool PressTempSensor::hasPendingEvents() const {
-	return mHasPendingEvent;
-}
-
-int PressTempSensor::setDelay(int32_t handle, int64_t delay_ns)
+int PressSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
 	int err = -1, what;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
@@ -189,14 +186,13 @@ int PressTempSensor::setDelay(int32_t handle, int64_t delay_ns)
 
 	delayms = delay_ms;
 
-	// Update sysfs
 	if (mEnabled & (1 << what))
 		err = writeSensorDelay(handle);
 
 	return err;
 }
 
-int PressTempSensor::setFullScale(int32_t __attribute__((unused))handle, int value)
+int PressSensor::setFullScale(int32_t __attribute__((unused))handle, int value)
 {
 	int err = -1;
 
@@ -216,15 +212,14 @@ int PressTempSensor::setFullScale(int32_t __attribute__((unused))handle, int val
 	return err;
 }
 
-int PressTempSensor::readEvents(sensors_event_t* data, int count)
+int PressSensor::readEvents(sensors_event_t* data, int count)
 {
-	static int cont = 0;
 	static float lastTempValue = 0.0f;
 	float pressureCompansationOffset = 0.0f;
 
 
 #if DEBUG_PRESSURE_SENSOR == 1
-	STLOGD("PressTempSensor::readEvents (count=%d)",count);
+	STLOGD("PressSensor::readEvents (count=%d)",count);
 #endif
 
 	if (count < 1)
@@ -246,16 +241,14 @@ int PressTempSensor::readEvents(sensors_event_t* data, int count)
 #endif
 
 	while (count && mInputReader.readEvent(&event)) {
-		
 #if DEBUG_PRESSURE_SENSOR == 1
-		STLOGD("PressTempSensor::readEvents (count=%d),type(%d)",count,event->type);
+		STLOGD("PressSensor::readEvents (count=%d),type(%d)",count,event->type);
 #endif
 
 		if (event->type == EV_MSC) {
 			float value = (float) event->value;
 
 			if (event->code == EVENT_TYPE_PRESSURE) {
-
 #if PRESS_COMPENSATION_ENABLE == 1
 				pressureCompansationOffset = (float)LPS331AP_getPressureCompensationOffSet( lastTempValue );
 #endif
@@ -263,14 +256,14 @@ int PressTempSensor::readEvents(sensors_event_t* data, int count)
 				mPendingEvents[Pressure].data[pressChan] = value * CONVERT_PRESS;
 				mPendingEvents[Pressure].data[tempChan] = TEMPERATURE_OFFSET + lastTempValue * CONVERT_TEMP;
 			}
-#if (SENSORS_TEMPERATURE_ENABLE == 1)
+#if (SENSORS_TEMP_PRESS_ENABLE == 1)
 			else if (event->code == EVENT_TYPE_TEMPERATURE) {
 				lastTempValue = value;
 				mPendingEvents[Temperature].temperature = TEMPERATURE_OFFSET + value * CONVERT_TEMP;
 			}
 #endif
 			else {
-				STLOGE("PressTempSensor: unknown event code (type=%d, code=%d)", event->type,event->code);
+				STLOGE("PressSensor: unknown event code (type=%d, code=%d)", event->type,event->code);
 			}
 		} else if (event->type == EV_SYN) {
 			if(mEnabled & (1<<Pressure))
@@ -291,7 +284,7 @@ int PressTempSensor::readEvents(sensors_event_t* data, int count)
 				}
 			}
 		} else {
-			STLOGE("PressTempSensor: unknown event type (type=%d, code=%d)", event->type, event->code);
+			STLOGE("PressSensor: unknown event type (type=%d, code=%d)", event->type, event->code);
 		}
 		mInputReader.next();
 	}
@@ -310,7 +303,7 @@ int PressTempSensor::readEvents(sensors_event_t* data, int count)
 }
 
 #if PRESS_COMPENSATION_ENABLE == 1
-int PressTempSensor::initCompensationAlgo(void)
+int PressSensor::initCompensationAlgo(void)
 {
 	FILE *fd_param;
 	char device_sysfs_path_prs[PATH_MAX];
@@ -318,12 +311,12 @@ int PressTempSensor::initCompensationAlgo(void)
 	strcat(device_sysfs_path_prs, PRESS_COMPENSATION_FILE_NAME);
 	if ((fd_param = fopen(device_sysfs_path_prs, "r")) == NULL ) {
 		/* ERROR HANDLING; you can check errno variable to see what went wrong */
-		STLOGE("PressTempSensor:Error Occured while opening %s File.!!\n", device_sysfs_path_prs);
+		STLOGE("PressSensor:Error Occured while opening %s File.!!\n", device_sysfs_path_prs);
 		return -1;
 	} else {
 
 #if DEBUG_PRESSURE_SENSOR == 1
-		STLOGD("PressTempSensor:File %s Opened Successfully !!\n", device_sysfs_path_prs);
+		STLOGD("PressSensor:File %s Opened Successfully !!\n", device_sysfs_path_prs);
 #endif
 
 		fscanf(fd_param, "%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\n",
@@ -332,7 +325,7 @@ int PressTempSensor::initCompensationAlgo(void)
 		&calvalues.TCS1, &calvalues.TCS2, &calvalues.TCS3,
 		&calvalues.digGain);
 
-		STLOGI("PressTempSensor:Acquired Pressure Compansation Values: TSL = 0x%04x, TSH = 0x%04x, TCV1 = 0x%04x, TCV2 = 0x%04x, TCV3 = 0x%04x, TCS1 = 0x%04x, TCS2 = 0x%04x, TCS3 = 0x%04x, DGAIN = 0x%04x\n", calvalues.TSL, calvalues.TSH, calvalues.TCV1, calvalues.TCV2, calvalues.TCV3, calvalues.TCS1, calvalues.TCS2, calvalues.TCS3, calvalues.digGain);
+		STLOGI("PressSensor:Acquired Pressure Compansation Values: TSL = 0x%04x, TSH = 0x%04x, TCV1 = 0x%04x, TCV2 = 0x%04x, TCV3 = 0x%04x, TCS1 = 0x%04x, TCS2 = 0x%04x, TCS3 = 0x%04x, DGAIN = 0x%04x\n", calvalues.TSL, calvalues.TSH, calvalues.TCV1, calvalues.TCV2, calvalues.TCV3, calvalues.TCS1, calvalues.TCS2, calvalues.TCS3, calvalues.digGain);
 
 		fclose(fd_param);
 		LPS331AP_CalculateAccuracyQuadr(calvalues);

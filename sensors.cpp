@@ -46,8 +46,8 @@
 #if (SENSOR_FUSION_ENABLE == 1)
 #include "iNemoEngineSensor.h"
 #endif
-#if (SENSORS_PRESSURE_ENABLE == 1)
-#include "PressTempSensor.h"
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
+#include "PressSensor.h"
 #endif
 #if (SENSORS_VIRTUAL_GYROSCOPE_ENABLE == 1)
 #include "VirtualGyroSensor.h"
@@ -706,7 +706,7 @@ private:
 		inemo,
 #endif
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
-		presstemp,
+		press,
 #endif
 #if(SENSORS_TILT_ENABLE == 1)
 		tilt,
@@ -785,7 +785,7 @@ private:
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 			case SENSORS_PRESSURE_HANDLE:
 			case SENSORS_TEMPERATURE_HANDLE:
-				return presstemp;
+				return press;
 #endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
 			case SENSORS_GYROSCOPE_HANDLE:
@@ -897,10 +897,10 @@ sensors_poll_context_t::sensors_poll_context_t()
 #endif
 
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
-	mSensors[presstemp] = new PressTempSensor();
-	mPollFds[presstemp].fd = mSensors[presstemp]->getFd();
-	mPollFds[presstemp].events = POLLIN;
-	mPollFds[presstemp].revents = 0;
+	mSensors[press] = new PressSensor();
+	mPollFds[press].fd = mSensors[press]->getFd();
+	mPollFds[press].events = POLLIN;
+	mPollFds[press].revents = 0;
 #endif
 
 #if (SENSORS_TILT_ENABLE == 1)
