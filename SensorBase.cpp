@@ -225,7 +225,7 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 			className = "GyroSensor::Enable()";
 			break;
 #endif
-#if (SENSORS_PRESSURE_ENABLE == 1)
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 		case SENSORS_PRESSURE_HANDLE:
 		case SENSORS_TEMPERATURE_HANDLE:
 			strcpy(&sysfs_device_path[sysfs_device_path_len], PRESS_ENABLE_FILE_NAME);
@@ -260,6 +260,13 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 		case SENSORS_TAP_HANDLE:
 			strcpy(&sysfs_device_path[sysfs_device_path_len], TAP_ENABLE_FILE_NAME);
 			className = "TapSensor::Enable()";
+			break;
+#endif
+#if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
+		case SENSORS_TEMPERATURE_HANDLE:
+		case SENSORS_HUMIDITY_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], HUMIDITY_ENABLE_FILE_NAME);
+			className = "HimiditySensor::Enable()";
 			break;
 #endif
 		default:
@@ -316,11 +323,18 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 			className = "StepCounterSensor::Delay()";
 			break;
 #endif
-#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMPERATURE_ENABLE == 1))
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 		case SENSORS_PRESSURE_HANDLE:
 		case SENSORS_TEMPERATURE_HANDLE:
 			strcpy(&sysfs_device_path[sysfs_device_path_len], PRESS_DELAY_FILE_NAME);
 			className = "PressTempSensor::Delay()";
+			break;
+#endif
+#if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
+		case SENSORS_TEMPERATURE_HANDLE:
+		case SENSORS_HUMIDITY_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], HUMIDITY_DELAY_FILE_NAME);
+			className = "HimiditySensor::Delay()";
 			break;
 #endif
 		default:

@@ -61,6 +61,7 @@ __BEGIN_DECLS
 #define ID_SIGN_MOTION				(ID_BASE+21)
 #define ID_ACTIVITY_RECOGNIZER			(ID_BASE+22)
 #define ID_TAP					(ID_BASE+23)
+#define ID_HUMIDITY				(ID_BASE+24)
 
 #define SENSORS_ACCELEROMETER_HANDLE		ID_ACCELEROMETER
 #define SENSORS_MAGNETIC_FIELD_HANDLE		ID_MAGNETIC_FIELD
@@ -86,6 +87,7 @@ __BEGIN_DECLS
 #define SENSORS_SIGN_MOTION_HANDLE		ID_SIGN_MOTION
 #define SENSORS_ACTIVITY_RECOGNIZER_HANDLE	ID_ACTIVITY_RECOGNIZER
 #define SENSORS_TAP_HANDLE			ID_TAP
+#define SENSORS_HUMIDITY_HANDLE			ID_HUMIDITY
 
 #define SENSOR_TYPE_TAP				(SENSOR_TYPE_DEVICE_PRIVATE_BASE + 2)
 #define SENSOR_TYPE_ACTIVITY			(SENSOR_TYPE_DEVICE_PRIVATE_BASE + 3)
@@ -97,9 +99,6 @@ __BEGIN_DECLS
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/
-
-/* Event Type in temperature sensor: see input_set_abs_params() function in your input driver */
-#define EVENT_TYPE_TEMPERATURE		MSC_PULSELED
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
 #define SENSOR_POLL_DEVICE sensors_poll_device_1

@@ -134,6 +134,9 @@
 #if defined(LPS25H)
   #include "conf_LPS25H.h"
 #endif
+#if defined(HTS221)
+  #include "conf_HTS221.h"
+#endif
 #if defined(SENSOR_FUSION)
   #include "conf_FUSION.h"
 #endif
@@ -198,6 +201,8 @@
 #else
   #define UNCALIB_GYRO_POWER_CONSUMPTION 	(GYRO_POWER_CONSUMPTION + MAGN_POWER_CONSUMPTION + ACCEL_POWER_CONSUMPTION)
 #endif
+
+#define SENSORS_TEMPERATURE_ENABLE	(SENSORS_TEMP_RH_ENABLE || SENSORS_TEMP_PRESS_ENABLE)
 
 /* DEBUG INFORMATION */
 #define DEBUG_ACCELEROMETER			(0)

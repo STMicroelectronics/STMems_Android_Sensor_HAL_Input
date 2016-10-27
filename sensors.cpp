@@ -67,6 +67,9 @@
 #if (SENSORS_TAP_ENABLE == 1)
 #include "TapSensor.h"
 #endif
+#if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
+#include "HumiditySensor.h"
+#endif
 
 
 /*****************************************************************************/
@@ -345,15 +348,15 @@ static const struct sensor_t sSensorList[] = {
 		SENSOR_TYPE_PRESSURE,
 		PRESS_MAX_RANGE,
 		0.0f,
-		PRESS_TEMP_POWER_CONSUMPTION,
-		FREQUENCY_TO_USECONDS(PRESS_TEMP_MAX_ODR),
+		PRESS_POWER_CONSUMPTION,
+		FREQUENCY_TO_USECONDS(PRESS_MAX_ODR),
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
 #if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_PRESSURE,
 		"",
-		FREQUENCY_TO_USECONDS(PRESS_TEMP_MIN_ODR),
+		FREQUENCY_TO_USECONDS(PRESS_MIN_ODR),
 		SENSOR_FLAG_CONTINUOUS_MODE,
 #endif
 #endif
@@ -369,15 +372,15 @@ static const struct sensor_t sSensorList[] = {
 		SENSOR_TYPE_TEMPERATURE,
 		TEMP_MAX_RANGE,
 		0.0f,
-		PRESS_TEMP_POWER_CONSUMPTION,
-		FREQUENCY_TO_USECONDS(PRESS_TEMP_MAX_ODR),
+		TEMP_POWER_CONSUMPTION,
+		FREQUENCY_TO_USECONDS(TEMP_MAX_ODR),
 #if (ANDROID_VERSION >= ANDROID_KK)
 		0,
 		0,
 #if (ANDROID_VERSION >= ANDROID_L)
 		SENSOR_STRING_TYPE_TEMPERATURE,
 		"",
-		FREQUENCY_TO_USECONDS(PRESS_TEMP_MIN_ODR),
+		FREQUENCY_TO_USECONDS(TEMP_MIN_ODR),
 		SENSOR_FLAG_CONTINUOUS_MODE,
 #endif
 #endif
@@ -606,6 +609,30 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+#if (SENSORS_HUMIDITY_ENABLE == 1)
+	{
+		SENSOR_HUMIDITY_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_HUMIDITY_HANDLE,
+		SENSOR_TYPE_RELATIVE_HUMIDITY,
+		HUMIDITY_MAX_RANGE,
+		0.0f,
+		HUMIDITY_POWER_CONSUMPTION,
+		FREQUENCY_TO_USECONDS(HUMIDITY_MAX_ODR),
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROID_L)
+		SENSOR_STRING_TYPE_RELATIVE_HUMIDITY,
+		"",
+		FREQUENCY_TO_USECONDS(HUMIDITY_MIN_ODR),
+		SENSOR_FLAG_CONTINUOUS_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 };
 
 
@@ -678,7 +705,7 @@ private:
 #if (SENSOR_FUSION_ENABLE == 1)
 		inemo,
 #endif
-#if (SENSORS_TEMPERATURE_ENABLE == 1) || (SENSORS_PRESSURE_ENABLE == 1)
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 		presstemp,
 #endif
 #if(SENSORS_TILT_ENABLE == 1)
@@ -695,6 +722,9 @@ private:
 #endif
 #if(SENSORS_TAP_ENABLE == 1)
 		tap,
+#endif
+#if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
+		humidity,
 #endif
 		numSensorDrivers,
 		numFds,
@@ -752,11 +782,8 @@ private:
 			case SENSORS_ROTATION_VECTOR_HANDLE:
 				return inemo;
 #endif
-#if (SENSORS_PRESSURE_ENABLE == 1)
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 			case SENSORS_PRESSURE_HANDLE:
-				return presstemp;
-#endif
-#if (SENSORS_TEMPERATURE_ENABLE == 1)
 			case SENSORS_TEMPERATURE_HANDLE:
 				return presstemp;
 #endif
@@ -820,6 +847,11 @@ private:
 			case SENSORS_TAP_HANDLE:
 				return tap;
 #endif
+#if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
+			case SENSORS_TEMPERATURE_HANDLE:
+			case SENSORS_HUMIDITY_HANDLE:
+				return humidity;
+#endif
 		}
 		return -EINVAL;
 	}
@@ -864,7 +896,7 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[inemo].revents = 0;
 #endif
 
-#if (SENSORS_TEMPERATURE_ENABLE == 1) || (SENSORS_PRESSURE_ENABLE == 1)
+#if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 	mSensors[presstemp] = new PressTempSensor();
 	mPollFds[presstemp].fd = mSensors[presstemp]->getFd();
 	mPollFds[presstemp].events = POLLIN;
@@ -904,6 +936,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[tap].fd = mSensors[tap]->getFd();
 	mPollFds[tap].events = POLLIN;
 	mPollFds[tap].revents = 0;
+#endif
+
+#if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
+	mSensors[humidity] = new HumiditySensor();
+	mPollFds[humidity].fd = mSensors[humidity]->getFd();
+	mPollFds[humidity].events = POLLIN;
+	mPollFds[humidity].revents = 0;
 #endif
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
