@@ -77,9 +77,6 @@
 #if defined(LSM303AGR)
 #include "conf_LSM303AGR.h"
 #endif
-#if defined(LSM303A)
-#include "conf_LSM303A.h"
-#endif
 #if defined(LSM303AH)
 #include "conf_LSM303AH.h"
 #endif
