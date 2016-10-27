@@ -18,15 +18,15 @@ Currently supported sensors are:
 
 ### Inertial Module Unit (IMU):
 
-> asm330lxh, lsm330, lsm330dlc, lsm6ds0,  lsm6ds3, lsm6dsm, lsm9ds0, lsm9ds1, lsm330d
+> asm330lxh, lsm330, lsm330dlc, lsm6ds0,  lsm6ds3, lsm6dsm, lsm6dsl, lsm9ds0, lsm9ds1, lsm330d
 
 ### ECompass:
 
-> lsm303agr, lsm303ah, lsm303c, lsm303d, lsm303dlhc, lsm303a
+> lsm303agr, lsm303ah, lsm303c, lsm303d, lsm303dlhc
 
 ### Accelerometer:
 
-> ais328dq, lis2dg, lis2dh12, lis2ds12, lis2hh, lis2hh12, lis3dh
+> ais328dq, lis2de, lis2dh12, lis2ds12, lis2hh12, lis3dh
 
 ### Gyroscope:
 
@@ -38,12 +38,15 @@ Currently supported sensors are:
 
 ### Pressure and Temperature:
 
-> lps22hb, lps25h, lps331ap
+> lps22hb, lps25h
 
+### Humidity and Temperature:
+
+> hts221
 
 Software architecture
 ===============
-STM Sensor HAL is written in *C++* language using the object-oriented approach, for each hw sensor there is a custom class file (*AccelSensor.cpp*, *MagnSensor.cpp*, *GyroSensor.cpp* and *PressTempSensor.cpp*) which extends the common base class (*SensorBase.cpp*).
+STM Sensor HAL is written in *C++* language using the object-oriented approach, for each hw sensor there is a custom class file (*AccelSensor.cpp*, *MagnSensor.cpp*, *GyroSensor.cpp*, *PressSensor.cpp* and *HumiditySensor.cpp*) which extends the common base class (*SensorBase.cpp*).
 
 Configuration parameters for each device (such as the name of the sensor, default full scale, names of the sysfs files, etc.) are specified in a dedicated file placed in *conf* directory and named *conf_<sensor_name\>.h* (e.g. *conf_LSM6DSM.h*)
 
@@ -147,7 +150,7 @@ Configuration parameters for each device (such as the name of the sensor, defaul
 Integration details
 =============
 
-The Android.mk file defines the list of all supported devices. To enable a sensor put its name (e.g. *LSM6DSM*) in the *ENABLED_SENSORS* macro:
+The *Android.mk* file defines the list of all supported devices. To enable a sensor put its name (e.g. *LSM6DSM*) in the *ENABLED_SENSORS* macro:
 
 	ENABLED_SENSORS := LSM6DSM
 
@@ -183,11 +186,11 @@ STM propertary libraries are used to define composite sensor based on hardware o
 ### MAGCALIB:
 > STM Magnetometer Calibration library provides an accurate magnetometer Hard Iron (HI) and Soft Iron (SI) runtime compensation
 
-*ENABLED_MODULES* variable is used to enable support for proprietary STM libraries
+The *Android.mk* file enumerates STM libraries supported by the HAL. *ENABLED_MODULES* variable is used to enable support for proprietary STM libraries
 
 	ENABLED_MODULES := SENSOR_FUSION MAGCALIB GBIAS
 
-STM propertary libraries are available under License User Agreement (LUA)
+STM proprietary libraries release is subjected to License User Agreement (LUA) signature; please contact STMicroelectronics sales office and representatives for further information.
 
 
 Copyright
