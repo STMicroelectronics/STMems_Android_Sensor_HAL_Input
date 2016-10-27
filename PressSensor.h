@@ -31,18 +31,6 @@
 #include "SensorBase.h"
 #include "InputEventReader.h"
 
-#if PRESS_COMPENSATION_ENABLE == 1
-extern "C" {
-	#include "pressureCompensationAPI.h"
-};
-
-#define PRESS_COMPENSATION_FILE_NAME		"compensation_param"
-#endif
-
-/*****************************************************************************/
-
-struct input_event;
-
 class PressSensor : public SensorBase {
 private:
 	enum {
@@ -67,11 +55,6 @@ private:
 
 	char device_sysfs_path_prs[PATH_MAX];
 	int device_sysfs_path_prs_len;
-
-#if PRESS_COMPENSATION_ENABLE == 1
-	struct CalibrationPackage calvalues;
-	virtual int initCompensationAlgo(void);
-#endif
 	int writeSensorDelay(int handle);
 public:
 	PressSensor();
@@ -85,5 +68,4 @@ public:
 };
 
 #endif  // ANDROID_PRESS_SENSOR_H
-
 #endif /* SENSORS_TEMP_PRESS_ENABLE | SENSORS_PRESSURE_ENABLE */

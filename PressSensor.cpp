@@ -31,10 +31,6 @@
 
 #include "PressSensor.h"
 
-#define FETCH_FULL_EVENT_BEFORE_RETURN		0
-
-/*****************************************************************************/
-
 int PressSensor::current_fullscale = 0;
 int unsigned PressSensor::mEnabled = 0;
 
@@ -58,9 +54,6 @@ PressSensor::PressSensor() :
 
 	if (data_fd) {
 		STLOGI("PressSensor::PressSensor press_device_sysfs_path:(%s)", sysfs_device_path);
-#if PRESS_COMPENSATION_ENABLE == 1
-		initCompensationAlgo();
-#endif
 	} else {
 		STLOGE("PressSensor::PressSensor press_device_sysfs_path:(%s) not found", sysfs_device_path);
 	}
@@ -80,7 +73,6 @@ int PressSensor::setInitialState()
 {
 	struct input_absinfo absinfo_pressure;
 	struct input_absinfo absinfo_temperature;
-	float pressureCompansationOffset = 0.0f;
 	float value;
 
 	if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_PRESSURE), &absinfo_pressure) &&
@@ -90,12 +82,7 @@ int PressSensor::setInitialState()
 		mPendingEvents[Pressure].data[tempChan] = TEMPERATURE_OFFSET + value * CONVERT_TEMP;
 		mPendingEvents[Temperature].temperature = TEMPERATURE_OFFSET + value * CONVERT_TEMP;
 
-#if PRESS_COMPENSATION_ENABLE == 1
-		pressureCompansationOffset = (float)LPS331AP_getPressureCompensationOffSet(absinfo_temperature.value);
-#endif
-
 		value = absinfo_pressure.value;
-		value = value + pressureCompansationOffset;
 		mPendingEvents[Pressure].data[pressChan] = value * CONVERT_PRESS;
 		mHasPendingEvent = true;
 	}
@@ -215,8 +202,6 @@ int PressSensor::setFullScale(int32_t __attribute__((unused))handle, int value)
 int PressSensor::readEvents(sensors_event_t* data, int count)
 {
 	static float lastTempValue = 0.0f;
-	float pressureCompansationOffset = 0.0f;
-
 
 #if DEBUG_PRESSURE_SENSOR == 1
 	STLOGD("PressSensor::readEvents (count=%d)",count);
@@ -236,10 +221,6 @@ int PressSensor::readEvents(sensors_event_t* data, int count)
 	int numEventReceived = 0;
 	input_event const* event;
 
-#if FETCH_FULL_EVENT_BEFORE_RETURN
-	again:
-#endif
-
 	while (count && mInputReader.readEvent(&event)) {
 #if DEBUG_PRESSURE_SENSOR == 1
 		STLOGD("PressSensor::readEvents (count=%d),type(%d)",count,event->type);
@@ -249,10 +230,6 @@ int PressSensor::readEvents(sensors_event_t* data, int count)
 			float value = (float) event->value;
 
 			if (event->code == EVENT_TYPE_PRESSURE) {
-#if PRESS_COMPENSATION_ENABLE == 1
-				pressureCompansationOffset = (float)LPS331AP_getPressureCompensationOffSet( lastTempValue );
-#endif
-				value = value + pressureCompansationOffset;
 				mPendingEvents[Pressure].data[pressChan] = value * CONVERT_PRESS;
 				mPendingEvents[Pressure].data[tempChan] = TEMPERATURE_OFFSET + lastTempValue * CONVERT_TEMP;
 			}
@@ -289,49 +266,7 @@ int PressSensor::readEvents(sensors_event_t* data, int count)
 		mInputReader.next();
 	}
 
-#if FETCH_FULL_EVENT_BEFORE_RETURN
-	/* if we didn't read a complete event, see if we can fill and
-	try again instead of returning with nothing and redoing poll. */
-	if (numEventReceived == 0 && mEnabled == 1) {
-		n = mInputReader.fill(data_fd);
-		if (n)
-			goto again;
-	}
-#endif
-
 	return numEventReceived;
 }
-
-#if PRESS_COMPENSATION_ENABLE == 1
-int PressSensor::initCompensationAlgo(void)
-{
-	FILE *fd_param;
-	char device_sysfs_path_prs[PATH_MAX];
-	strcpy(device_sysfs_path_prs, sysfs_device_path);
-	strcat(device_sysfs_path_prs, PRESS_COMPENSATION_FILE_NAME);
-	if ((fd_param = fopen(device_sysfs_path_prs, "r")) == NULL ) {
-		/* ERROR HANDLING; you can check errno variable to see what went wrong */
-		STLOGE("PressSensor:Error Occured while opening %s File.!!\n", device_sysfs_path_prs);
-		return -1;
-	} else {
-
-#if DEBUG_PRESSURE_SENSOR == 1
-		STLOGD("PressSensor:File %s Opened Successfully !!\n", device_sysfs_path_prs);
-#endif
-
-		fscanf(fd_param, "%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\n",
-		&calvalues.TSL, &calvalues.TSH,
-		&calvalues.TCV1, &calvalues.TCV2, &calvalues.TCV3,
-		&calvalues.TCS1, &calvalues.TCS2, &calvalues.TCS3,
-		&calvalues.digGain);
-
-		STLOGI("PressSensor:Acquired Pressure Compansation Values: TSL = 0x%04x, TSH = 0x%04x, TCV1 = 0x%04x, TCV2 = 0x%04x, TCV3 = 0x%04x, TCS1 = 0x%04x, TCS2 = 0x%04x, TCS3 = 0x%04x, DGAIN = 0x%04x\n", calvalues.TSL, calvalues.TSH, calvalues.TCV1, calvalues.TCV2, calvalues.TCV3, calvalues.TCS1, calvalues.TCS2, calvalues.TCS3, calvalues.digGain);
-
-		fclose(fd_param);
-		LPS331AP_CalculateAccuracyQuadr(calvalues);
-		return 0;
-	}
-}
-#endif
 
 #endif /* SENSORS_PRESSURE_ENABLE */
