@@ -25,10 +25,18 @@ LOCAL_PRELINK_MODULE := false
 LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE_OWNER := STMicroelectronics
 
+ifeq ($(PLATFORM_SDK_VERSION),19)
+LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+else
 LOCAL_MODULE_RELATIVE_PATH := hw
+endif
 LOCAL_MODULE_TAGS := optional
 
+ifdef TARGET_BOARD_PLATFORM
 LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
+else
+LOCAL_MODULE := sensors.default
+endif # TARGET_BOARD_PLATFORM
 
 define all-module-under-lib
 	$(wildcard $(LOCAL_PATH)/lib/*/module.mk)
@@ -41,6 +49,11 @@ endef
 
 define def_macro
 	$(foreach d,$1,$(addprefix -D,$(d)))
+endef
+
+define all-cpp-source-files
+       $(patsubst ./%,%, \
+               $(shell cd $(LOCAL_PATH); find . -name "*.cpp"))
 endef
 
 ################################################################################
@@ -104,8 +117,7 @@ LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\" \
 		$(call def_macro, $(ENABLED_SENSORS)) \
 		$(call def_macro, $(ENABLED_MODULES))
 
-
-LOCAL_SRC_FILES := $(call all-cpp-files-under,.)
+LOCAL_SRC_FILES := $(call all-cpp-source-files)
 
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl libc
 
