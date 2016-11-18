@@ -150,22 +150,26 @@ Configuration parameters for each device (such as the name of the sensor, defaul
 Integration details
 =============
 
-The *Android.mk* file defines the list of all supported devices. To enable a sensor put its name (e.g. *LSM6DSM*) in the *ENABLED_SENSORS* macro:
+Copy HAL source code into *AOSP_DIR/hardware/STMicroelectronics/SensorHAL_Input* folder. During build process Android will include automatically the SensorHAL Android.mk.
+In *AOSP_DIR/device/{vendor}/{board}/device.mk* add package build information:
+
+	PRODUCT_PACKAGES += sensors.{TARGET_BOARD_PLATFORM}
+
+	Note: device.mk can not read $(TARGET_BOARD_PLATFORM) variable, read and replace the value from your BoardConfig.mk (e.g. PRODUCT_PACKAGES += sensors.msm8974 for Nexus 5)
+
+  The Android.mk file defines the list of all supported devices. To enable a sensor put its name (e.g. *LSM6DSM*) in the *ENABLED_SENSORS* macro:
 
 	ENABLED_SENSORS := LSM6DSM
 
-Before to build the code Android environment must be configured using Android Open Source Project (AOSP) toolchain:
+To compile SensorHAL_Input just build AOSP source code from *$TOP* folder
 
-    $ cd <ANDROID_ROOT>
-    $ source build/envsetup.sh
-    $ lunch <select target platform>
+	$ cd <AOSP_DIR>
+	$ source build/envsetup.sh
+	$ lunch <select target platform>
+	$ make V=99
 
-From now on Android utilities can be used to compile STM Sensor HAL
+The compiled library will be placed in *AOSP_DIR/out/target/product/{board}/system/vendor/lib/hw/sensor.{TARGET_BOARD_PLATFORM}.so*
 
-    $ export TOP=$(pwd)
-    $ cd <ST_SENSOR_HAL>
-    $ mm -B
-    
 For more information how to compile Android project please refer to [AOSP website](https://source.android.com/source/requirements.html) 
 
 
