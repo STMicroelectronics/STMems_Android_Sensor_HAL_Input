@@ -3,16 +3,16 @@ Index
 	* Introduction
 	* Software architecture
 	* Integration details
-	* STM propertary libraries
+	* STM proprietary libraries
 	* More information
 	* Copyright
 
 
 Introduction
 =========
-The STM Android sensor Hardware Abstraction Layer (*HAL*) defines a standard interface for STM sensors allowing Android to be agnostic about lower-level driver implementations (XXX link github). HAL library is packaged into modules (.so) file and loaded by the Android system at the appropriate time. For more information see [AOSP HAL Interface](https://source.android.com/devices/sensors/hal-interface.html) 
+The STM Android sensor Hardware Abstraction Layer (*HAL*) defines a standard interface for STM sensors allowing Android to be agnostic about lower-level driver implementations (XXX link github). The HAL library is packaged into modules (.so) file and loaded by the Android system at the appropriate time. For more information see [AOSP HAL Interface](https://source.android.com/devices/sensors/hal-interface.html) 
 
-STM Sensor HAL is leaning on [Linux Input framework](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/input) to gather data from sensor device drivers and forwards samples to Android Framework
+STM Sensor HAL is leaning on [Linux Input framework](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/input) to gather data from sensor device drivers and to forward samples to the Android Framework
 
 Currently supported sensors are:
 
@@ -20,7 +20,7 @@ Currently supported sensors are:
 
 > asm330lxh, lsm330, lsm330dlc, lsm6ds0,  lsm6ds3, lsm6dsm, lsm6dsl, lsm9ds0, lsm9ds1, lsm330d
 
-### ECompass:
+### eCompass:
 
 > lsm303agr, lsm303ah, lsm303c, lsm303d, lsm303dlhc
 
@@ -46,9 +46,9 @@ Currently supported sensors are:
 
 Software architecture
 ===============
-STM Sensor HAL is written in *C++* language using the object-oriented approach, for each hw sensor there is a custom class file (*AccelSensor.cpp*, *MagnSensor.cpp*, *GyroSensor.cpp*, *PressSensor.cpp* and *HumiditySensor.cpp*) which extends the common base class (*SensorBase.cpp*).
+STM Sensor HAL is written in *C++* language using object-oriented design. For each hw sensor there is a custom class file (*AccelSensor.cpp*, *MagnSensor.cpp*, *GyroSensor.cpp*, *PressSensor.cpp* and *HumiditySensor.cpp*) which extends the common base class (*SensorBase.cpp*).
 
-Configuration parameters for each device (such as the name of the sensor, default full scale, names of the sysfs files, etc.) are specified in a dedicated file placed in *conf* directory and named *conf_<sensor_name\>.h* (e.g. *conf_LSM6DSM.h*)
+Configuration parameters for each device (such as the name of the sensor, default full scale, names of the sysfs files, etc.) are specified in a dedicated file placed in the *conf* directory and named *conf_<sensor_name\>.h* (e.g. *conf_LSM6DSM.h*)
 
 	/* ACCELEROMETER SENSOR */
 	#define SENSOR_ACC_LABEL				"LSM6DSM 3-axis Accelerometer Sensor"
@@ -92,7 +92,7 @@ Configuration parameters for each device (such as the name of the sensor, defaul
 	
 ...
 		
-	/* In this section you must define the axis mapping for individuate one only coordinate system ENU
+	/* In this section the user must define the axis mapping to individuate only one coordinate system ENU
 	 *
 	 * Example:
 	 *                                                 y'     /| z'
@@ -150,8 +150,8 @@ Configuration parameters for each device (such as the name of the sensor, defaul
 Integration details
 =============
 
-Copy HAL source code into *AOSP_DIR/hardware/STMicroelectronics/SensorHAL_Input* folder. During build process Android will include automatically the SensorHAL Android.mk.
-In *AOSP_DIR/device/{vendor}/{board}/device.mk* add package build information:
+Copy the HAL source code into *<AOSP_DIR\>/hardware/STMicroelectronics/SensorHAL_Input* folder. During building process Android will include automatically the SensorHAL Android.mk.
+In *<AOSP_DIR\>/device/<vendor\>/<board\>/device.mk* add package build information:
 
 	PRODUCT_PACKAGES += sensors.{TARGET_BOARD_PLATFORM}
 
@@ -168,33 +168,33 @@ To compile SensorHAL_Input just build AOSP source code from *$TOP* folder
 	$ lunch <select target platform>
 	$ make V=99
 
-The compiled library will be placed in *AOSP_DIR/out/target/product/{board}/system/vendor/lib/hw/sensor.{TARGET_BOARD_PLATFORM}.so*
+The compiled library will be placed in *<AOSP_DIR\>/out/target/product/<board\>/system/vendor/lib/hw/sensor.{TARGET_BOARD_PLATFORM}.so*
 
-For more information how to compile Android project please refer to [AOSP website](https://source.android.com/source/requirements.html) 
+For more information on compiling an Android project, please consult the [AOSP website](https://source.android.com/source/requirements.html) 
 
 
-STM propertary libraries
+STM proprietary libraries
 ================
 
-STM propertary libraries are used to define composite sensor based on hardware ones (accelerometer, gyroscope, magnetometer) or to provide sensor calibration
+STM proprietary libraries are used to define composite sensors based on hardware (accelerometer, gyroscope, magnetometer) or to provide sensor calibration
 
 ### SENSOR_FUSION:
-> STM Sensor Fusion library is a complete 9-axis/6-axis solution which combines the measurements from 3-axis gyroscope, 3-axis magnetometer and 3-axis accelerometer to provide a robust absolute orientation vector and game orientation vector
+> The STM Sensor Fusion library is a complete 9-axis/6-axis solution which combines the measurements from a 3-axis gyroscope, a 3-axis magnetometer and a 3-axis accelerometer to provide a robust absolute orientation vector and game orientation vector
 
 ### GEOMAG_FUSION:
->  STM GeoMag Fusion library is a complete 6-axis solution which combines the measurements from 3-axis magnetometer and 3-axis accelerometer to provide a robust geomagnetic orientation vector
+> The STM GeoMag Fusion library is a complete 6-axis solution which combines the measurements from a 3-axis magnetometer and a 3-axis accelerometer to provide a robust geomagnetic orientation vector
 
 ### GBIAS:
-> STM Gbias Calibration library provides an efficient gyroscope bias runtime compensation
+> The STM Gbias Calibration library provides an efficient gyroscope bias runtime compensation
 
 ### MAGCALIB:
-> STM Magnetometer Calibration library provides an accurate magnetometer Hard Iron (HI) and Soft Iron (SI) runtime compensation
+> The STM Magnetometer Calibration library provides an accurate magnetometer Hard Iron (HI) and Soft Iron (SI) runtime compensation
 
-The *Android.mk* file enumerates STM libraries supported by the HAL. *ENABLED_MODULES* variable is used to enable support for proprietary STM libraries
+The *Android.mk* file enumerates STM libraries supported by the HAL. The *ENABLED_MODULES* variable is used to enable support for proprietary STM libraries
 
 	ENABLED_MODULES := SENSOR_FUSION MAGCALIB GBIAS
 
-STM proprietary libraries release is subjected to License User Agreement (LUA) signature; please contact STMicroelectronics sales office and representatives for further information.
+The release of STM proprietary libraries is subject to signature of a License User Agreement (LUA); please contact an STMicroelectronics sales office and representatives for further information.
 
 
 Copyright
