@@ -664,7 +664,7 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
 		reserved: { },
 	},
 	get_sensors_list: sensors__get_sensors_list,
-#if (ANDROID_VERSION > ANDROID_L)
+#if (ANDROID_VERSION >= ANDROID_M)
 	set_operation_mode: NULL,
 #endif
 }	
