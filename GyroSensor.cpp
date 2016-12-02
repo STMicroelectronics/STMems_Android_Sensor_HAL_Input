@@ -83,7 +83,7 @@ GyroSensor::GyroSensor()
 	memset(data_raw, 0, sizeof(data_raw));
 
 #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
-	iNemoEngine_API_gbias_Initialization(NULL, false);
+	iNemoEngine_API_gbias_Initialization(false);
   #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 	acc = new AccelSensor();
   #endif
