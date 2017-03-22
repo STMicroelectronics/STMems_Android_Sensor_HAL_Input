@@ -77,6 +77,7 @@ endef
 # - L3GD20H                                                                    #
 # - LIS2DE                                                                     #
 # - LIS2DS12                                                                   #
+# - LIS2MDL                                                                    #
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #
 # - LPS22HB                                                                    #
@@ -100,8 +101,8 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LIS2DH12
-ENABLED_MODULES :=
+ENABLED_SENSORS := LIS2MDL
+ENABLED_MODULES := MAGCALIB
 
 LOCAL_C_INCLUDES := $(call all-dir-under-lib) \
 		    $(LOCAL_PATH)/include/ \

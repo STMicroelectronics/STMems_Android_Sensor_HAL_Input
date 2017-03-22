@@ -48,6 +48,9 @@
 #if defined(LSM330)
   #include "conf_LSM330.h"
 #endif
+#if defined(LIS2MDL)
+  #include "conf_LIS2MDL.h"
+#endif
 #if defined(LIS3MDL)
   #include "conf_LIS3MDL.h"
 #endif
