@@ -34,7 +34,7 @@ Currently supported sensors are:
 
 ### Magnetometer:
 
-> lis3mdl
+> lis3mdl, lis2mdl
 
 ### Pressure and Temperature:
 
