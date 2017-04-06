@@ -77,6 +77,7 @@ endef
 # - L3GD20H                                                                    #
 # - LIS2DE                                                                     #
 # - LIS2DS12                                                                   #
+# - LIS2DW12                                                                   #
 # - LIS2MDL                                                                    #
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #

@@ -26,8 +26,8 @@
 #define SENSORS_TAP_ENABLE			(1)
 
 /* ACCELEROMETER SENSOR */
-#define SENSOR_ACC_LABEL			"LIS2DW 3-axis Accelerometer Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_ACCELEROMETER		"ST LIS2DW Accelerometer Sensor"				// Name of input device: struct input_dev->name
+#define SENSOR_ACC_LABEL			"LIS2DW12 3-axis Accelerometer Sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_ACCELEROMETER		"ST LIS2DW12 Accelerometer Sensor"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"						// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"							// name of sysfs file for enable/disable the sensor state
 #define ACCEL_RANGE_FILE_NAME			"accel/scale"							// name of sysfs file for setting the full scale
@@ -38,8 +38,8 @@
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
 /* STEP TAP SENSOR */
-#define SENSOR_TAP_LABEL			"LIS2DW Tap Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_TAP			"ST LIS2DW Tap Sensor"		// Name of input device: struct input_dev->name
+#define SENSOR_TAP_LABEL			"LIS2DW12 Tap Sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_TAP			"ST LIS2DW12 Tap Sensor"		// Name of input device: struct input_dev->name
 #define TAP_ENABLE_FILE_NAME			"tap/enable"		// name of sysfs file for enable/disable the sensor state
 #define TAP_POWER_CONSUMPTION			ACCEL_POWER_CONSUMPTION
 

@@ -26,7 +26,7 @@ Currently supported sensors are:
 
 ### Accelerometer:
 
-> ais328dq, lis2de, lis2dh12, lis2ds12, lis2hh12, lis3dh
+> ais328dq, lis2de, lis2dh12, lis2ds12, lis2hh12, lis3dh, lis2dw12
 
 ### Gyroscope:
 
