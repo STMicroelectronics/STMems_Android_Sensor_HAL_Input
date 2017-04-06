@@ -102,8 +102,8 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LIS2MDL
-ENABLED_MODULES := MAGCALIB
+ENABLED_SENSORS := LIS2DH12
+ENABLED_MODULES :=
 
 LOCAL_C_INCLUDES := $(call all-dir-under-lib) \
 		    $(LOCAL_PATH)/include/ \
