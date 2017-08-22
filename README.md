@@ -18,31 +18,31 @@ Currently supported sensors are:
 
 ### Inertial Module Unit (IMU):
 
-> asm330lxh, lsm330, lsm330dlc, lsm6ds0,  lsm6ds3, lsm6dsm, lsm6dsl, lsm9ds0, lsm9ds1, lsm330d
+> ASM330LXH, LSM330, LSM330DLC, LSM6DS0,  LSM6DS3, LSM6DSM, LSM6DSL, LSM9DS0, LSM9DS1, LSM330D
 
 ### eCompass:
 
-> lsm303agr, lsm303ah, lsm303c, lsm303d, lsm303dlhc
+> LSM303AGR, LSM303AH, LSM303C, LSM303D, LSM303DLHC
 
 ### Accelerometer:
 
-> ais328dq, lis2de, lis2dh12, lis2ds12, lis2hh12, lis3dh, lis2dw12
+> AIS328DQ, LIS2DE, LIS2DH12, LIS2DS12, LIS2HH12, LIS3DH, LIS2DW12
 
 ### Gyroscope:
 
-> a3g4250d, l3gd20, l3gd20h
+> A3G4250D, L3GD20, L3GD20H
 
 ### Magnetometer:
 
-> lis3mdl, lis2mdl
+> LIS3MDL, LIS2MDL
 
 ### Pressure and Temperature:
 
-> lps22hb, lps25h
+> LPS22HB, LPS25H
 
 ### Humidity and Temperature:
 
-> hts221
+> HTS221
 
 Software architecture
 ===============
