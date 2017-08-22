@@ -17,7 +17,7 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_TILT_ENABLE == 1)
+#if ((SENSORS_TILT_ENABLE == 1) && (ANDROID_VERSION >= ANDROID_L))
 
 #ifndef ANDROID_TILT_SENSOR_H
 #define ANDROID_TILT_SENSOR_H
@@ -57,4 +57,4 @@ public:
 };
 
 #endif  // ANDROID_TILT_SENSOR_H
-#endif
+#endif /* ANDROID_VERSION */

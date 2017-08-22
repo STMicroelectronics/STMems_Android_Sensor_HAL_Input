@@ -17,7 +17,7 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_TILT_ENABLE == 1)
+#if ((SENSORS_TILT_ENABLE == 1) && (ANDROID_VERSION >= ANDROID_L))
 
 #include <fcntl.h>
 #include <errno.h>
