@@ -57,7 +57,10 @@
   #include "conf_LIS3MDL.h"
 #endif
 #if defined(LIS3DH)
-#include "conf_LIS3DH.h"
+  #include "conf_LIS3DH.h"
+#endif
+#if defined(LIS3DHH)
+  #include "conf_LIS3DHH.h"
 #endif
 #if defined(ASM330LXH)
   #include "conf_ASM330LXH.h"
