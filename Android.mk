@@ -82,6 +82,7 @@ endef
 # - LIS3MDL                                                                    #
 # - LIS3DH                                                                     #
 # - LPS22HB                                                                    #
+# - LPS33HW                                                                    #
 # - LPS25H                                                                     #
 # - LIS2DH12                                                                   #
 # - ASM330LXH                                                                  #
@@ -102,7 +103,7 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LIS2DH12
+ENABLED_SENSORS := ASM330LHH LPS33HW
 ENABLED_MODULES :=
 
 LOCAL_C_INCLUDES := $(call all-dir-under-lib) \

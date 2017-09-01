@@ -32,6 +32,8 @@
 #define ANDROID_KK				(19)
 #define ANDROID_L				(21)
 #define ANDROID_M				(23)
+#define ANDROID_N				(24)
+#define ANDROID_O				(26)
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
   #define OS_VERSION_ENABLE			(1)
@@ -122,6 +124,9 @@
 #endif
 #if defined(LPS22HB)
   #include "conf_LPS22HB.h"
+#endif
+#if defined(LPS33HW)
+  #include "conf_LPS33HW.h"
 #endif
 #if defined(LPS25H)
   #include "conf_LPS25H.h"
