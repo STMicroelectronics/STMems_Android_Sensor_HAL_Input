@@ -38,7 +38,7 @@ Currently supported sensors are:
 
 ### Pressure and Temperature:
 
-> LPS22HB, LPS25H, LPS33HW, LPS35HW
+> LPS22HB, LPS22HD, LPS25H, LPS33HW, LPS35HW
 
 ### Humidity and Temperature:
 

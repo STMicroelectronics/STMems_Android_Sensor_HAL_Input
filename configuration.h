@@ -128,6 +128,9 @@
 #if defined(LPS22HB)
   #include "conf_LPS22HB.h"
 #endif
+#if defined(LPS22HD)
+  #include "conf_LPS22HD.h"
+#endif
 #if defined(LPS33HW)
   #include "conf_LPS33HW.h"
 #endif
