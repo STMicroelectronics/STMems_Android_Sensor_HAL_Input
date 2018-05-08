@@ -61,7 +61,6 @@ int StepDetectorSensor::enable(int32_t handle, int en, int  __attribute__((unuse
 {
 	int err = 0;
 	int flags = en ? 1 : 0;
-	int mEnabledPrev;
 
 	if (flags) {
 		if (!mEnabled) {
@@ -165,7 +164,6 @@ int StepDetectorSensor::readEvents(sensors_event_t* data, int count)
 			STLOGE("StepDetectorSensor: unknown event (type=%d, code=%d)",
 						event->type, event->code);
 		}
-no_data:
 		mInputReader.next();
 	}
 

@@ -161,7 +161,6 @@ int TiltSensor::readEvents(sensors_event_t* data, int count)
 			STLOGE("TiltSensor: unknown event (type=%d, code=%d)",
 						event->type, event->code);
 		}
-no_data:
 		mInputReader.next();
 	}
 

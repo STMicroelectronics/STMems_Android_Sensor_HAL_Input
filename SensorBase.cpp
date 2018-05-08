@@ -342,15 +342,15 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 	}
 
 	fd = open(sysfs_device_path, O_RDWR);
-	sprintf(buf,"%lld", delay_ms);
+	sprintf(buf,"%lld", (long long)delay_ms);
 	err = write(fd, buf, sizeof(buf));
 	close(fd);
 
 	if(err > 0) {
-		STLOGI("%s Set delay to %lld [ms]", className, delay_ms);
+		STLOGI("%s Set delay to %lld [ms]", className, (long long)delay_ms);
 		return 0;
 	} else {
-		STLOGE("%s Failed to set delay: %lld [ms] - %s", className, delay_ms, sysfs_device_path);
+		STLOGE("%s Failed to set delay: %lld [ms] - %s", className, (long long)delay_ms, sysfs_device_path);
 		return -1;
 	}
 }

@@ -53,8 +53,8 @@ private:
 	};
 	int64_t delayms;
 
-	char device_sysfs_path_prs[PATH_MAX];
-	int device_sysfs_path_prs_len;
+	//char device_sysfs_path_prs[PATH_MAX];
+	//int device_sysfs_path_prs_len;
 	int writeSensorDelay(int handle);
 public:
 	PressSensor();

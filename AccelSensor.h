@@ -31,14 +31,16 @@
 #include "SensorBase.h"
 #include "InputEventReader.h"
 
-#if defined(STORE_CALIB_ACCEL_ENABLED)
-#include "StoreCalibration.h"
-#endif
-
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
 extern "C"
 {
 	#include "ActivityRecoLib.h"
+};
+#endif
+#if (ACCEL_CALIBRATION_ENABLE == 1)
+extern "C"
+{
+	#include "STAccCalibration_API.h"
 };
 #endif
 
@@ -49,6 +51,7 @@ struct input_event;
 class AccelSensor : public SensorBase {
 	enum {
 		Acceleration = 0,
+		AccelUncalib,
 		SignificantMotion,
 		iNemoAcceleration,
 		MagCalAcceleration,
@@ -69,6 +72,10 @@ class AccelSensor : public SensorBase {
 	sensors_event_t mPendingEvents[numSensors];
 	bool mHasPendingEvent;
 	int setInitialState();
+#if ACCEL_CALIBRATION_ENABLE == 1
+	STAccCalibration_Input accCalibIn;
+	STAccCalibration_Output accCalibOut;
+#endif
 
 private:
 	static sensors_vec_t  dataBuffer;
@@ -79,11 +86,9 @@ private:
 	virtual bool setBufferData(sensors_vec_t *value);
 	float data_raw[3];
 	float data_rot[3];
+	sensors_vec_t data_calibrated;
 	static pthread_mutex_t dataMutex;
 	int64_t timestamp;
-#if defined(STORE_CALIB_ACCEL_ENABLED)
-	StoreCalibration *pStoreCalibration;
-#endif
 
 public:
 	AccelSensor();

@@ -140,6 +140,24 @@
 #if defined(HTS221)
   #include "conf_HTS221.h"
 #endif
+
+/* Industrial */
+#if defined(ISM330DLC)
+  #include "conf_ISM330DLC.h"
+#endif
+#if defined(IIS2MDC)
+  #include "conf_IIS2MDC.h"
+#endif
+#if defined(IIS2DH)
+  #include "conf_IIS2DH.h"
+#endif
+#if defined(ISM303DAC)
+  #include "conf_ISM303DAC.h"
+#endif
+#if defined(IIS3DHHC)
+  #include "conf_IIS3DHHC.h"
+#endif
+
 #if defined(SENSOR_FUSION)
   #include "conf_FUSION.h"
 #endif

@@ -117,7 +117,7 @@ int PressSensor::writeSensorDelay(int handle)
 	return err >= 0 ? 0 : err;
 }
 
-int PressSensor::enable(int32_t handle, int en, int type)
+int PressSensor::enable(int32_t handle, int en, int type __attribute__((unused)))
 {
 	int err = 0;
 	int what = -1;

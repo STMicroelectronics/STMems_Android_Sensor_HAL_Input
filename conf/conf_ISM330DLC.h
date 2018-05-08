@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2014 STMicroelectronics
- * Giuseppe Barba - Motion MEMS Product Div.
+ * Copyright (C) 2018 STMicroelectronics AMG/MSD Product Div.
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef CONFIGURATION_LSM6DSM_H
-#define CONFIGURATION_LSM6DSM_H
+#ifndef CONFIGURATION_ISM330DLC_H
+#define CONFIGURATION_ISM330DLC_H
 
 #define SENSORS_ACCELEROMETER_ENABLE		(1)
 #define SENSORS_GYROSCOPE_ENABLE		(1)
@@ -25,13 +24,10 @@
 #define SENSORS_UNCALIB_ACCELEROMETER_ENABLE	(1 & SENSORS_ACCELEROMETER_ENABLE & ANDROID_VERSION >= ANDROID_O)
 
 #define SENSORS_TILT_ENABLE			(1)
-#define SENSORS_STEP_COUNTER_ENABLE		(1)
-#define SENSORS_STEP_DETECTOR_ENABLE		(1)
-#define SENSORS_SIGN_MOTION_ENABLE		(1)
 
 /* ACCELEROMETER SENSOR */
-#define SENSOR_ACC_LABEL			"LSM6DSM 3-axis Accelerometer Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_ACCELEROMETER		"ST LSM6DSM Accelerometer Sensor"				// Name of input device: struct input_dev->name
+#define SENSOR_ACC_LABEL			"ISM330DLC 3-axis Accelerometer Sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_ACCELEROMETER		"ST ISM330DLC Accelerometer Sensor"				// Name of input device: struct input_dev->name
 #define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"						// name of sysfs file for setting the pollrate
 #define ACCEL_ENABLE_FILE_NAME			"accel/enable"							// name of sysfs file for enable/disable the sensor state
 #define ACCEL_RANGE_FILE_NAME			"accel/scale"							// name of sysfs file for setting the full scale
@@ -42,8 +38,8 @@
 #define ACCEL_DEFAULT_FULLSCALE			4					// Set default full-scale (value depends on the driver sysfs file)
 
 /* GYROSCOPE SENSOR */
-#define SENSOR_GYRO_LABEL			"LSM6DSM 3-axis Gyroscope sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_GYROSCOPE		"ST LSM6DSM Gyroscope Sensor"		// Name of input device: struct input_dev->name
+#define SENSOR_GYRO_LABEL			"ISM330DLC 3-axis Gyroscope sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_GYROSCOPE		"ST ISM330DLC Gyroscope Sensor"		// Name of input device: struct input_dev->name
 #define GYRO_DELAY_FILE_NAME			"gyro/polling_rate"			// name of sysfs file for setting the pollrate
 #define GYRO_ENABLE_FILE_NAME			"gyro/enable"		// name of sysfs file for enable/disable the sensor state
 #define GYRO_RANGE_FILE_NAME			"gyro/scale"			// name of sysfs file for setting the full scale
@@ -55,29 +51,10 @@
 #define TO_MDPS(x)				(x / 1000000.0f)
 
 /* TILT SENSOR */
-#define SENSOR_TILT_LABEL			"LSM6DSM Tilt Detector sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_TILT			"ST LSM6DSM Tilt Sensor"		// Name of input device: struct input_dev->name
+#define SENSOR_TILT_LABEL			"ISM330DLC Tilt Detector sensor"	// Label views in Android Applications
+#define SENSOR_DATANAME_TILT			"ST ISM330DLC Tilt Sensor"		// Name of input device: struct input_dev->name
 #define TILT_ENABLE_FILE_NAME			"tilt/enable"		// name of sysfs file for enable/disable the sensor state
 #define TILT_POWER_CONSUMPTION			0.6f
-
-/* STEP COUNTER SENSOR */
-#define SENSOR_STEP_C_LABEL			"LSM6DSM Step Counter sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_STEP_C			"ST LSM6DSM Step Counter Sensor"		// Name of input device: struct input_dev->name
-#define STEP_C_ENABLE_FILE_NAME			"step_c/enable"		// name of sysfs file for enable/disable the sensor state
-#define STEP_C_DELAY_FILE_NAME			"step_c/max_delivery_rate"
-#define STEP_C_POWER_CONSUMPTION		0.6f
-
-/* STEP DETECTOR SENSOR */
-#define SENSOR_STEP_D_LABEL			"LSM6DSM Step Detector Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_STEP_D			"ST LSM6DSM Step Detector Sensor"		// Name of input device: struct input_dev->name
-#define STEP_D_ENABLE_FILE_NAME			"step_d/enable"		// name of sysfs file for enable/disable the sensor state
-#define STEP_D_POWER_CONSUMPTION		0.6f
-
-/* SIGNIFICANT MOTION SENSOR */
-#define SENSOR_SIGN_M_LABEL			"LSM6DSM Significant Motion Sensor"	// Label views in Android Applications
-#define SENSOR_DATANAME_SIGN_M			"ST LSM6DSM Significant Motion Sensor"		// Name of input device: struct input_dev->name
-#define SIGN_M_ENABLE_FILE_NAME			"sign_m/enable"		// name of sysfs file for enable/disable the sensor state
-#define SIGN_M_POWER_CONSUMPTION		0.6f
 
 /* INEMO_ENGINE SENSOR */
 #define GYRO_DEFAULT_RANGE			2000					// full scale set to 2000 DPS (value depends on the driver sysfs file)
@@ -99,9 +76,6 @@
 #define EVENT_TYPE_ACCEL			EV_MSC
 #define EVENT_TYPE_GYRO				EV_MSC
 #define EVENT_TYPE_TILT				EV_MSC
-#define EVENT_TYPE_STEP_C			EV_MSC
-#define EVENT_TYPE_STEP_D			EV_MSC
-#define EVENT_TYPE_SIGN_M			EV_MSC
 
 #define EVENT_TYPE_TIME_MSB			MSC_SCAN
 #define EVENT_TYPE_TIME_LSB			MSC_MAX
@@ -117,9 +91,6 @@
 #define EVENT_TYPE_GYRO_Z			MSC_GESTURE
 
 #define EVENT_TYPE_TILT_DATA			MSC_SERIAL
-#define EVENT_TYPE_STEP_C_DATA			MSC_SERIAL
-#define EVENT_TYPE_STEP_D_DATA			MSC_SERIAL
-#define EVENT_TYPE_SIGN_M_DATA			MSC_SERIAL
 
 /*****************************************************************************/
 /* AXIS MAPPING */
@@ -204,4 +175,4 @@ static short matrix_gyr[3][3] = {
 #define INPUT_EVENT_HAS_TIMESTAMP		1
 //#define NOT_SET_ACC_INITIAL_STATE		1
 //#define NOT_SET_GYRO_INITIAL_STATE		1
-#endif	/*	CONFIGURATION_LSM6DSM_H	*/
+#endif	/*	CONFIGURATION_ISM330DLC_H	*/

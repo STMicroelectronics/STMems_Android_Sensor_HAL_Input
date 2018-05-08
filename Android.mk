@@ -59,6 +59,8 @@ endef
 ################################################################################
 # Select enabled sensor trough ENABLED_SENSORS macro.                          #
 # Valid values for ENABLED_SENSORS are:                                        #
+#                                                                              #
+#                   GENERIC                                                    #
 # - LSM330                                                                     #
 # - LSM330D                                                                    #
 # - LSM330DLC                                                                  #
@@ -87,10 +89,20 @@ endef
 # - LPS33HW                                                                    #
 # - LPS25H                                                                     #
 # - LIS2DH12                                                                   #
+# - HTS221                                                                     #
+#                                                                              #
+#                   AUTOMOTIVE                                                 #
 # - ASM330LXH                                                                  #
 # - A3G4250D                                                                   #
 # - AIS328DQ                                                                   #
-# - HTS221                                                                     #
+#                                                                              #
+#                   INDUSTRIAL                                                 #
+# - ISM330DLC                                                                  #
+# - IIS2MDC                                                                    #
+# - IIS2DH                                                                     #
+# - ISM303DAC                                                                  #
+# - IIS3DHHC                                                                   #
+#                                                                              #
 #                                                                              #
 # Valid values for ENABLED_MODULES:                                            #
 # - V_GYRO                                                                     #
@@ -98,6 +110,7 @@ endef
 # - SENSOR_ST_COMPASS                                                          #
 # - GEOMAG_FUSION                                                              #
 # - MAGCALIB                                                                   #
+# - ACCELCALIB                                                                 #
 # - GBIAS                                                                      #
 # - ACT_RECO                                                                   #
 # - FILE_CALIB                                                                 #

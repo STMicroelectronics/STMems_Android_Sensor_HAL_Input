@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 STMicroelectronics
- * Giuseppe Barba - Motion MEMS Product Div.
- * Copyright (C) 2008 The Android Open Source Project
+ * Armando Visconti - Motion MEMS Product Div.
+ * Copyright (C) 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
  * limitations under the License.
  */
 
-#ifndef CONFIGURATION_FILE_CALIB_H
-#define CONFIGURATION_FILE_CALIB_H
 
-#define STORE_CALIB_ACCEL_ENABLED		1
-#define STORE_CALIB_GYRO_ENABLED		1
-#define STORE_CALIB_ENABLED			STORE_CALIB_GYRO_ENABLED
-#endif
+#ifndef CONFIGURATION_ACCELCAL_H
+#define CONFIGURATION_ACCELCAL_H
+
+#define ACCEL_CALIBRATION_ENABLE	(1 & ST_ACCEL_CALIB_MODULE_PRESENT & SENSORS_ACCELEROMETER_ENABLE)
+#define ACCEL_CALIB_FREQUENCY		(25)
+#define ACCEL_CALIB_PERIOD_MS		(1000.0f / ACCEL_CALIB_FREQUENCY)
+
+#endif /* CONFIGURATION_ACCELCAL_H */
+

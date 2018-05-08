@@ -59,6 +59,14 @@ AccelSensor::AccelSensor()
 	mPendingEvents[Acceleration].type = SENSOR_TYPE_ACCELEROMETER;
 	mPendingEvents[Acceleration].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
 
+#if (SENSORS_UNCALIB_ACCELEROMETER_ENABLE == 1)
+	mPendingEvents[AccelUncalib].version = sizeof(sensors_event_t);
+	mPendingEvents[AccelUncalib].sensor = ID_UNCALIB_ACCELEROMETER;
+	mPendingEvents[AccelUncalib].type = SENSOR_TYPE_ACCELEROMETER_UNCALIBRATED;
+	memset(mPendingEvents[AccelUncalib].data, 0, sizeof(mPendingEvents[AccelUncalib].data));
+	mPendingEvents[AccelUncalib].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
+#endif
+
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
 	mPendingEvents[SignificantMotion].version = sizeof(sensors_event_t);
 	mPendingEvents[SignificantMotion].sensor = ID_SIGNIFICANT_MOTION;
@@ -71,10 +79,6 @@ AccelSensor::AccelSensor()
 	mPendingEvents[ActivityReco].sensor = ID_ACTIVITY_RECOGNIZER;
 	mPendingEvents[ActivityReco].type = SENSOR_TYPE_ACTIVITY;
 	mPendingEvents[ActivityReco].data[0] = 1.0f;
-#endif
-
-#if defined(STORE_CALIB_ACCEL_ENABLED)
-	pStoreCalibration = StoreCalibration::getInstance();
 #endif
 
 	if (data_fd) {
@@ -123,6 +127,11 @@ int AccelSensor::getWhatFromHandle(int32_t handle)
 		case SENSORS_ACCELEROMETER_HANDLE:
 			what = Acceleration;
 			break;
+#if (SENSORS_UNCALIB_ACCELEROMETER_ENABLE == 1)
+		case SENSORS_UNCALIB_ACCELEROMETER_HANDLE:
+			what = AccelUncalib;
+			break;
+#endif
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
 		case SENSORS_SIGNIFICANT_MOTION_HANDLE:
 			what = SignificantMotion;
@@ -221,6 +230,9 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE, flags);	// Enable Accelerometer
 		}
 
+#if (ACCEL_CALIBRATION_ENABLE == 1)
+		ST_AccCalibration_API_Init(ACCEL_CALIB_PERIOD_MS);
+#endif
 
 	} else {
 		int tmp = mEnabled;
@@ -241,6 +253,9 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 			err = -1;
 			mEnabled = tmp;
 		}
+#if (ACCEL_CALIBRATION_ENABLE == 1)
+		ST_AccCalibration_API_DeInit(ACCEL_CALIB_PERIOD_MS);
+#endif
 		//setDelay(handle, DELAY_OFF);
 		if (mEnabled) {
 			writeMinDelay();
@@ -266,7 +281,6 @@ bool AccelSensor::hasPendingEvents() const
 int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
 	int err = 0;
-	int kk;
 	int what = -1;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
 
@@ -337,6 +351,10 @@ int AccelSensor::writeMinDelay(void)
 			Min_delay_ms = writeDelayBuffer[kk];
 	}
 
+#if (ACCEL_CALIBRATION_ENABLE == 1)
+	if(Min_delay_ms > ACCEL_CALIB_PERIOD_MS)
+		Min_delay_ms = ACCEL_CALIB_PERIOD_MS;
+#endif
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
 	if ((mEnabled & (1 << ActivityReco)) &&
 		(Min_delay_ms > (1000 / ACTIVITY_RECOGNIZER_ODR)))
@@ -417,6 +435,8 @@ int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
 
 int AccelSensor::readEvents(sensors_event_t* data, int count)
 {
+	float AccOffset[3];
+
 	if (count < 1)
 		return -EINVAL;
 
@@ -484,40 +504,72 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 			data_rot[2] = data_raw[0]*matrix_acc[0][2] +
 					data_raw[1]*matrix_acc[1][2] +
 					data_raw[2]*matrix_acc[2][2];
-#if defined(STORE_CALIB_ACCEL_ENABLED)
-			data_rot[0] -= pStoreCalibration->getCalibration(
-					StoreCalibration::ACCELEROMETER_BIAS,
-					StoreCalibration::XAxis);
-			data_rot[1] -= pStoreCalibration->getCalibration(
-					StoreCalibration::ACCELEROMETER_BIAS,
-					StoreCalibration::YAxis);
-			data_rot[2] -= pStoreCalibration->getCalibration(
-					StoreCalibration::ACCELEROMETER_BIAS,
-					StoreCalibration::ZAxis);
-			data_rot[0] *= pStoreCalibration->getCalibration(
-					StoreCalibration::ACCELEROMETER_SENS,
-					StoreCalibration::XAxis);
-			data_rot[1] *= pStoreCalibration->getCalibration(
-					StoreCalibration::ACCELEROMETER_SENS,
-					StoreCalibration::YAxis);
-			data_rot[2] *= pStoreCalibration->getCalibration(
-					StoreCalibration::ACCELEROMETER_SENS,
-					StoreCalibration::ZAxis);
-#endif
 #if !defined(ACC_EVENT_HAS_TIMESTAMP)
 			timestamp = timevalToNano(event->time);
 
 #endif
+#if (ACCEL_CALIBRATION_ENABLE == 1)
+			accCalibIn.timestamp = timestamp;
+			accCalibIn.acc_raw[0] = data_rot[0];
+			accCalibIn.acc_raw[1] = data_rot[1];
+			accCalibIn.acc_raw[2] = data_rot[2];
+
+			ST_AccCalibration_API_Run(&accCalibOut, &accCalibIn);
+#if (DEBUG_ACCELEROMETER == 1)
+			STLOGD("Calibration accData [uT] -> raw_x:%f raw_y:%f raw_z:%f",
+					data_rot[0], data_rot[1], data_rot[2]);
+			STLOGD("Calibration accData [uT] -> uncal_x:%f uncal_y:%f uncal_z:%f",
+					accCalibOut.acc_cal[0], accCalibOut.acc_cal[1],
+					accCalibOut.acc_cal[2]);
+#endif /* DEBUG_ACCELEROMETER */
+#endif /* ACCEL_CALIBRATION_ENABLE */
 
 			DecimationCount++;
 
-			if ((mEnabled & (1<<Acceleration)) &&
-			   (DecimationCount >= DecimationBuffer[Acceleration])) {
+			if ((mEnabled & ((1<<Acceleration) |
+							(1<<AccelUncalib))) &&
+			   ((DecimationCount >= DecimationBuffer[Acceleration]) ||
+				(DecimationCount >= DecimationBuffer[AccelUncalib]))) {
 				DecimationCount = 0;
 
-				memcpy(mPendingEvents[Acceleration].data, data_rot, sizeof(float) * 3);
-				mPendingEvents[Acceleration].timestamp = timestamp;
-				mPendingMask |= 1<<Acceleration;
+#if (ACCEL_CALIBRATION_ENABLE == 1)
+				data_calibrated.v[0] = accCalibOut.acc_cal[0];
+				data_calibrated.v[1] = accCalibOut.acc_cal[1];
+				data_calibrated.v[2] = accCalibOut.acc_cal[2];
+				data_calibrated.status = accCalibOut.accuracy;
+				AccOffset[0] = accCalibOut.offset[0];
+				AccOffset[1] = accCalibOut.offset[1];
+				AccOffset[2] = accCalibOut.offset[2];
+
+#if (DEBUG_ACCELEROMETER == 1)
+				STLOGD("AccelSensor::AccCalibData: %f, %f, %f (accuracy: %d) (off: %f 5f %f)",
+						data_calibrated.v[0], data_calibrated.v[1], data_calibrated.v[2], data_calibrated.status,
+						AccOffset[0], AccOffset[1], AccOffset[2]);
+#endif /* DEBUG_ACCELEROMETER */
+#else
+				/**
+				 * No calibration is available!
+				 */
+				memcpy(data_calibrated.v, data_rot, sizeof(data_calibrated.v));
+				data_calibrated.status = SENSOR_STATUS_UNRELIABLE;
+#endif
+				if (mEnabled & (1<<Acceleration)) {
+					mPendingEvents[Acceleration].acceleration.status = data_calibrated.status;
+					memcpy(mPendingEvents[Acceleration].data, data_calibrated.v, sizeof(data_calibrated.v));
+					mPendingEvents[Acceleration].timestamp = timestamp;
+					mPendingMask |= 1<<Acceleration;
+				}
+#if (SENSORS_UNCALIB_ACCELEROMETER_ENABLE == 1)
+				if (mEnabled & (1<<AccelUncalib)) {
+					mPendingEvents[AccelUncalib].acceleration.status = data_calibrated.status;
+					memcpy(mPendingEvents[AccelUncalib].uncalibrated_accelerometer.uncalib,
+							data_rot, sizeof(data_rot));
+					memcpy(mPendingEvents[AccelUncalib].uncalibrated_accelerometer.bias,
+							AccOffset, sizeof(AccOffset));
+					mPendingEvents[AccelUncalib].timestamp = timestamp;
+					mPendingMask |= 1<<AccelUncalib;
+				}
+#endif
 			}
 
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)

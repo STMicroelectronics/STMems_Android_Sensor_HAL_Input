@@ -112,7 +112,7 @@ int GyroSensor::setInitialState()
 		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_GYRO_Y), &absinfo_y) &&
 		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_GYRO_Z), &absinfo_z))
 	{
-		mHasPendingEvent = true;	static int DecimationBuffer[numSensors];
+		mHasPendingEvent = true;
 	}
 
 	setFullScale(SENSORS_GYROSCOPE_HANDLE, GYRO_DEFAULT_FULLSCALE);
@@ -217,7 +217,6 @@ bool GyroSensor::hasPendingEvents() const
 int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
 	int what = -1;
-	int kk;
 	int err = 0;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
 

@@ -107,6 +107,30 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+#if (SENSORS_UNCALIB_ACCELEROMETER_ENABLE == 1)
+	{
+		SENSOR_ACC_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_UNCALIB_ACCELEROMETER_HANDLE,
+		SENSOR_TYPE_ACCELEROMETER_UNCALIBRATED,
+		ACCEL_MAX_RANGE,
+		0.0f,
+		ACCEL_POWER_CONSUMPTION,
+		FREQUENCY_TO_USECONDS(ACCEL_MAX_ODR),
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROID_L)
+		SENSOR_STRING_TYPE_ACCELEROMETER_UNCALIBRATED,
+		"",
+		FREQUENCY_TO_USECONDS(ACCEL_MIN_ODR),
+		SENSOR_FLAG_CONTINUOUS_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
 	{
 		SENSOR_MAGN_LABEL,
@@ -637,7 +661,7 @@ static int open_sensors(const struct hw_module_t* module, const char* id, struct
 void get_ref(sensors_module_t *sm);
 
 static struct hw_module_methods_t sensors_module_methods = {
-	open: open_sensors
+	.open = open_sensors
 };
 
 int sensors__get_sensors_list(struct sensors_module_t __attribute__((unused))*module,
@@ -648,20 +672,20 @@ int sensors__get_sensors_list(struct sensors_module_t __attribute__((unused))*mo
 };
 
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
-	common: {
-		tag: HARDWARE_MODULE_TAG,
-		version_major: 1,
-		version_minor: 0,
-		id: SENSORS_HARDWARE_MODULE_ID,
-		name: "STMicroelectronics Sensor module",
-		author: "STMicroelectronics",
-		methods: &sensors_module_methods,
-		dso: NULL,
-		reserved: { },
+	.common = {
+		.tag = HARDWARE_MODULE_TAG,
+		.version_major = 1,
+		.version_minor = 0,
+		.id = SENSORS_HARDWARE_MODULE_ID,
+		.name = "STMicroelectronics Sensor module",
+		.author = "STMicroelectronics",
+		.methods = &sensors_module_methods,
+		.dso = NULL,
+		.reserved = { },
 	},
-	get_sensors_list: sensors__get_sensors_list,
+	.get_sensors_list = sensors__get_sensors_list,
 #if (ANDROID_VERSION >= ANDROID_M)
-	set_operation_mode: NULL,
+	.set_operation_mode = NULL,
 #endif
 }	
 ;
@@ -739,6 +763,10 @@ private:
 		switch (handle) {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 			case SENSORS_ACCELEROMETER_HANDLE:
+				return accel;
+#endif
+#if (SENSORS_UNCALIB_ACCELEROMETER_ENABLE == 1)
+			case SENSORS_UNCALIB_ACCELEROMETER_HANDLE:
 				return accel;
 #endif
 
