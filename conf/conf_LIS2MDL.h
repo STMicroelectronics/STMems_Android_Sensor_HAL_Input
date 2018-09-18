@@ -23,34 +23,38 @@
 #define SENSORS_UNCALIB_MAGNETIC_FIELD_ENABLE	(1 & SENSORS_MAGNETIC_FIELD_ENABLE & OS_VERSION_ENABLE)
 
 /* MAGNETOMETER SENSOR */
-#define SENSOR_MAGN_LABEL			"LIS2MDL 3-axis Magnetometer Sensor"
-#define SENSOR_UNCALIB_MAGN_LABEL		"LIS2MDL 3-axis Uncalibrated Magnetometer sensor"
-#define SENSOR_DATANAME_MAGNETIC_FIELD		"ST LIS2MDL Magnetometer Sensor"
-#define MAGN_DELAY_FILE_NAME			"magn/polling_rate"
-#define MAGN_ENABLE_FILE_NAME			"magn/enable"
-#define MAGN_RANGE_FILE_NAME			"magn/range"
-#define CALIBRATION_ENABLE			1
-#define MAGN_MAX_RANGE				1000.0f
-#define MAGN_MAX_ODR				100
+#define SENSOR_MAGN_LABEL		"LIS2MDL 3-axis Magnetometer Sensor"
+#define SENSOR_UNCALIB_MAGN_LABEL	"LIS2MDL 3-axis Uncalibrated Magnetometer sensor"
+#define SENSOR_DATANAME_MAGNETIC_FIELD	"ST LIS2MDL Magnetometer Sensor"
+#define MAGN_DELAY_FILE_NAME		"magn/polling_rate"
+#define MAGN_ENABLE_FILE_NAME		"magn/enable"
+#define MAGN_RANGE_FILE_NAME		"magn/range"
+#define CALIBRATION_ENABLE		1
+#define MAGN_MAX_RANGE			1000.0f
+#define MAGN_MAX_ODR			100
 #define MAGN_MIN_ODR			25
-#define MAGN_POWER_CONSUMPTION			0.077f
-#define MAGN_DEFAULT_FULLSCALE			50
+#define MAGN_POWER_CONSUMPTION		0.077f
+#define MAGN_DEFAULT_FULLSCALE		50
 
 /* INEMO_ENGINE SENSOR */
-#define MAG_DEFAULT_RANGE		8					// full scale set to +-2.5Gauss (value depends on the driver sysfs file)
-#define MAG_DEFAULT_DELAY		12					// 1/frequency (default: 10 -> 100 Hz) [ms]
+#define MAG_DEFAULT_RANGE		8				// full scale set to +-2.5Gauss (value depends on the driver sysfs file)
+#define MAG_DEFAULT_DELAY		12				// 1/frequency (default: 10 -> 100 Hz) [ms]
+
+/* SENSOR FUSION */
+#define MAGNETOMETER_ACTIVE		1				// Enable Magnetometer sensor in Sensor Fusion -> [0]:off, [1]:on
+#define MAG_GBIAS_THRESHOLD		1200e-6				// Set magnetometer gbias threshold [uT]
 
 /*****************************************************************************/
 /* EVENT TYPE */
 /*****************************************************************************/
-#define EVENT_TYPE_MAG				EV_MSC
+#define EVENT_TYPE_MAG			EV_MSC
 
-#define EVENT_TYPE_TIME_MSB			MSC_SCAN
-#define EVENT_TYPE_TIME_LSB			MSC_MAX
+#define EVENT_TYPE_TIME_MSB		MSC_SCAN
+#define EVENT_TYPE_TIME_LSB		MSC_MAX
 
-#define EVENT_TYPE_MAG_X			MSC_SERIAL
-#define EVENT_TYPE_MAG_Y			MSC_PULSELED
-#define EVENT_TYPE_MAG_Z			MSC_GESTURE
+#define EVENT_TYPE_MAG_X		MSC_SERIAL
+#define EVENT_TYPE_MAG_Y		MSC_PULSELED
+#define EVENT_TYPE_MAG_Z		MSC_GESTURE
 
 /*****************************************************************************/
 /* AXIS MAPPING */
@@ -100,13 +104,13 @@ static short matrix_mag[3][3] = {
 /*****************************************************************************/
 /* DATA CONVERSION */
 /*****************************************************************************/
-#define CONVERT_M				(1.0f/10000.0f)
-#define CONVERT_M_X				(CONVERT_M)
-#define CONVERT_M_Y				(CONVERT_M)
-#define CONVERT_M_Z				(CONVERT_M)
+#define CONVERT_M			(1.0f/10000.0f)
+#define CONVERT_M_X			(CONVERT_M)
+#define CONVERT_M_Y			(CONVERT_M)
+#define CONVERT_M_Z			(CONVERT_M)
 
-#define INPUT_EVENT_HAS_TIMESTAMP		1
-#define NOT_SET_MAG_INITIAL_STATE		1
-#define MAG_EVENT_HAS_TIMESTAMP			1
+#define INPUT_EVENT_HAS_TIMESTAMP	1
+#define NOT_SET_MAG_INITIAL_STATE	1
+#define MAG_EVENT_HAS_TIMESTAMP		1
 
 #endif	/*	CONFIGURATION_LIS2MDL_H	*/
