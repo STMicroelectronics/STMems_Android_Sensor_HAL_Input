@@ -93,6 +93,7 @@ endef
 #                                                                              #
 #                   AUTOMOTIVE                                                 #
 # - ASM330LXH                                                                  #
+# - ASM330LHH                                                                  #
 # - A3G4250D                                                                   #
 # - AIS328DQ                                                                   #
 #                                                                              #
@@ -118,7 +119,7 @@ endef
 # E.g.: to enable LSM6DS0 + LIS3MDL sensor                                     #
 #                ENABLED_SENSORS := LSM6DS0 LIS3MDL                            #
 ################################################################################
-ENABLED_SENSORS := LPS22HD
+ENABLED_SENSORS := ASM330LHH
 ENABLED_MODULES :=
 
 LOCAL_C_INCLUDES := $(call all-dir-under-lib) \

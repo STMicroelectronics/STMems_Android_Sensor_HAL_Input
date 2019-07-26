@@ -435,8 +435,9 @@ int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
 
 int AccelSensor::readEvents(sensors_event_t* data, int count)
 {
+#if (ACCEL_CALIBRATION_ENABLE == 1)
 	float AccOffset[3];
-
+#endif
 	if (count < 1)
 		return -EINVAL;
 

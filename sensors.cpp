@@ -49,6 +49,9 @@
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 #include "PressSensor.h"
 #endif
+#if (SENSORS_TEMP_ENABLE == 1)
+#include "TempSensor.h"
+#endif
 #if (SENSORS_VIRTUAL_GYROSCOPE_ENABLE == 1)
 #include "VirtualGyroSensor.h"
 #endif
@@ -411,6 +414,30 @@ static const struct sensor_t sSensorList[] = {
 		{ }
 	},
 #endif
+#if (SENSORS_TEMP_ENABLE == 1)
+	{
+		SENSOR_TEMP_LABEL,
+		"STMicroelectronics",
+		1,
+		SENSORS_TEMPERATURE_HANDLE,
+		SENSOR_TYPE_AMBIENT_TEMPERATURE,
+		TEMP_MAX_RANGE,
+		0.0f,
+		TEMP_POWER_CONSUMPTION,
+		FREQUENCY_TO_USECONDS(TEMP_MAX_ODR),
+#if (ANDROID_VERSION >= ANDROID_KK)
+		0,
+		0,
+#if (ANDROID_VERSION >= ANDROID_L)
+		SENSOR_STRING_TYPE_TEMPERATURE,
+		"",
+		FREQUENCY_TO_USECONDS(TEMP_MIN_ODR),
+		SENSOR_FLAG_ON_CHANGE_MODE,
+#endif
+#endif
+		{ }
+	},
+#endif
 #if (SENSORS_UNCALIB_MAGNETIC_FIELD_ENABLE == 1)
 	{
 		SENSOR_MAGN_LABEL,
@@ -687,7 +714,7 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
 #if (ANDROID_VERSION >= ANDROID_M)
 	.set_operation_mode = NULL,
 #endif
-}	
+}
 ;
 
 void get_ref(sensors_module_t __attribute__((unused))*sm) {
@@ -705,7 +732,7 @@ struct sensors_poll_context_t {
 	int pollEvents(sensors_event_t* data, int count);
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
 	int batch(int sensor_handle, int flags, int64_t sampling_period_ns,
-										int64_t max_report_latency_ns);
+		  int64_t max_report_latency_ns);
 	int flush(int sensor_handle);
 #endif
 private:
@@ -727,6 +754,9 @@ private:
 #endif
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
 		press,
+#endif
+#if (SENSORS_TEMP_ENABLE == 1)
+		temperature,
 #endif
 #if ((SENSORS_TILT_ENABLE == 1) && (ANDROID_VERSION >= ANDROID_L))
 		tilt,
@@ -810,6 +840,10 @@ private:
 			case SENSORS_PRESSURE_HANDLE:
 			case SENSORS_TEMPERATURE_HANDLE:
 				return press;
+#endif
+#if (SENSORS_TEMP_ENABLE == 1)
+			case SENSORS_TEMPERATURE_HANDLE:
+				return temperature;
 #endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
 			case SENSORS_GYROSCOPE_HANDLE:
@@ -925,6 +959,13 @@ sensors_poll_context_t::sensors_poll_context_t()
 	mPollFds[press].fd = mSensors[press]->getFd();
 	mPollFds[press].events = POLLIN;
 	mPollFds[press].revents = 0;
+#endif
+
+#if (SENSORS_TEMP_ENABLE == 1)
+	mSensors[temperature] = new TempSensor();
+	mPollFds[temperature].fd = mSensors[temperature]->getFd();
+	mPollFds[temperature].events = POLLIN;
+	mPollFds[temperature].revents = 0;
 #endif
 
 #if ((SENSORS_TILT_ENABLE == 1) && (ANDROID_VERSION >= ANDROID_L))

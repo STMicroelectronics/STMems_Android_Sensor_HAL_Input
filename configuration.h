@@ -62,9 +62,6 @@
 #if defined(LIS3DHH)
   #include "conf_LIS3DHH.h"
 #endif
-#if defined(ASM330LXH)
-  #include "conf_ASM330LXH.h"
-#endif
 #if defined(LSM6DS0)
   #include "conf_LSM6DS0.h"
 #endif
@@ -101,12 +98,6 @@
 #if defined(L3GD20H)
   #include "conf_L3GD20H.h"
 #endif
-#if defined(AIS328DQ)
-  #include "conf_AIS328DQ.h"
-#endif
-#if defined(A3G4250D)
-  #include "conf_A3G4250D.h"
-#endif
 #if defined(LIS2DH12)
   #include "conf_LIS2DH12.h"
 #endif
@@ -139,6 +130,20 @@
 #endif
 #if defined(HTS221)
   #include "conf_HTS221.h"
+#endif
+
+/* Automotive */
+#if defined(ASM330LXH)
+  #include "conf_ASM330LXH.h"
+#endif
+#if defined(ASM330LHH)
+  #include "conf_ASM330LHH.h"
+#endif
+#if defined(AIS328DQ)
+  #include "conf_AIS328DQ.h"
+#endif
+#if defined(A3G4250D)
+  #include "conf_A3G4250D.h"
 #endif
 
 /* Industrial */

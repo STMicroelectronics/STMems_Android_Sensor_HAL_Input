@@ -232,6 +232,12 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 			className = "PressTempSensor::Enable()";
 			break;
 #endif
+#if (SENSORS_TEMP_ENABLE == 1)
+		case SENSORS_TEMPERATURE_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], TEMP_ENABLE_FILE_NAME);
+			className = "TempSensor::Enable()";
+			break;
+#endif
 #if (SENSORS_TILT_ENABLE == 1)
 		case SENSORS_TILT_DETECTOR_HANDLE:
 			strcpy(&sysfs_device_path[sysfs_device_path_len], TILT_ENABLE_FILE_NAME);
@@ -328,6 +334,12 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 		case SENSORS_TEMPERATURE_HANDLE:
 			strcpy(&sysfs_device_path[sysfs_device_path_len], PRESS_DELAY_FILE_NAME);
 			className = "PressTempSensor::Delay()";
+			break;
+#endif
+#if (SENSORS_TEMP_ENABLE == 1)
+		case SENSORS_TEMPERATURE_HANDLE:
+			strcpy(&sysfs_device_path[sysfs_device_path_len], TEMP_DELAY_FILE_NAME);
+			className = "TempSensor::Enable()";
 			break;
 #endif
 #if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
