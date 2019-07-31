@@ -25,6 +25,7 @@
 #include <sys/select.h>
 #include <cutils/log.h>
 #include <linux/input.h>
+#include <stdio.h>
 #include <string.h>
 #include <linux/ioctl.h>
 #include <linux/rtc.h>
@@ -80,7 +81,7 @@ int SensorBase::getFd() const
 }
 
 int SensorBase::setDelay(int32_t  __attribute__((unused)) handle,
-					int64_t  __attribute__((unused)) ns)
+			 int64_t  __attribute__((unused)) ns)
 {
 	return 0;
 }
@@ -93,8 +94,10 @@ bool SensorBase::hasPendingEvents() const
 int SensorBase::openInput(const char* inputDeviceName)
 {
 	int fd = -1;
+
 	fd = getSysfsDevicePath(sysfs_device_path, inputDeviceName);
 	sysfs_device_path_len = strlen(sysfs_device_path);
+
 	return fd;
 }
 
@@ -141,8 +144,10 @@ int SensorBase::getSysfsDevicePath(char* sysfs_path ,const char* inputDeviceName
 			}
 		}
 	}
+
 	closedir(dir);
 	STLOGE_IF(fd < 0, "couldn't find sysfs path for device '%s' ", inputDeviceName);
+
 	return fd;
 }
 
@@ -185,11 +190,11 @@ int SensorBase::writeFullScale(int32_t handle, int value)
 
 	if(err >= 0) {
 		STLOGI("%s Set new full-scale to %d", className, value);
-		return 0;
 	} else {
 		STLOGE("%s Failed to set Full-scale: %d - %s", className, value, sysfs_device_path);
-		return -1;
 	}
+
+	return err >= 0 ? 0 : -1;
 }
 
 int SensorBase::writeEnable(int32_t handle, int enable)
@@ -286,11 +291,11 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 
 	if(err > 0) {
 		STLOGI("%s Set enable to %d", className, enable);
-		return 0;
 	} else {
 		STLOGE("%s Failed to set enable: %d - %s", className, enable, sysfs_device_path);
-		return -1;
 	}
+
+	return err > 0 ? 0 : -1;
 }
 
 int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
@@ -354,17 +359,22 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 	}
 
 	fd = open(sysfs_device_path, O_RDWR);
+	if (!fd) {
+		STLOGE("%s Failed to open device: %s", className, sysfs_device_path);
+		return -1;
+	}
+
 	sprintf(buf,"%lld", (long long)delay_ms);
 	err = write(fd, buf, sizeof(buf));
 	close(fd);
 
 	if(err > 0) {
 		STLOGI("%s Set delay to %lld [ms]", className, (long long)delay_ms);
-		return 0;
 	} else {
 		STLOGE("%s Failed to set delay: %lld [ms] - %s", className, (long long)delay_ms, sysfs_device_path);
-		return -1;
 	}
+
+        return err > 0 ? 0 : -1;
 }
 
 int SensorBase::writeSysfsCommand(int32_t handle, const char *sysfsFilename, const char *dataFormat, int64_t param)
@@ -401,11 +411,11 @@ int SensorBase::writeSysfsCommand(int32_t handle, const char *sysfsFilename, con
 
 	if(err > 0) {
 		STLOGI(formatstring1, className, sysfsFilename, param);
-		return 0;
 	} else {
 		STLOGE(formatstring2, className, sysfsFilename, param, sysfs_device_path);
-		return -1;
 	}
+
+        return err > 0 ? 0 : -1;
 }
 
 /*
@@ -436,4 +446,3 @@ int64_t systemTime(int clock)
 	clock_gettime(clocks[clock], &t);
 	return int64_t(t.tv_sec)*1000000000LL + t.tv_nsec;
 }
-

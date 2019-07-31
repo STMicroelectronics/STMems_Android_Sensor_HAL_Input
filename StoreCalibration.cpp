@@ -24,9 +24,10 @@
 #include <cutils/log.h>
 #include <unistd.h>
 #include <sys/mman.h>
-#include <private/android_filesystem_config.h>
+#include <pthread.h>
 
 #if defined(STORE_CALIB_ENABLED)
+#include <private/android_filesystem_config.h>
 
 #include <fstream>
 using std::ifstream;
@@ -94,7 +95,7 @@ int StoreCalibration::eventCheck(int fd)
 	FD_SET (fd, &rfds);
 	/* Wait until an event happens */
 
-	return select (FD_SETSIZE, &rfds, NULL, NULL, NULL);
+	return select(FD_SETSIZE, &rfds, NULL, NULL, NULL);
 }
 
 StoreCalibration::StoreCalibration()
@@ -109,7 +110,7 @@ StoreCalibration::StoreCalibration()
 	}
 
 	rc = pthread_create(&thread, NULL,
-				StoreCalibration::checkChangesThread, NULL);
+			    StoreCalibration::checkChangesThread, NULL);
 	if (rc) {
 		ALOGE("Error to create pthread\n");
 	}
@@ -159,7 +160,7 @@ void* StoreCalibration::checkChangesThread(void  __attribute__((unused))*arg)
 				event = (struct inotify_event *)(event_buf + event_pos);
 				if (event->len) {
 					if (event->mask & (IN_MODIFY /*| IN_CREATE*/)) {
-						
+
 						if (!strcmp(event->name, CAL_FILE)) {
 							ALOGI("Changes on Calibration file detected");
 							readCalibrationFile();
@@ -191,7 +192,7 @@ void StoreCalibration::readCalibrationFile()
 	char buf[MAX_CHARS_PER_LINE];
 	const char* token[MAX_TOKENS_PER_LINE] = {};
 	int n, i;
-	
+
 	fin.open(concat(CAL_DIR,CAL_FILE));
 	pthread_mutex_lock(&lock);
 	for (n = 0; n < SPEC_NUM; n++)
@@ -205,7 +206,7 @@ void StoreCalibration::readCalibrationFile()
 		while (!fin.eof())
 		{
 			fin.getline(buf, MAX_CHARS_PER_LINE);
-			
+
 			token[0] = strtok(buf, DELIMITER);
 			if (token[0]) // zero if line is blank
 			{

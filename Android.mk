@@ -139,6 +139,8 @@ LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\" \
 LOCAL_SRC_FILES := $(call all-cpp-source-files)
 
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl libc
+LOCAL_HEADER_LIBRARIES := libhardware_headers libsystem_headers
+LOCAL_VENDOR_MODULE := true
 
 include $(BUILD_SHARED_LIBRARY)
 include $(call all-makefiles-under,$(LOCAL_PATH))
