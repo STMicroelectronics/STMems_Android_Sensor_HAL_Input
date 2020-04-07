@@ -51,26 +51,26 @@ STM Sensor HAL is written in *C++* language using object-oriented design. For ea
 Configuration parameters for each device (such as the name of the sensor, default full scale, names of the sysfs files, etc.) are specified in a dedicated file placed in the *conf* directory and named *conf_<sensor_name\>.h* (e.g. *conf_LSM6DSM.h*)
 
 	/* ACCELEROMETER SENSOR */
-	#define SENSOR_ACC_LABEL				"LSM6DSM 3-axis Accelerometer Sensor"
-	#define SENSOR_DATANAME_ACCELEROMETER	"ST LSM6DSM Accelerometer Sensor"
+	#define SENSOR_ACC_LABEL			"LSM6DSM 3-axis Accelerometer Sensor"
+	#define SENSOR_DATANAME_ACCELEROMETER		"ST LSM6DSM Accelerometer Sensor"
 	#define ACCEL_DELAY_FILE_NAME			"accel/polling_rate"
 	#define ACCEL_ENABLE_FILE_NAME			"accel/enable"
 	#define ACCEL_RANGE_FILE_NAME			"accel/scale"
-	#define ACCEL_MAX_RANGE					8 * GRAVITY_EARTH
-	#define ACCEL_MAX_ODR					200
-	#define ACCEL_MIN_ODR					13
+	#define ACCEL_MAX_RANGE				8 * GRAVITY_EARTH
+	#define ACCEL_MAX_ODR				200
+	#define ACCEL_MIN_ODR				13
 	#define ACCEL_POWER_CONSUMPTION			0.6f
 	#define ACCEL_DEFAULT_FULLSCALE			4
 	
 	/* GYROSCOPE SENSOR */
-	#define SENSOR_GYRO_LABEL				"LSM6DSM 3-axis Gyroscope sensor"
+	#define SENSOR_GYRO_LABEL			"LSM6DSM 3-axis Gyroscope sensor"
 	#define SENSOR_DATANAME_GYROSCOPE		"ST LSM6DSM Gyroscope Sensor"
 	#define GYRO_DELAY_FILE_NAME			"gyro/polling_rate"
 	#define GYRO_ENABLE_FILE_NAME			"gyro/enable"
 	#define GYRO_RANGE_FILE_NAME			"gyro/scale"
-	#define GYRO_MAX_RANGE					(2000.0f * (float)M_PI/180.0f)
-	#define GYRO_MAX_ODR					200
-	#define GYRO_MIN_ODR					13
+	#define GYRO_MAX_RANGE				(2000.0f * (float)M_PI/180.0f)
+	#define GYRO_MAX_ODR				200
+	#define GYRO_MIN_ODR				13
 	#define GYRO_POWER_CONSUMPTION			4.0f
 	#define GYRO_DEFAULT_FULLSCALE			2000
 	
@@ -199,7 +199,7 @@ The release of STM proprietary libraries is subject to signature of a License Us
 
 Copyright
 ========
-Copyright (C) 2016 STMicroelectronics
+Copyright (C) 2016-2020 STMicroelectronics
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
