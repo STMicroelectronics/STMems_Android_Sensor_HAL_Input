@@ -26,7 +26,11 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 #include <string.h>
 
 #include "TapSensor.h"

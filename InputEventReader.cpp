@@ -26,7 +26,11 @@
 
 #include <linux/input.h>
 
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 
 #include "InputEventReader.h"
 

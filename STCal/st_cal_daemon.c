@@ -13,7 +13,11 @@
 #include <sys/stat.h>
 #include <sys/inotify.h>
 #include <stdio.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>

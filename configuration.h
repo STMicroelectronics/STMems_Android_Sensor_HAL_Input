@@ -34,6 +34,8 @@
 #define ANDROID_M				(23)
 #define ANDROID_N				(24)
 #define ANDROID_O				(26)
+#define ANDROID_P				(28)
+#define ANDROID_Q				(29)
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
   #define OS_VERSION_ENABLE			(1)

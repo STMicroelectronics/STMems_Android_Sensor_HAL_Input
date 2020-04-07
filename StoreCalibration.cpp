@@ -21,7 +21,11 @@
 #include <sys/stat.h>
 #include "StoreCalibration.h"
 #include <fcntl.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 #include <unistd.h>
 #include <sys/mman.h>
 #include <pthread.h>

@@ -26,9 +26,14 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 #include <linux/time.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "MagnSensor.h"
 
@@ -63,7 +68,7 @@ MagnSensor::MagnSensor()
 	mInputReader(6),
 	mHasPendingEvent(false)
 {
-	int err;
+	[[maybe_unused]] int err;
 
 	pthread_mutex_init(&dataMutex, NULL);
 
@@ -320,10 +325,10 @@ bool MagnSensor::hasPendingEvents() const
 int MagnSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
 	int err = 0;
-	int kk;
+	[[maybe_unused]] int kk;
 	int what = -1;
 	int64_t delay_ms = NSEC_TO_MSEC(delay_ns);
-	int64_t Min_delay_ms = 0;
+	[[maybe_unused]] int64_t Min_delay_ms = 0;
 
 	if(delay_ms == 0)
 		return err;
@@ -491,7 +496,7 @@ int MagnSensor::setFullScale(int32_t __attribute__((unused))handle, int value)
 
 int MagnSensor::readEvents(sensors_event_t *data, int count)
 {
-	int err;
+	[[maybe_unused]] int err;
 	float MagOffset[3];
 
 	if (count < 1)

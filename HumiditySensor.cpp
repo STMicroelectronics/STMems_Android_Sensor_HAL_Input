@@ -27,7 +27,11 @@
 #include <dirent.h>
 #include <string.h>
 #include <sys/select.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 
 #include "HumiditySensor.h"
 

@@ -23,7 +23,11 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 #include <linux/input.h>
 #include <stdio.h>
 #include <string.h>

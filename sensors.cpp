@@ -30,9 +30,14 @@
 #include <unistd.h>
 
 #include <linux/input.h>
+#if (ANDROID_VERSION >= ANDROID_P)
+#include <log/log.h>
+#else
 #include <cutils/log.h>
+#endif
 
 #include "sensors.h"
+#include "SensorBase.h"
 #include "configuration.h"
 
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
@@ -1204,10 +1209,10 @@ static int open_sensors(const struct hw_module_t* module,
 	dev->device.common.close	= poll__close;
 	dev->device.activate		= poll__activate;
 	dev->device.setDelay		= poll__setDelay;
-	dev->device.poll			= poll__poll;
+	dev->device.poll		= poll__poll;
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
-	dev->device.batch			= poll__batch;
-	dev->device.flush			= poll__flush;
+	dev->device.batch		= poll__batch;
+	dev->device.flush		= poll__flush;
 #endif
 
 	*device = &dev->device.common;
