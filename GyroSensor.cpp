@@ -464,7 +464,6 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 #if !(GYROSCOPE_GBIAS_ESTIMATION_FUSION == 1)
 			memset(gbias_out, 0, sizeof(gbias_out));
 #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
-			int bias_meas;
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 			sensors_vec_t tmp_data_acc;
 			AccelSensor::getBufferData(&tmp_data_acc);
