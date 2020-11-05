@@ -133,6 +133,9 @@
 #if defined(HTS221)
   #include "conf_HTS221.h"
 #endif
+#if defined(LPS22HH)
+  #include "conf_LPS22HH.h"
+#endif
 
 /* Automotive */
 #if defined(ASM330LXH)
