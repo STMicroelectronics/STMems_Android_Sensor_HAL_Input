@@ -161,6 +161,35 @@ In *<AOSP_DIR\>/device/<vendor\>/<board\>/device.mk* add package build informati
 
 	ENABLED_SENSORS := LSM6DSM
 
+In *<AOSP_DIR\>/device/<vendor\>/<board\>/ueventd.rc* add rules to access to input devices and sysfs:
+
+	# Common input char devices
+	/dev/input* 0666 system system
+
+	# Input device (for pressure sensor)
+	/sys/class/input/input* device/poll_period_ms 0666 system system
+	/sys/class/input/input* device/enable_device 0666 system system
+
+	# Input device (for imu sensor)
+	/sys/class/input/input* accel/scale 0666 system system
+	/sys/class/input/input* accel/polling_rate 0666 system system
+	/sys/class/input/input* accel/enable 0666 system system
+	/sys/class/input/input* accel/scale_avail 0666 system system
+	/sys/class/input/input* accel/sampling_freq_avail 0666 system system
+	/sys/class/input/input* accel/sampling_freq 0666 system system
+	/sys/class/input/input* gyro/scale 0666 system system
+	/sys/class/input/input* gyro/polling_rate 0666 system system
+	/sys/class/input/input* gyro/enable 0666 system system
+	/sys/class/input/input* gyro/scale_avail 0666 system system
+	/sys/class/input/input* gyro/sampling_freq_avail 0666 system system
+	/sys/class/input/input* gyro/sampling_freq 0666 system system
+	/sys/class/input/input* temp/scale 0666 system system
+	/sys/class/input/input* temp/polling_rate 0666 system system
+	/sys/class/input/input* temp/enable 0666 system system
+	/sys/class/input/input* temp/scale_avail 0666 system system
+	/sys/class/input/input* temp/sampling_freq_avail 0666 system system
+	/sys/class/input/input* temp/sampling_freq 0666 system system
+
 To compile SensorHAL_Input just build AOSP source code from *$TOP* folder
 
 	$ cd <AOSP_DIR>
