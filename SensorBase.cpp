@@ -11,9 +11,9 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 #include <fcntl.h>
@@ -23,27 +23,29 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if defined(PLTF_LINUX_ENABLED)
+#else /* PLTF_LINUX_ENABLED */
+#include <utils/Atomic.h>
 #if (ANDROID_VERSION >= ANDROID_P)
 #include <log/log.h>
 #else
 #include <cutils/log.h>
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 #include <linux/input.h>
 #include <stdio.h>
 #include <string.h>
 #include <linux/ioctl.h>
 #include <linux/rtc.h>
-#include <utils/Atomic.h>
+#include <time.h>
 
 #include "SensorBase.h"
 #include "configuration.h"
 #include "sensors.h"
 
-/*****************************************************************************/
-
-SensorBase::SensorBase(const char* dev_name, const char* data_name)
-	: dev_name(dev_name), data_name(data_name),
-	dev_fd(-1), data_fd(-1)
+SensorBase::SensorBase(const char* dev_name, const char* data_name) :
+	    dev_name(dev_name), data_name(data_name), dev_fd(-1),
+	    data_fd(-1)
 {
 	if(data_name)
 		data_fd = openInput(data_name);
@@ -62,7 +64,8 @@ int SensorBase::open_device()
 {
 	if (dev_fd<0 && dev_name) {
 		dev_fd = open(dev_name, O_RDONLY);
-		STLOGE_IF(dev_fd < 0, "Couldn't open %s (%s)", dev_name, strerror(errno));
+		STLOGE_IF(dev_fd < 0, "Couldn't open %s (%s)",
+			  dev_name, strerror(errno));
 	}
 	return 0;
 }
@@ -106,7 +109,8 @@ int SensorBase::openInput(const char* inputDeviceName)
 }
 
 
-int SensorBase::getSysfsDevicePath(char* sysfs_path ,const char* inputDeviceName)
+int SensorBase::getSysfsDevicePath(char* sysfs_path,
+				   const char* inputDeviceName)
 {
 	int fd = -1;
 	const char *dirname = "/dev/input";
@@ -126,14 +130,16 @@ int SensorBase::getSysfsDevicePath(char* sysfs_path ,const char* inputDeviceName
 	*filename++ = '/';
 
 	while((de = readdir(dir))) {
-		if(de->d_name[0] == '.' && (de->d_name[1] == '\0' || (de->d_name[1] == '.' && de->d_name[2] == '\0')))
+		if (de->d_name[0] == '.' && (de->d_name[1] == '\0' ||
+		    (de->d_name[1] == '.' && de->d_name[2] == '\0')))
 			continue;
 
 		strcpy(filename, de->d_name);
 		fd = open(devname, O_RDONLY);
 		if (fd >= 0) {
 			char name[80];
-			if (ioctl(fd, EVIOCGNAME(sizeof(name) - 1), &name) < 1)
+			if (ioctl(fd, EVIOCGNAME(sizeof(name) - 1),
+				  &name) < 1)
 				name[0] = '\0';
 
 			if (!strcmp(name, inputDeviceName)) {
@@ -150,7 +156,8 @@ int SensorBase::getSysfsDevicePath(char* sysfs_path ,const char* inputDeviceName
 	}
 
 	closedir(dir);
-	STLOGE_IF(fd < 0, "couldn't find sysfs path for device '%s' ", inputDeviceName);
+	STLOGE_IF(fd < 0, "couldn't find sysfs path for device '%s' ",
+		  inputDeviceName);
 
 	return fd;
 }
@@ -164,26 +171,29 @@ int SensorBase::writeFullScale(int32_t handle, int value)
 
 	switch(handle) {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-		case SENSORS_ACCELEROMETER_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], ACCEL_RANGE_FILE_NAME);
-			className = "AccelSensor::setFullScale()";
-			break;
+	case SENSORS_ACCELEROMETER_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       ACCEL_RANGE_FILE_NAME);
+		className = "AccelSensor::setFullScale()";
+		break;
 #endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
-		case SENSORS_MAGNETIC_FIELD_HANDLE:
-		case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], MAGN_RANGE_FILE_NAME);
-			className = "MagnSensor::setFullScale()";
-			break;
+	case SENSORS_MAGNETIC_FIELD_HANDLE:
+	case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       MAGN_RANGE_FILE_NAME);
+		className = "MagnSensor::setFullScale()";
+		break;
 #endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-		case SENSORS_GYROSCOPE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], GYRO_RANGE_FILE_NAME);
-			className = "Gyro::setFullScale()";
-			break;
+	case SENSORS_GYROSCOPE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       GYRO_RANGE_FILE_NAME);
+		className = "Gyro::setFullScale()";
+		break;
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 
 
@@ -195,7 +205,8 @@ int SensorBase::writeFullScale(int32_t handle, int value)
 	if(err >= 0) {
 		STLOGI("%s Set new full-scale to %d", className, value);
 	} else {
-		STLOGE("%s Failed to set Full-scale: %d - %s", className, value, sysfs_device_path);
+		STLOGE("%s Failed to set Full-scale: %d - %s",
+		       className, value, sysfs_device_path);
 	}
 
 	return err >= 0 ? 0 : -1;
@@ -210,82 +221,94 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 
 	switch(handle) {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-		case SENSORS_ACCELEROMETER_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], ACCEL_ENABLE_FILE_NAME);
-			className = "AccelSensor::Enable(Accel)";
-			break;
+	case SENSORS_ACCELEROMETER_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       ACCEL_ENABLE_FILE_NAME);
+		className = "AccelSensor::Enable(Accel)";
+		break;
 #endif
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
-		case SENSORS_SIGNIFICANT_MOTION_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], SIGN_MOTION_ENABLE_FILE_NAME);
-			className = "AccelSensor::Enable(SigMotion)";
-			break;
+	case SENSORS_SIGNIFICANT_MOTION_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       SIGN_MOTION_ENABLE_FILE_NAME);
+		className = "AccelSensor::Enable(SigMotion)";
+		break;
 #endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
-		case SENSORS_MAGNETIC_FIELD_HANDLE:
-		case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], MAGN_ENABLE_FILE_NAME);
-			className = "MagnSensor::Enable()";
-			break;
+	case SENSORS_MAGNETIC_FIELD_HANDLE:
+	case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       MAGN_ENABLE_FILE_NAME);
+		className = "MagnSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-		case SENSORS_GYROSCOPE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], GYRO_ENABLE_FILE_NAME);
-			className = "GyroSensor::Enable()";
-			break;
+	case SENSORS_GYROSCOPE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       GYRO_ENABLE_FILE_NAME);
+		className = "GyroSensor::Enable()";
+		break;
 #endif
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
-		case SENSORS_PRESSURE_HANDLE:
-		case SENSORS_TEMPERATURE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], PRESS_ENABLE_FILE_NAME);
-			className = "PressTempSensor::Enable()";
-			break;
+	case SENSORS_PRESSURE_HANDLE:
+	case SENSORS_TEMPERATURE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       PRESS_ENABLE_FILE_NAME);
+		className = "PressTempSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_TEMP_ENABLE == 1)
-		case SENSORS_TEMPERATURE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], TEMP_ENABLE_FILE_NAME);
-			className = "TempSensor::Enable()";
-			break;
+	case SENSORS_TEMPERATURE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       TEMP_ENABLE_FILE_NAME);
+		className = "TempSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_TILT_ENABLE == 1)
-		case SENSORS_TILT_DETECTOR_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], TILT_ENABLE_FILE_NAME);
-			className = "TiltSensor::Enable()";
-			break;
+	case SENSORS_TILT_DETECTOR_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       TILT_ENABLE_FILE_NAME);
+		className = "TiltSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_STEP_COUNTER_ENABLE == 1)
-		case SENSORS_STEP_COUNTER_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], STEP_C_ENABLE_FILE_NAME);
-			className = "StepCounterSensor::Enable()";
-			break;
+	case SENSORS_STEP_COUNTER_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       STEP_C_ENABLE_FILE_NAME);
+		className = "StepCounterSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_STEP_DETECTOR_ENABLE == 1)
-		case SENSORS_STEP_DETECTOR_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], STEP_D_ENABLE_FILE_NAME);
-			className = "StepDetectorSensor::Enable()";
-			break;
+	case SENSORS_STEP_DETECTOR_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       STEP_D_ENABLE_FILE_NAME);
+		className = "StepDetectorSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_SIGN_MOTION_ENABLE == 1)
-		case SENSORS_SIGN_MOTION_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], SIGN_M_ENABLE_FILE_NAME);
-			className = "SignMotionSensor::Enable()";
-			break;
+	case SENSORS_SIGN_MOTION_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       SIGN_M_ENABLE_FILE_NAME);
+		className = "SignMotionSensor::Enable()";
+		break;
 #endif
 #if (SENSORS_TAP_ENABLE == 1)
-		case SENSORS_TAP_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], TAP_ENABLE_FILE_NAME);
-			className = "TapSensor::Enable()";
-			break;
+	case SENSORS_TAP_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       TAP_ENABLE_FILE_NAME);
+		className = "TapSensor::Enable()";
+		break;
 #endif
 #if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
-		case SENSORS_TEMPERATURE_HANDLE:
-		case SENSORS_HUMIDITY_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], HUMIDITY_ENABLE_FILE_NAME);
-			className = "HimiditySensor::Enable()";
-			break;
+	case SENSORS_TEMPERATURE_HANDLE:
+	case SENSORS_HUMIDITY_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       HUMIDITY_ENABLE_FILE_NAME);
+		className = "HimiditySensor::Enable()";
+		break;
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 
 	fd = open(sysfs_device_path, O_RDWR);
@@ -296,7 +319,8 @@ int SensorBase::writeEnable(int32_t handle, int enable)
 	if(err > 0) {
 		STLOGI("%s Set enable to %d", className, enable);
 	} else {
-		STLOGE("%s Failed to set enable: %d - %s", className, enable, sysfs_device_path);
+		STLOGE("%s Failed to set enable: %d - %s",
+		       className, enable, sysfs_device_path);
 	}
 
 	return err > 0 ? 0 : -1;
@@ -313,58 +337,66 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 
 	switch(handle) {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-		case SENSORS_ACCELEROMETER_HANDLE:
-		case SENSORS_SIGNIFICANT_MOTION_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], ACCEL_DELAY_FILE_NAME);
-			className = "AccelSensor::Delay()";
-			break;
+	case SENSORS_ACCELEROMETER_HANDLE:
+	case SENSORS_SIGNIFICANT_MOTION_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       ACCEL_DELAY_FILE_NAME);
+		className = "AccelSensor::Delay()";
+		break;
 #endif
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
-		case SENSORS_MAGNETIC_FIELD_HANDLE:
-		case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], MAGN_DELAY_FILE_NAME);
-			className = "MagnSensor::Delay()";
-			break;
+	case SENSORS_MAGNETIC_FIELD_HANDLE:
+	case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       MAGN_DELAY_FILE_NAME);
+		className = "MagnSensor::Delay()";
+		break;
 #endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-		case SENSORS_GYROSCOPE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], GYRO_DELAY_FILE_NAME);
-			className = "Gyro::Delay()";
-			break;
+	case SENSORS_GYROSCOPE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       GYRO_DELAY_FILE_NAME);
+		className = "Gyro::Delay()";
+		break;
 #endif
 #if (SENSORS_STEP_COUNTER_ENABLE == 1)
-		case SENSORS_STEP_COUNTER_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], STEP_C_DELAY_FILE_NAME);
-			className = "StepCounterSensor::Delay()";
-			break;
+	case SENSORS_STEP_COUNTER_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       STEP_C_DELAY_FILE_NAME);
+		className = "StepCounterSensor::Delay()";
+		break;
 #endif
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
-		case SENSORS_PRESSURE_HANDLE:
-		case SENSORS_TEMPERATURE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], PRESS_DELAY_FILE_NAME);
-			className = "PressTempSensor::Delay()";
-			break;
+	case SENSORS_PRESSURE_HANDLE:
+	case SENSORS_TEMPERATURE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       PRESS_DELAY_FILE_NAME);
+		className = "PressTempSensor::Delay()";
+		break;
 #endif
 #if (SENSORS_TEMP_ENABLE == 1)
-		case SENSORS_TEMPERATURE_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], TEMP_DELAY_FILE_NAME);
-			className = "TempSensor::Enable()";
-			break;
+	case SENSORS_TEMPERATURE_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       TEMP_DELAY_FILE_NAME);
+		className = "TempSensor::Enable()";
+		break;
 #endif
 #if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
-		case SENSORS_TEMPERATURE_HANDLE:
-		case SENSORS_HUMIDITY_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], HUMIDITY_DELAY_FILE_NAME);
-			className = "HimiditySensor::Delay()";
-			break;
+	case SENSORS_TEMPERATURE_HANDLE:
+	case SENSORS_HUMIDITY_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       HUMIDITY_DELAY_FILE_NAME);
+		className = "HimiditySensor::Delay()";
+		break;
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 
 	fd = open(sysfs_device_path, O_RDWR);
 	if (!fd) {
-		STLOGE("%s Failed to open device: %s", className, sysfs_device_path);
+		STLOGE("%s Failed to open device: %s",
+		       className, sysfs_device_path);
 		return -1;
 	}
 
@@ -373,15 +405,19 @@ int SensorBase::writeDelay(int32_t handle, int64_t delay_ms)
 	close(fd);
 
 	if(err > 0) {
-		STLOGI("%s Set delay to %lld [ms]", className, (long long)delay_ms);
+		STLOGI("%s Set delay to %lld [ms]",
+		       className, (long long)delay_ms);
 	} else {
-		STLOGE("%s Failed to set delay: %lld [ms] - %s", className, (long long)delay_ms, sysfs_device_path);
+		STLOGE("%s Failed to set delay: %lld [ms] - %s",
+		       className, (long long)delay_ms, sysfs_device_path);
 	}
 
         return err > 0 ? 0 : -1;
 }
 
-int SensorBase::writeSysfsCommand(int32_t handle, const char *sysfsFilename, const char *dataFormat, int64_t param)
+int SensorBase::writeSysfsCommand(int32_t handle,
+				  const char *sysfsFilename,
+				  const char *dataFormat, int64_t param)
 {
 	int fd;
 	int err;
@@ -393,14 +429,15 @@ int SensorBase::writeSysfsCommand(int32_t handle, const char *sysfsFilename, con
 
 	switch(handle) {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-		case SENSORS_ACCELEROMETER_HANDLE:
-		case SENSORS_SIGNIFICANT_MOTION_HANDLE:
-			strcpy(&sysfs_device_path[sysfs_device_path_len], sysfsFilename);
-			className = "AccelSensor::Command()";
-			break;
+	case SENSORS_ACCELEROMETER_HANDLE:
+	case SENSORS_SIGNIFICANT_MOTION_HANDLE:
+		strcpy(&sysfs_device_path[sysfs_device_path_len],
+		       sysfsFilename);
+		className = "AccelSensor::Command()";
+		break;
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 
 	fd = open(sysfs_device_path, O_RDWR);
@@ -416,15 +453,16 @@ int SensorBase::writeSysfsCommand(int32_t handle, const char *sysfsFilename, con
 	if(err > 0) {
 		STLOGI(formatstring1, className, sysfsFilename, param);
 	} else {
-		STLOGE(formatstring2, className, sysfsFilename, param, sysfs_device_path);
+		STLOGE(formatstring2, className, sysfsFilename, param,
+		       sysfs_device_path);
 	}
 
         return err > 0 ? 0 : -1;
 }
 
 /*
- * The following functions are the same used by Android to retrieve system
- * boot time (system/core/libutils/SystemClock.cpp).
+ * The following functions are the same used by Android to retrieve
+ * system boot time (system/core/libutils/SystemClock.cpp).
  * These function are here reported to be consistent with the
  * timestamp check used into CTS tests.
  */
@@ -439,11 +477,19 @@ enum {
 int64_t systemTime(int clock)
 {
 	static const clockid_t clocks[] = {
+#if defined(PLTF_LINUX_ENABLED)
+		SYSTEM_TIME_REALTIME,
+		SYSTEM_TIME_MONOTONIC,
+		SYSTEM_TIME_PROCESS,
+		SYSTEM_TIME_THREAD,
+		SYSTEM_TIME_BOOTTIME
+#else /* PLTF_LINUX_ENABLED */
 		CLOCK_REALTIME,
 		CLOCK_MONOTONIC,
 		CLOCK_PROCESS_CPUTIME_ID,
 		CLOCK_THREAD_CPUTIME_ID,
 		CLOCK_BOOTTIME
+#endif /* PLTF_LINUX_ENABLED */
 	};
 	struct timespec t;
 	t.tv_sec = t.tv_nsec = 0;

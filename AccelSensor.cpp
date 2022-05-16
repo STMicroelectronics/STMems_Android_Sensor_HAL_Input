@@ -17,8 +17,8 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>
@@ -26,11 +26,14 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if defined(PLTF_LINUX_ENABLED)
+#else /* PLTF_LINUX_ENABLED */
 #if (ANDROID_VERSION >= ANDROID_P)
 #include <log/log.h>
 #else
 #include <cutils/log.h>
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 #include <string.h>
 #include <pthread.h>
 
@@ -88,9 +91,11 @@ AccelSensor::AccelSensor()
 #endif
 
 	if (data_fd) {
-		STLOGI("AccelSensor::AccelSensor accel_device_sysfs_path:(%s)", sysfs_device_path);
+		STLOGI("%s: accel_device_sysfs_path:(%s)",
+		       __func__, sysfs_device_path);
 	} else {
-		STLOGE("AccelSensor::AccelSensor accel_device_sysfs_path:(%s) not found", sysfs_device_path);
+		STLOGE("%s: accel_device_sysfs_path:(%s) not found",
+		       sysfs_device_path);
 	}
 
 	data_raw[0] = data_raw[1] = data_raw[2] = 0.0;
@@ -112,13 +117,12 @@ int AccelSensor::setInitialState()
 	struct input_absinfo absinfo_z;
 
 	if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ACCEL_X), &absinfo_x) &&
-		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ACCEL_Y), &absinfo_y) &&
-		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ACCEL_Z), &absinfo_z))
-	{
+	    !ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ACCEL_Y), &absinfo_y) &&
+	    !ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ACCEL_Z), &absinfo_z))
 		mHasPendingEvent = true;
-	}
 
-	setFullScale(SENSORS_ACCELEROMETER_HANDLE, ACCEL_DEFAULT_FULLSCALE);
+	setFullScale(SENSORS_ACCELEROMETER_HANDLE,
+		     ACCEL_DEFAULT_FULLSCALE);
 	DecimationCount = 0;
 
 	return 0;
@@ -197,7 +201,8 @@ int AccelSensor::getWhatFromHandle(int32_t handle)
 	return what;
 }
 
-int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
+int AccelSensor::enable(int32_t handle, int en,
+			int  __attribute__((unused))type)
 {
 	int err = 0, errSM1 = 0, errSM2 = 0;
 	int flags = en ? 1 : 0;
@@ -213,27 +218,30 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 			//enable sysfs state machine
 			if(!(mEnabled & (1<<Acceleration)))
 				errSM1 = writeSysfsCommand(SENSORS_SIGNIFICANT_MOTION_HANDLE,
-								SIGN_MOTION_POLL_EN_FILE_NAME,
-								"%lld" ,0);
+							   SIGN_MOTION_POLL_EN_FILE_NAME,
+							   "%lld" ,0);
 
 			errSM2 = writeEnable(SENSORS_SIGNIFICANT_MOTION_HANDLE,
-								SIGN_MOTION_ENABLE_VALUE);
+					     SIGN_MOTION_ENABLE_VALUE);
 
 		}
 		if (what == Acceleration) {
 			errSM2 = writeSysfsCommand(SENSORS_ACCELEROMETER_HANDLE,
-								SIGN_MOTION_POLL_EN_FILE_NAME,
-								"%lld", 1);
+						   SIGN_MOTION_POLL_EN_FILE_NAME,
+						   "%lld", 1);
 		}
 #endif
 		mEnabled |= (1<<what);
 		writeMinDelay();
 
-		if ((mEnabled == (1<<what)) && (errSM1 >= 0) && (errSM2 >= 0)) {
+		if ((mEnabled == (1 << what)) &&
+		    (errSM1 >= 0) &&
+		    (errSM2 >= 0)) {
 #if !defined(NOT_SET_ACC_INITIAL_STATE)
 			setInitialState();
 #endif
-			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE, flags);	// Enable Accelerometer
+			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE,
+					  flags);
 		}
 
 #if (ACCEL_CALIBRATION_ENABLE == 1)
@@ -246,14 +254,15 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
 		if (what == SignificantMotion)
 			errSM1 = writeEnable(SENSORS_SIGNIFICANT_MOTION_HANDLE,
-								SIGN_MOTION_DISABLE_VALUE);
+					     SIGN_MOTION_DISABLE_VALUE);
 		if (what == Acceleration)
 			errSM2 = writeSysfsCommand(SENSORS_ACCELEROMETER_HANDLE,
-								SIGN_MOTION_POLL_EN_FILE_NAME,
-								"%lld", 0);
+						   SIGN_MOTION_POLL_EN_FILE_NAME,
+						   "%lld", 0);
 #endif
 		if((!mEnabled) && (tmp != 0)) {
-			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE, flags);
+			err = writeEnable(SENSORS_ACCELEROMETER_HANDLE,
+					  flags);
 		}
 		if ( (errSM1 < 0) || (errSM2 < 0) ){
 			err = -1;
@@ -269,11 +278,11 @@ int AccelSensor::enable(int32_t handle, int en, int  __attribute__((unused))type
 	}
 
 	if(err >= 0 ) {
-		STLOGD("AccelSensor::enable(%d), handle: %d, what: %d, mEnabled: %x",
-						flags, handle, what, mEnabled);
+		STLOGD("%s: (%d), handle: %d, what: %d, mEnabled: %x",
+		       __func__, flags, handle, what, mEnabled);
 	} else {
-		STLOGE("AccelSensor::enable(%d), handle: %d, what: %d, mEnabled: %x",
-						flags, handle, what, mEnabled);
+		STLOGE("%s: (%d), handle: %d, what: %d, mEnabled: %x",
+		       __func__, flags, handle, what, mEnabled);
 	}
 
 	return err;
@@ -303,8 +312,8 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	}
 
 	/**
-	 * The handled sensor is disabled. Set 0 in its setDelayBuffer position
-	 * and update decimation buffer.
+	 * The handled sensor is disabled. Set 0 in its setDelayBuffer
+	 * position and update decimation buffer
 	 */
 	if (delay_ms == NSEC_TO_MSEC(DELAY_OFF))
 		delay_ms = 0;
@@ -313,20 +322,18 @@ int AccelSensor::setDelay(int32_t handle, int64_t delay_ns)
 	setDelayBuffer[what] = delay_ms;
 
 #if (DEBUG_POLL_RATE == 1)
-	STLOGD("AccSensor::setDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
-						setDelayBuffer[0], setDelayBuffer[1],
-						setDelayBuffer[2], setDelayBuffer[3],
-						setDelayBuffer[4], setDelayBuffer[5],
-						setDelayBuffer[6], setDelayBuffer[7],
-						setDelayBuffer[8], setDelayBuffer[9],
-						setDelayBuffer[10]);
+	STLOGD("%s: setDelayBuffer = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+	       __func__,
+	       setDelayBuffer[0], setDelayBuffer[1],
+	       setDelayBuffer[2], setDelayBuffer[3],
+	       setDelayBuffer[4], setDelayBuffer[5],
+	       setDelayBuffer[6], setDelayBuffer[7],
+	       setDelayBuffer[8], setDelayBuffer[9],
+	       setDelayBuffer[10]);
 #endif
 
-	// Update sysfs
 	if(mEnabled & 1 << what)
-	{
 		writeMinDelay();
-	}
 
 	return err;
 }
@@ -337,24 +344,23 @@ int AccelSensor::writeMinDelay(void)
 	int kk;
 	int64_t Min_delay_ms = 0;
 
-	for(kk = 0; kk < numSensors; kk++)
-	{
-		if ((mEnabled & 1<<kk) != 0)
-		{
+	for(kk = 0; kk < numSensors; kk++) {
+		if ((mEnabled & 1<<kk) != 0) {
 			writeDelayBuffer[kk] = setDelayBuffer[kk];
-		}
-		else
+		} else {
 			writeDelayBuffer[kk] = 0;
+		}
 	}
 
 	// Min setDelay Definition
-	for(kk = 0; kk < numSensors; kk++)
-	{
+	for(kk = 0; kk < numSensors; kk++) {
 		if (Min_delay_ms != 0) {
-			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
+			if ((writeDelayBuffer[kk] != 0) &&
+			    (writeDelayBuffer[kk] <= Min_delay_ms))
 				Min_delay_ms = writeDelayBuffer[kk];
-		} else
+		} else {
 			Min_delay_ms = writeDelayBuffer[kk];
+		}
 	}
 
 #if (ACCEL_CALIBRATION_ENABLE == 1)
@@ -367,9 +373,9 @@ int AccelSensor::writeMinDelay(void)
 			Min_delay_ms = 1000 / ACTIVITY_RECOGNIZER_ODR;
 #endif
 
-	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms))
-	{
-		err = writeDelay(SENSORS_ACCELEROMETER_HANDLE, Min_delay_ms);
+	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms)) {
+		err = writeDelay(SENSORS_ACCELEROMETER_HANDLE,
+				 Min_delay_ms);
 		if(err >= 0) {
 			err = 0;
 			delayms = Min_delay_ms;
@@ -378,8 +384,7 @@ int AccelSensor::writeMinDelay(void)
 	}
 
 	// Decimation Definition
-	for(kk = 0; kk < numSensors; kk++)
-	{
+	for(kk = 0; kk < numSensors; kk++) {
 		if (kk == Acceleration || kk == Gbias)
 			continue;
 
@@ -390,16 +395,19 @@ int AccelSensor::writeMinDelay(void)
 	}
 
 #if (DEBUG_POLL_RATE == 1)
-	STLOGD("AccSensor::writeDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+	STLOGD("%s: writeDelayBuffer[] = %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld, %lld",
+						__func__,
 						writeDelayBuffer[0], writeDelayBuffer[1],
 						writeDelayBuffer[2], writeDelayBuffer[3],
 						writeDelayBuffer[4], writeDelayBuffer[5],
 						writeDelayBuffer[6], writeDelayBuffer[7],
 						writeDelayBuffer[8], writeDelayBuffer[9],
 						writeDelayBuffer[10]);
-	STLOGD("AccSensor::Min_delay_ms = %lld, delayms = %lld, mEnabled = %d",
+	STLOGD("%s: Min_delay_ms = %lld, delayms = %lld, mEnabled = %d",
+						__func__,
 						Min_delay_ms, delayms, mEnabled);
-	STLOGD("AccSensor::DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
+	STLOGD("%s: DecimationBuffer = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
+						__func__,
 						DecimationBuffer[0], DecimationBuffer[1],
 						DecimationBuffer[2], DecimationBuffer[3],
 						DecimationBuffer[4], DecimationBuffer[5],
@@ -419,7 +427,8 @@ void AccelSensor::getAccDelay(int64_t *Acc_Delay_ms)
 }
 
 
-int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
+int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle,
+			      int value)
 {
 	int err = -1;
 
@@ -430,7 +439,8 @@ int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
 
 	if(value != current_fullscale)
 	{
-		err = writeFullScale(SENSORS_ACCELEROMETER_HANDLE, value);
+		err = writeFullScale(SENSORS_ACCELEROMETER_HANDLE,
+				     value);
 		if(err >= 0) {
 			err = 0;
 			current_fullscale = value;
@@ -441,9 +451,7 @@ int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
 
 int AccelSensor::readEvents(sensors_event_t* data, int count)
 {
-#if (ACCEL_CALIBRATION_ENABLE == 1)
-	float AccOffset[3];
-#endif
+	float AccOffset[3] = { 0 };
 	if (count < 1)
 		return -EINVAL;
 
@@ -464,7 +472,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 	while (count && mInputReader.readEvent(&event)) {
 		if (event->type == EVENT_TYPE_ACCEL) {
 #if (DEBUG_ACCELEROMETER == 1)
-	STLOGD("AccelSensor::readEvents (event_code=%d)", event->code);
+	STLOGD("%s: (event_code=%d)", __func__, event->code);
 #endif
 			float value = (float) event->value;
 			if (event->code == EVENT_TYPE_ACCEL_X) {
@@ -492,15 +500,15 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 					mPendingEvents[SignificantMotion].timestamp = timevalToNano(event->time);
 					mPendingMask |= 1<<SignificantMotion;
   #if (DEBUG_ACCELEROMETER == 1)
-					STLOGD("AccelSensor::SignificantMotion event type (type = %d, code = %d)",
-							event->type, event->code);
+					STLOGD("%s: SignificantMotion event type (type = %d, code = %d)",
+						__func__, event->type, event->code);
   #endif
 				}
 			}
 #endif
 			else
-				STLOGE("AccelSensor: unknown event code (type = %d, code = %d)",
-							event->type, event->code);
+				STLOGE("%s: unknown event code (type = %d, code = %d)",
+					__func__, event->type, event->code);
 		} else if (event->type == EV_SYN) {
 			data_rot[0] = data_raw[0]*matrix_acc[0][0] +
 					data_raw[1]*matrix_acc[1][0] +
@@ -523,20 +531,23 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 
 			ST_AccCalibration_API_Run(&accCalibOut, &accCalibIn);
 #if (DEBUG_ACCELEROMETER == 1)
-			STLOGD("Calibration accData [uT] -> raw_x:%f raw_y:%f raw_z:%f",
-					data_rot[0], data_rot[1], data_rot[2]);
-			STLOGD("Calibration accData [uT] -> uncal_x:%f uncal_y:%f uncal_z:%f",
-					accCalibOut.acc_cal[0], accCalibOut.acc_cal[1],
-					accCalibOut.acc_cal[2]);
+			STLOGD("%s: Calibration accData [uT] -> raw_x:%f raw_y:%f raw_z:%f",
+				__func__,
+				data_rot[0], data_rot[1], data_rot[2]);
+			STLOGD("%s: Calibration accData [uT] -> uncal_x:%f uncal_y:%f uncal_z:%f",
+				__func__,
+				accCalibOut.acc_cal[0],
+				accCalibOut.acc_cal[1],
+				accCalibOut.acc_cal[2]);
 #endif /* DEBUG_ACCELEROMETER */
 #endif /* ACCEL_CALIBRATION_ENABLE */
 
 			DecimationCount++;
 
 			if ((mEnabled & ((1<<Acceleration) |
-							(1<<AccelUncalib))) &&
-			   ((DecimationCount >= DecimationBuffer[Acceleration]) ||
-				(DecimationCount >= DecimationBuffer[AccelUncalib]))) {
+			    (1<<AccelUncalib))) &&
+			    ((DecimationCount >= DecimationBuffer[Acceleration]) ||
+			     (DecimationCount >= DecimationBuffer[AccelUncalib]))) {
 				DecimationCount = 0;
 
 #if (ACCEL_CALIBRATION_ENABLE == 1)
@@ -549,20 +560,28 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 				AccOffset[2] = accCalibOut.offset[2];
 
 #if (DEBUG_ACCELEROMETER == 1)
-				STLOGD("AccelSensor::AccCalibData: %f, %f, %f (accuracy: %d) (off: %f 5f %f)",
-						data_calibrated.v[0], data_calibrated.v[1], data_calibrated.v[2], data_calibrated.status,
-						AccOffset[0], AccOffset[1], AccOffset[2]);
+				STLOGD("%s: AccCalibData: %f, %f, %f (accuracy: %d) (off: %f 5f %f)",
+					__func__,
+					data_calibrated.v[0],
+					data_calibrated.v[1],
+					data_calibrated.v[2],
+					data_calibrated.status,
+					AccOffset[0],
+					AccOffset[1],
+					AccOffset[2]);
 #endif /* DEBUG_ACCELEROMETER */
 #else
 				/**
 				 * No calibration is available!
 				 */
-				memcpy(data_calibrated.v, data_rot, sizeof(data_calibrated.v));
+				memcpy(data_calibrated.v, data_rot,
+				       sizeof(data_calibrated.v));
 				data_calibrated.status = SENSOR_STATUS_UNRELIABLE;
 #endif
 				if (mEnabled & (1<<Acceleration)) {
 					mPendingEvents[Acceleration].acceleration.status = data_calibrated.status;
-					memcpy(mPendingEvents[Acceleration].data, data_calibrated.v, sizeof(data_calibrated.v));
+					memcpy(mPendingEvents[Acceleration].data,
+					       data_calibrated.v, sizeof(data_calibrated.v));
 					mPendingEvents[Acceleration].timestamp = timestamp;
 					mPendingMask |= 1<<Acceleration;
 				}
@@ -570,9 +589,9 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 				if (mEnabled & (1<<AccelUncalib)) {
 					mPendingEvents[AccelUncalib].acceleration.status = data_calibrated.status;
 					memcpy(mPendingEvents[AccelUncalib].uncalibrated_accelerometer.uncalib,
-							data_rot, sizeof(data_rot));
+					       data_rot, sizeof(data_rot));
 					memcpy(mPendingEvents[AccelUncalib].uncalibrated_accelerometer.bias,
-							AccOffset, sizeof(AccOffset));
+					       AccOffset, sizeof(AccOffset));
 					mPendingEvents[AccelUncalib].timestamp = timestamp;
 					mPendingMask |= 1<<AccelUncalib;
 				}
@@ -580,8 +599,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 			}
 
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
-			if (mEnabled & (1<<ActivityReco))
-			{
+			if (mEnabled & (1<<ActivityReco)) {
 				int activity_changed = 0;
 
 				mPendingEvents[ActivityReco].data[0] =
@@ -602,10 +620,14 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 			}
 #endif
 
-			if (mEnabled & ((1<<iNemoAcceleration) | (1<<MagCalAcceleration) |
-				(1<<GeoMagRotVectAcceleration) | (1<<Orientation) |
-				(1<<Linear_Accel) | (1<<Gravity_Accel) | (1<<Gbias) |
-				(1<<VirtualGyro)))
+			if (mEnabled & ((1<<iNemoAcceleration) |
+					(1<<MagCalAcceleration) |
+					(1<<GeoMagRotVectAcceleration) |
+					(1<<Orientation) |
+					(1<<Linear_Accel) |
+					(1<<Gravity_Accel) |
+					(1<<Gbias) |
+					(1<<VirtualGyro)))
 			{
 				sensors_vec_t sData;
 				memcpy(sData.v, data_rot, sizeof(data_rot));
@@ -613,17 +635,19 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 			}
 
 #if (DEBUG_ACCELEROMETER == 1)
-			STLOGD("AccelSensor(Acceleration)::readEvents (time = %lld), count(%d), received(%d)",
-						mPendingEvents[Acceleration].timestamp,
-						count, numEventReceived);
+			STLOGD("%s: Acceleration::readEvents (time = %lld), count(%d), received(%d)",
+				__func__,
+				mPendingEvents[Acceleration].timestamp,
+				count, numEventReceived);
 #endif
 		} else {
-			STLOGE("AccelSensor: unknown event type (type = %d, code = %d)", event->type, event->code);
+			STLOGE("%s: AccelSensor: unknown event type (type = %d, code = %d)",
+				__func__, event->type, event->code);
 		}
 
 		for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
 			if (mPendingMask & (1<<j)) {
-				mPendingMask &= ~(1<<j);
+			    mPendingMask &= ~(1<<j);
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
 				if((j == SignificantMotion) && mPendingEvents[j].data[0] == 0.0f)
 					enable(SENSORS_SIGNIFICANT_MOTION_HANDLE, 0, 0);
@@ -635,6 +659,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
 				}
 			}
 		}
+
 		mInputReader.next();
 	}
 
@@ -667,9 +692,11 @@ bool AccelSensor::getBufferData(sensors_vec_t *lastBufferedValues)
 	pthread_mutex_unlock(&dataMutex);
 
 #if (DEBUG_ACCELEROMETER == 1)
-	STLOGD("AccelSensor: getBufferData got values: x:(%f),y:(%f), z:(%f).",
-					lastBufferedValues->x, lastBufferedValues->y,
-					lastBufferedValues->z);
+	STLOGD("%s: got values: x:(%f),y:(%f), z:(%f).",
+		__func__,
+		lastBufferedValues->x,
+		lastBufferedValues->y,
+		lastBufferedValues->z);
 #endif
 
 	return true;

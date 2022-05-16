@@ -17,8 +17,8 @@
  */
 
 #include "configuration.h"
-#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 
+#if (SENSORS_ACCELEROMETER_ENABLE == 1)
 #ifndef ANDROID_ACC_SENSOR_H
 #define ANDROID_ACC_SENSOR_H
 
@@ -104,6 +104,6 @@ public:
 	virtual int getWhatFromHandle(int32_t handle);
 };
 
-#endif  // ANDROID_ACCEL_SENSOR_H
+#endif  /* ANDROID_ACCEL_SENSOR_H */
 
 #endif /* SENSORS_ACCELEROMETER_ENABLE */

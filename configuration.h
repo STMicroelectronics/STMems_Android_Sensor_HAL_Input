@@ -25,6 +25,8 @@
 #ifndef CONFIGURATION_HAL_H
 #define CONFIGURATION_HAL_H
 
+#include <stdio.h>
+
 /* ANDROID API VERSION */
 #define ANDROID_ICS				(14)
 #define ANDROID_JB				(16)
@@ -240,7 +242,7 @@
 /* DEBUG INFORMATION */
 #define DEBUG_ACCELEROMETER			(0)
 #define DEBUG_MAGNETOMETER			(0)
-#define DEBUG_GYROSCOPE				(0)
+#define DEBUG_GYROSCOPE				(1)
 #define DEBUG_INEMO_SENSOR			(0)
 #define DEBUG_PRESSURE_SENSOR			(0)
 #define DEBUG_CALIBRATION			(0)
@@ -253,6 +255,17 @@
 #define DEBUG_POLL_RATE				(0)
 #define DEBUG_ACTIVITY_RECO			(0)
 
+#if defined(PLTF_LINUX_ENABLED)
+  #define ALOGV(fmt, ...)			fprintf(stdout, "[VERBOSE] %s(%u): " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+  #define ALOGD(fmt, ...)			fprintf(stdout, "[DEBUG] %s(%u): " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+  #define ALOGW(fmt, ...)			fprintf(stdout, "[WARNING] %s(%u): " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+  #define ALOGE(fmt,...) 			fprintf(stderr, "[ERROR] %s(%u): " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+  #define STLOGI(fmt,...)
+  #define STLOGE(fmt,...)
+  #define STLOGD(fmt,...)
+  #define STLOGD_IF(...)
+  #define STLOGE_IF(...)
+#else /* PLTF_LINUX_ENABLED */
 #if (ANDROID_VERSION >= ANDROID_JB)
   #define STLOGI(...)				ALOGI(__VA_ARGS__)
   #define STLOGE(...)				ALOGE(__VA_ARGS__)
@@ -266,6 +279,7 @@
   #define STLOGD_IF(...)			LOGD_IF(__VA_ARGS__)
   #define STLOGE_IF(...)			LOGE_IF(__VA_ARGS__)
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 
 #if !defined(ACCEL_MIN_ODR)
   #define ACCEL_MIN_ODR				1

@@ -30,11 +30,14 @@
 #include <unistd.h>
 
 #include <linux/input.h>
+#if defined(PLTF_LINUX_ENABLED)
+#else /* PLTF_LINUX_ENABLED */
 #if (ANDROID_VERSION >= ANDROID_P)
 #include <log/log.h>
 #else
 #include <cutils/log.h>
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 
 #include "sensors.h"
 #include "SensorBase.h"
@@ -689,7 +692,8 @@ static const struct sensor_t sSensorList[] = {
 };
 
 
-static int open_sensors(const struct hw_module_t* module, const char* id, struct hw_device_t** device);
+static int open_sensors(const struct hw_module_t* module,
+			const char* id, struct hw_device_t** device);
 
 void get_ref(sensors_module_t *sm);
 
@@ -698,7 +702,7 @@ static struct hw_module_methods_t sensors_module_methods = {
 };
 
 int sensors__get_sensors_list(struct sensors_module_t __attribute__((unused))*module,
-						struct sensor_t const** list)
+			      struct sensor_t const** list)
 {
 	*list = sSensorList;
 	return ARRAY_SIZE(sSensorList);
@@ -798,123 +802,123 @@ private:
 	{
 		switch (handle) {
 #if (SENSORS_ACCELEROMETER_ENABLE == 1)
-			case SENSORS_ACCELEROMETER_HANDLE:
-				return accel;
+		case SENSORS_ACCELEROMETER_HANDLE:
+			return accel;
 #endif
 #if (SENSORS_UNCALIB_ACCELEROMETER_ENABLE == 1)
-			case SENSORS_UNCALIB_ACCELEROMETER_HANDLE:
-				return accel;
+		case SENSORS_UNCALIB_ACCELEROMETER_HANDLE:
+			return accel;
 #endif
 
 #if (SENSORS_MAGNETIC_FIELD_ENABLE == 1)
-			case SENSORS_MAGNETIC_FIELD_HANDLE:
-				return magn;
+		case SENSORS_MAGNETIC_FIELD_HANDLE:
+			return magn;
 #endif
 
 #if ((SENSORS_ORIENTATION_ENABLE == 1) || (GEOMAG_COMPASS_ORIENTATION_ENABLE == 1))
-			case SENSORS_ORIENTATION_HANDLE:
+		case SENSORS_ORIENTATION_HANDLE:
 #if (SENSORS_ORIENTATION_ENABLE == 1)
-				return inemo;
+			return inemo;
 #else
-				return magn;
+			return magn;
 #endif
 #endif
 
 #if (SENSORS_GRAVITY_ENABLE == 1)
-			case SENSORS_GRAVITY_HANDLE:
+		case SENSORS_GRAVITY_HANDLE:
 #if (SENSOR_FUSION_ENABLE == 1)
-				return inemo;
+			return inemo;
 #else
-				return magn;
+			return magn;
 #endif
 #endif
 
 #if (SENSORS_LINEAR_ACCELERATION_ENABLE == 1)
-			case SENSORS_LINEAR_ACCELERATION_HANDLE:
+		case SENSORS_LINEAR_ACCELERATION_HANDLE:
 #if (SENSOR_FUSION_ENABLE == 1)
-				return inemo;
+			return inemo;
 #else
-				return magn;
+			return magn;
 #endif
 #endif
 
 #if (SENSORS_ROTATION_VECTOR_ENABLE == 1)
-			case SENSORS_ROTATION_VECTOR_HANDLE:
-				return inemo;
+		case SENSORS_ROTATION_VECTOR_HANDLE:
+			return inemo;
 #endif
 #if ((SENSORS_PRESSURE_ENABLE == 1) || (SENSORS_TEMP_PRESS_ENABLE == 1))
-			case SENSORS_PRESSURE_HANDLE:
-			case SENSORS_TEMPERATURE_HANDLE:
-				return press;
+		case SENSORS_PRESSURE_HANDLE:
+		case SENSORS_TEMPERATURE_HANDLE:
+			return press;
 #endif
 #if (SENSORS_TEMP_ENABLE == 1)
-			case SENSORS_TEMPERATURE_HANDLE:
-				return temperature;
+		case SENSORS_TEMPERATURE_HANDLE:
+			return temperature;
 #endif
 #if (SENSORS_GYROSCOPE_ENABLE == 1)
-			case SENSORS_GYROSCOPE_HANDLE:
+		case SENSORS_GYROSCOPE_HANDLE:
 #if (GYROSCOPE_GBIAS_ESTIMATION_FUSION == 1)
-				return inemo;
+			return inemo;
 #else
-				return gyro;
+			return gyro;
 #endif
 #endif
 #if (SENSORS_VIRTUAL_GYROSCOPE_ENABLE == 1)
-			case SENSORS_VIRTUAL_GYROSCOPE_HANDLE:
-				return virtual_gyro;
+		case SENSORS_VIRTUAL_GYROSCOPE_HANDLE:
+			return virtual_gyro;
 #endif
 #if (SENSORS_GAME_ROTATION_ENABLE == 1) && (SENSOR_FUSION_ENABLE == 1)
-			case SENSORS_GAME_ROTATION_HANDLE:
-				return inemo;
+		case SENSORS_GAME_ROTATION_HANDLE:
+			return inemo;
 #endif
 #if (SENSORS_UNCALIB_GYROSCOPE_ENABLE == 1)
-			case SENSORS_UNCALIB_GYROSCOPE_HANDLE:
+		case SENSORS_UNCALIB_GYROSCOPE_HANDLE:
 #if (GYROSCOPE_GBIAS_ESTIMATION_FUSION == 1)
-				return inemo;
+			return inemo;
 #else
-				return gyro;
+			return gyro;
 #endif
 #endif
 #if (SENSORS_SIGNIFICANT_MOTION_ENABLE == 1)
-			case SENSORS_SIGNIFICANT_MOTION_HANDLE:
-				return accel;
+		case SENSORS_SIGNIFICANT_MOTION_HANDLE:
+			return accel;
 #endif
 #if SENSORS_UNCALIB_MAGNETIC_FIELD_ENABLE
-			case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
-				return magn;
+		case SENSORS_UNCALIB_MAGNETIC_FIELD_HANDLE:
+			return magn;
 #endif
 #if SENSORS_GEOMAG_ROTATION_VECTOR_ENABLE
-			case SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE:
-				return magn;
+		case SENSORS_GEOMAG_ROTATION_VECTOR_HANDLE:
+			return magn;
 #endif
 #if ((SENSORS_TILT_ENABLE == 1) && (ANDROID_VERSION >= ANDROID_L))
-			case SENSORS_TILT_DETECTOR_HANDLE:
-				return tilt;
+		case SENSORS_TILT_DETECTOR_HANDLE:
+			return tilt;
 #endif
 #if SENSORS_STEP_COUNTER_ENABLE
-			case SENSORS_STEP_COUNTER_HANDLE:
-				return step_c;
+		case SENSORS_STEP_COUNTER_HANDLE:
+			return step_c;
 #endif
 #if SENSORS_STEP_DETECTOR_ENABLE
-			case SENSORS_STEP_DETECTOR_HANDLE:
-				return step_d;
+		case SENSORS_STEP_DETECTOR_HANDLE:
+			return step_d;
 #endif
 #if SENSORS_SIGN_MOTION_ENABLE
-			case SENSORS_SIGN_MOTION_HANDLE:
-				return sign_m;
+		case SENSORS_SIGN_MOTION_HANDLE:
+			return sign_m;
 #endif
 #if (SENSORS_ACTIVITY_RECOGNIZER_ENABLE == 1)
-			case SENSORS_ACTIVITY_RECOGNIZER_HANDLE:
-				return accel;
+		case SENSORS_ACTIVITY_RECOGNIZER_HANDLE:
+			return accel;
 #endif
 #if (SENSORS_TAP_ENABLE == 1)
-			case SENSORS_TAP_HANDLE:
-				return tap;
+		case SENSORS_TAP_HANDLE:
+			return tap;
 #endif
 #if ((SENSORS_HUMIDITY_ENABLE == 1) || (SENSORS_TEMP_RH_ENABLE == 1))
-			case SENSORS_TEMPERATURE_HANDLE:
-			case SENSORS_HUMIDITY_HANDLE:
-				return humidity;
+		case SENSORS_TEMPERATURE_HANDLE:
+		case SENSORS_HUMIDITY_HANDLE:
+			return humidity;
 #endif
 		}
 		return -EINVAL;
@@ -1034,7 +1038,7 @@ sensors_poll_context_t::sensors_poll_context_t()
 
 sensors_poll_context_t::~sensors_poll_context_t()
 {
-	for (int i=0 ; i<numSensorDrivers ; i++) {
+	for (int i = 0; i < numSensorDrivers ; i++) {
 		delete mSensors[i];
 	}
 
@@ -1047,16 +1051,17 @@ sensors_poll_context_t::~sensors_poll_context_t()
 int sensors_poll_context_t::activate(int handle, int enabled)
 {
 	int index = handleToDriver(handle);
+
 	if(index < 0)
 		return index;
 
-	int err =  mSensors[index]->enable(handle, enabled, 0);
-	return err;
+	return  mSensors[index]->enable(handle, enabled, 0);
 }
 
 int sensors_poll_context_t::setDelay(int handle, int64_t ns)
 {
 	int index = handleToDriver(handle);
+
 	if(index < 0)
 		return index;
 
@@ -1106,7 +1111,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 
 #if (ANDROID_VERSION >= ANDROID_JBMR2)
 int sensors_poll_context_t::batch(int sensor_handle, int __attribute__((unused))flags,
-						int64_t sampling_period_ns,
+				  int64_t sampling_period_ns,
 				  int64_t __attribute__((unused))max_report_latency_ns)
 {
 	this->setDelay(sensor_handle, sampling_period_ns);

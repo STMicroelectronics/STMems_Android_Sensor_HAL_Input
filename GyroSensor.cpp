@@ -26,11 +26,14 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if defined(PLTF_LINUX_ENABLED)
+#else /* PLTF_LINUX_ENABLED */
 #if (ANDROID_VERSION >= ANDROID_P)
 #include <log/log.h>
 #else
 #include <cutils/log.h>
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 #include <string.h>
 #include <pthread.h>
 
@@ -81,9 +84,11 @@ GyroSensor::GyroSensor()
 #endif
 
 	if (data_fd) {
-		STLOGI("GyroSensor::GyroSensor gyro_device_sysfs_path:(%s)", sysfs_device_path);
+		STLOGI("%s: gyro_device_sysfs_path:(%s)",
+			__func__, sysfs_device_path);
 	} else {
-		STLOGE("GyroSensor::GyroSensor gyro_device_sysfs_path:(%s) not found", sysfs_device_path);
+		STLOGE("%s:  gyro_device_sysfs_path:(%s) not found",
+			__func__, sysfs_device_path);
 	}
 
 	memset(data_raw, 0, sizeof(data_raw));
@@ -117,9 +122,7 @@ int GyroSensor::setInitialState()
 	if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_GYRO_X), &absinfo_x) &&
 		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_GYRO_Y), &absinfo_y) &&
 		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_GYRO_Z), &absinfo_z))
-	{
 		mHasPendingEvent = true;
-	}
 
 	setFullScale(SENSORS_GYROSCOPE_HANDLE, GYRO_DEFAULT_FULLSCALE);
 	startup_samples = samples_to_discard;
@@ -154,7 +157,8 @@ int GyroSensor::getWhatFromHandle(int32_t handle)
 	return what;
 }
 
-int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
+int GyroSensor::enable(int32_t handle, int en,
+		       int  __attribute__((unused))type)
 {
 	int err = 0;
 	int flags = en ? 1 : 0;
@@ -205,11 +209,11 @@ int GyroSensor::enable(int32_t handle, int en, int  __attribute__((unused))type)
 	}
 
 	if(err >= 0 ) {
-		STLOGD("GyroSensor::enable(%d), handle: %d, what: %d, mEnabled: %x",
-						flags, handle, what, mEnabled);
+		STLOGD("%s: (%d), handle: %d, what: %d, mEnabled: %x",
+			__func__, flags, handle, what, mEnabled);
 	} else {
-		STLOGE("GyroSensor::enable(%d), handle: %d, what: %d, mEnabled: %x",
-						flags, handle, what, mEnabled);
+		STLOGE("%s: (%d), handle: %d, what: %d, mEnabled: %x",
+			__func__, flags, handle, what, mEnabled);
 	}
 
 	return err;
@@ -244,8 +248,8 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 #endif
 
 	/**
-	 * The handled sensor is disabled. Set 0 in its setDelayBuffer position
-	 * and update decimation buffer.
+	 * The handled sensor is disabled. Set 0 in its setDelayBuffer
+	 * position and update decimation buffer.
 	 */
 	if (delay_ms == NSEC_TO_MSEC(DELAY_OFF))
 		delay_ms = 0;
@@ -254,14 +258,14 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 	setDelayBuffer[what] = delay_ms;
 
 #if (DEBUG_POLL_RATE == 1)
-	STLOGD("GyroSensor::setDelayBuffer[] = %lld, %lld, %lld", setDelayBuffer[0], setDelayBuffer[1], setDelayBuffer[2]);
+	STLOGD("%s: setDelayBuffer[] = %lld, %lld, %lld",
+		__func__, setDelayBuffer[0], setDelayBuffer[1],
+		setDelayBuffer[2]);
 #endif
 
 	// Update sysfs
 	if(mEnabled & 1<<what)
-	{
 		writeMinDelay();
-	}
 
 	return err;
 }
@@ -272,29 +276,27 @@ int GyroSensor::writeMinDelay(void)
 	int kk;
 	int64_t Min_delay_ms = 0;
 
-	for(kk = 0; kk < numSensors; kk++)
-	{
-		if ((mEnabled & 1<<kk) != 0)
-		{
+	for(kk = 0; kk < numSensors; kk++) {
+		if ((mEnabled & 1<<kk) != 0) {
 			writeDelayBuffer[kk] = setDelayBuffer[kk];
-		}
-		else
+		} else {
 			writeDelayBuffer[kk] = 0;
+		}
 	}
 
 	// Min setDelay Definition
-	for(kk = 0; kk < numSensors; kk++)
-	{
+	for(kk = 0; kk < numSensors; kk++) {
 		if (Min_delay_ms != 0) {
-			if ((writeDelayBuffer[kk] != 0) && (writeDelayBuffer[kk] <= Min_delay_ms))
+			if ((writeDelayBuffer[kk] != 0) &&
+			    (writeDelayBuffer[kk] <= Min_delay_ms))
 				Min_delay_ms = writeDelayBuffer[kk];
-		} else
+		} else {
 			Min_delay_ms = writeDelayBuffer[kk];
+		}
 	}
 
-	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms))
-	{
-		samples_to_discard = (int)(GYRO_STARTUP_TIME_MS/Min_delay_ms)+1;
+	if ((Min_delay_ms > 0) && (Min_delay_ms != delayms)) {
+		samples_to_discard = (int)(GYRO_STARTUP_TIME_MS / Min_delay_ms) + 1;
 		startup_samples = samples_to_discard;
 		err = writeDelay(SENSORS_GYROSCOPE_HANDLE, Min_delay_ms);
 		if(err >= 0) {
@@ -302,21 +304,19 @@ int GyroSensor::writeMinDelay(void)
 			delayms = Min_delay_ms;
 			memset(DecimationCount, 0, sizeof(DecimationCount));
 #if (GYROSCOPE_GBIAS_ESTIMATION_STANDALONE == 1)
-			iNemoEngine_API_gbias_set_frequency(1000.0f /
-							(float)Min_delay_ms);
+			iNemoEngine_API_gbias_set_frequency(1000.0f / (float)Min_delay_ms);
   #if (SENSORS_ACCELEROMETER_ENABLE == 1)
 			if (Min_delay_ms >= 10)
-				acc->setDelay(SENSORS_GYROSCOPE_HANDLE,(float)Min_delay_ms*1000000);
+				acc->setDelay(SENSORS_GYROSCOPE_HANDLE, (float)Min_delay_ms*1000000);
 			else
-				acc->setDelay(SENSORS_GYROSCOPE_HANDLE,10000000);
+				acc->setDelay(SENSORS_GYROSCOPE_HANDLE, 10000000);
   #endif
 #endif
 		}
 	}
 
 	// Decimation Definition
-	for(kk = 0; kk < numSensors; kk++)
-	{
+	for(kk = 0; kk < numSensors; kk++) {
 		if (kk == Gyro || kk == GyroUncalib)
 			continue;
 
@@ -327,10 +327,16 @@ int GyroSensor::writeMinDelay(void)
 	}
 
 #if (DEBUG_POLL_RATE == 1)
-	STLOGD("GyroSensor::writeDelayBuffer[] = %lld, %lld, %lld", writeDelayBuffer[0], writeDelayBuffer[1], writeDelayBuffer[2]);
-	STLOGD("GyroSensor::Min_delay_ms = %lld, delayms = %lld, mEnabled = %d", Min_delay_ms, delayms, mEnabled);
-	STLOGD("GyroSensor::samples_to_discard = %d", samples_to_discard);
-	STLOGD("GyroSensor::DecimationBuffer = %d, %d, %d", DecimationBuffer[0], DecimationBuffer[1], DecimationBuffer[2]);
+	STLOGD("%s: writeDelayBuffer[] = %lld, %lld, %lld",
+		__func__, writeDelayBuffer[0],
+		writeDelayBuffer[1], writeDelayBuffer[2]);
+	STLOGD("%s: Min_delay_ms = %lld, delayms = %lld, mEnabled = %d",
+		__func__, Min_delay_ms, delayms, mEnabled);
+	STLOGD("%s: samples_to_discard = %d",
+		__func__, samples_to_discard);
+	STLOGD("%s: DecimationBuffer = %d, %d, %d",
+		__func__, DecimationBuffer[0], DecimationBuffer[1],
+		DecimationBuffer[2]);
 #endif
 
 	return err;
@@ -346,7 +352,8 @@ void GyroSensor::getGyroDelay(int64_t *Gyro_Delay_ms)
 }
 
 
-int GyroSensor::setFullScale(int32_t  __attribute__((unused))handle, int value)
+int GyroSensor::setFullScale(int32_t  __attribute__((unused))handle,
+			     int value)
 {
 	int err = -1;
 
@@ -391,37 +398,35 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 		if (event->type == EVENT_TYPE_GYRO) {
 
 #if (DEBUG_GYROSCOPE == 1)
-	STLOGD("GyroSensor::readEvents (event_code=%d)", event->code);
+	STLOGD("%s (event_code=%d)", __func__, event->code);
 #endif
 
 			float value = (float) event->value;
 			if (event->code == EVENT_TYPE_GYRO_X) {
 				data_raw[0] = value * CONVERT_GYRO_X;
-			}
-			else if (event->code == EVENT_TYPE_GYRO_Y) {
+			} else if (event->code == EVENT_TYPE_GYRO_Y) {
 				data_raw[1] = value * CONVERT_GYRO_Y;
-			}
-			else if (event->code == EVENT_TYPE_GYRO_Z) {
+			} else if (event->code == EVENT_TYPE_GYRO_Z) {
 				data_raw[2] = value * CONVERT_GYRO_Z;
 			}
 #if defined(GYRO_EVENT_HAS_TIMESTAMP)
 			else if (event->code == EVENT_TYPE_TIME_MSB) {
 				timestamp = ((int64_t)(event->value)) << 32;
-			}
-			else if (event->code == EVENT_TYPE_TIME_LSB) {
+			} else if (event->code == EVENT_TYPE_TIME_LSB) {
 				timestamp |= (uint32_t)(event->value);
 			}
 #endif
 			else {
-				STLOGE("GyroSensor: unknown event code (type = %d, code = %d)", event->type, event->code);
+				STLOGE("%s: unknown event code (type = %d, code = %d)",
+					__func__, event->type, event->code);
 			}
 		} else if (event->type == EV_SYN) {
-
 			if (startup_samples) {
 				startup_samples--;
 
 #if (DEBUG_GYROSCOPE == 1)
-				STLOGD("GyroSensor::Start-up samples = %d", startup_samples);
+				STLOGD("%s: Start-up samples = %d",
+					__func__, startup_samples);
 #endif
 				goto no_data;
 			}
@@ -516,14 +521,14 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
 			}
 
 #if (DEBUG_GYROSCOPE == 1)
-			STLOGD("GyroSensor::readEvents (time = %lld), count(%d), received(%d)",
-						mPendingEvent[Gyro].timestamp,
-						count, numEventReceived);
+			STLOGD("%s: (time = %lld), count(%d), received(%d)",
+				__func__, mPendingEvent[Gyro].timestamp,
+				count, numEventReceived);
 #endif
 
 		} else {
-			STLOGE("GyroSensor: unknown event (type=%d, code=%d)",
-						event->type, event->code);
+			STLOGE("%s: unknown event (type=%d, code=%d)",
+				__func__, event->type, event->code);
 		}
 no_data:
 		mInputReader.next();
@@ -558,10 +563,11 @@ bool GyroSensor::getBufferData(sensors_vec_t *lastBufferedValues)
 	pthread_mutex_unlock(&dataMutex);
 
 #if (DEBUG_GYROSCOPE == 1)
-	STLOGD("GyroSensor: getBufferData got values: x:(%f),y:(%f), z:(%f).",
-						lastBufferedValues->x,
-						lastBufferedValues->y,
-						lastBufferedValues->z);
+	STLOGD("%s: getBufferData got values: x:(%f),y:(%f), z:(%f).",
+		__func__,
+		lastBufferedValues->x,
+		lastBufferedValues->y,
+		lastBufferedValues->z);
 #endif
 
 	return true;

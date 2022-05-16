@@ -26,11 +26,14 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#if defined(PLTF_LINUX_ENABLED)
+#else /* PLTF_LINUX_ENABLED */
 #if (ANDROID_VERSION >= ANDROID_P)
 #include <log/log.h>
 #else
 #include <cutils/log.h>
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 #include <string.h>
 #include "StepCounterSensor.h"
 

@@ -27,11 +27,14 @@
 #include <dirent.h>
 #include <string.h>
 #include <sys/select.h>
+#if defined(PLTF_LINUX_ENABLED)
+#else /* PLTF_LINUX_ENABLED */
 #if (ANDROID_VERSION >= ANDROID_P)
 #include <log/log.h>
 #else
 #include <cutils/log.h>
 #endif
+#endif /* PLTF_LINUX_ENABLED */
 
 #include "PressSensor.h"
 
@@ -57,9 +60,11 @@ PressSensor::PressSensor() :
 #endif
 
 	if (data_fd) {
-		STLOGI("PressSensor::PressSensor press_device_sysfs_path:(%s)", sysfs_device_path);
+		STLOGI("%s: press_device_sysfs_path:(%s)",
+		       __func__, sysfs_device_path);
 	} else {
-		STLOGE("PressSensor::PressSensor press_device_sysfs_path:(%s) not found", sysfs_device_path);
+		STLOGE("%s:  press_device_sysfs_path:(%s) not found",
+		       __func__, sysfs_device_path);
 	}
 }
 
@@ -79,15 +84,20 @@ int PressSensor::setInitialState()
 	struct input_absinfo absinfo_temperature;
 	float value;
 
-	if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_PRESSURE), &absinfo_pressure) &&
-		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_TEMPERATURE), &absinfo_temperature))
+	if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_PRESSURE),
+		   &absinfo_pressure) &&
+		!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_TEMPERATURE),	
+		       &absinfo_temperature))
 	{
 		value = absinfo_temperature.value;
-		mPendingEvents[Pressure].data[tempChan] = TEMPERATURE_OFFSET + value * CONVERT_TEMP;
-		mPendingEvents[Temperature].temperature = TEMPERATURE_OFFSET + value * CONVERT_TEMP;
+		mPendingEvents[Pressure].data[tempChan] =
+			      TEMPERATURE_OFFSET + value * CONVERT_TEMP;
+		mPendingEvents[Temperature].temperature =
+			      TEMPERATURE_OFFSET + value * CONVERT_TEMP;
 
 		value = absinfo_pressure.value;
-		mPendingEvents[Pressure].data[pressChan] = value * CONVERT_PRESS;
+		mPendingEvents[Pressure].data[pressChan] =
+						  value * CONVERT_PRESS;
 		mHasPendingEvent = true;
 	}
 
@@ -121,7 +131,8 @@ int PressSensor::writeSensorDelay(int handle)
 	return err >= 0 ? 0 : err;
 }
 
-int PressSensor::enable(int32_t handle, int en, int type __attribute__((unused)))
+int PressSensor::enable(int32_t handle, int en,
+			int type __attribute__((unused)))
 {
 	int err = 0;
 	int what = -1;
@@ -183,7 +194,8 @@ int PressSensor::setDelay(int32_t handle, int64_t delay_ns)
 	return err;
 }
 
-int PressSensor::setFullScale(int32_t __attribute__((unused))handle, int value)
+int PressSensor::setFullScale(int32_t __attribute__((unused))handle,
+			      int value)
 {
 	int err = -1;
 
@@ -227,7 +239,8 @@ int PressSensor::readEvents(sensors_event_t* data, int count)
 
 	while (count && mInputReader.readEvent(&event)) {
 #if DEBUG_PRESSURE_SENSOR == 1
-		STLOGD("PressSensor::readEvents (count=%d),type(%d)",count,event->type);
+		STLOGD("PressSensor::readEvents (count=%d),type(%d)",
+		       count, event->type);
 #endif
 
 		if (event->type == EV_MSC) {
@@ -244,7 +257,8 @@ int PressSensor::readEvents(sensors_event_t* data, int count)
 			}
 #endif
 			else {
-				STLOGE("PressSensor: unknown event code (type=%d, code=%d)", event->type,event->code);
+				STLOGE("PressSensor: unknown event code (type=%d, code=%d)",
+				       event->type, event->code);
 			}
 		} else if (event->type == EV_SYN) {
 			if(mEnabled & (1<<Pressure))
@@ -265,7 +279,8 @@ int PressSensor::readEvents(sensors_event_t* data, int count)
 				}
 			}
 		} else {
-			STLOGE("PressSensor: unknown event type (type=%d, code=%d)", event->type, event->code);
+			STLOGE("PressSensor: unknown event type (type=%d, code=%d)",
+			       event->type, event->code);
 		}
 		mInputReader.next();
 	}

@@ -99,6 +99,6 @@ public:
 	virtual int getWhatFromHandle(int32_t handle);
 };
 
-#endif  // ANDROID_GYRO_SENSOR_H
+#endif  /* ANDROID_GYRO_SENSOR_H */
 
 #endif /* SENSORS_GYROSCOPE_ENABLE */

@@ -150,6 +150,8 @@ Configuration parameters for each device (such as the name of the sensor, defaul
 Integration details
 =============
 
+### Android
+
 Copy the HAL source code into *<AOSP_DIR\>/hardware/STMicroelectronics/SensorHAL_Input* folder. During building process Android will include automatically the SensorHAL Android.mk.
 In *<AOSP_DIR\>/device/<vendor\>/<board\>/device.mk* add package build information:
 
@@ -201,6 +203,14 @@ The compiled library will be placed in *<AOSP_DIR\>/out/target/product/<board\>/
 
 For more information on compiling an Android project, please consult the [AOSP website](https://source.android.com/source/requirements.html) 
 
+### Linux
+
+To build the SensorHAL for linux only set CROSS_COMPILE environment accordingly to you target board, follow an examples for raspberry pi zero target:
+
+>   PATH=$PATH:/local/home/raspy/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+>   make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
+
+The compiled library will be placed in local SensorHAL source code path.
 
 STM proprietary libraries
 ================
