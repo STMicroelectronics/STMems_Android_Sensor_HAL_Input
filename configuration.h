@@ -140,6 +140,9 @@
 #if defined(LPS22HH)
   #include "conf_LPS22HH.h"
 #endif
+#if defined(LSM6DSOX)
+  #include "conf_LSM6DSOX.h"
+#endif
 
 /* Automotive */
 #if defined(ASM330LXH)
