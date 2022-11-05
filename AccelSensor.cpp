@@ -95,7 +95,7 @@ AccelSensor::AccelSensor()
 		       __func__, sysfs_device_path);
 	} else {
 		STLOGE("%s: accel_device_sysfs_path:(%s) not found",
-		       sysfs_device_path);
+		       __func__, sysfs_device_path);
 	}
 
 	data_raw[0] = data_raw[1] = data_raw[2] = 0.0;
@@ -451,7 +451,7 @@ int AccelSensor::setFullScale(int32_t  __attribute__((unused))handle,
 
 int AccelSensor::readEvents(sensors_event_t* data, int count)
 {
-	float AccOffset[3] = { 0 };
+	[[maybe_unused]] float AccOffset[3] = { 0 };
 	if (count < 1)
 		return -EINVAL;
 
