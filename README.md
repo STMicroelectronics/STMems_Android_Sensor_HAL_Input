@@ -1,18 +1,49 @@
+Important Notice
+==================
+
+DISCONTINUED (November 2022): the maintenance for this repository has been discontinued.
+
+Please refer to:
+
+https://github.com/STMicroelectronics/st-mems-android-linux-sensors-hal
+
+for the up-to-date HAL repository.
+
+
+---
+
+The current repository contains the implementation of Android sensors HAL, which must be combined with the STMicroelectronics suite of input Linux kernel device drivers for MEMS sensors using __input API__ (LDD, https://github.com/STMicroelectronics/st-mems-android-linux-drivers-input/ ). This implementation of Android sensors HAL has become __obsolete__ for use in recent __Android__ systems.
+
+Due to intrinsic limitations of the input framework, the drivers of this family are therefore limited in terms of performance and only the basic hardware embedded features of the MEMS sensors are supported.
+
+The kernel support for sensors and Android has evolved and an improved solution for integrating ST MEMS sensors in Linux kernel now leverages on IIO API.
+STMicroelectronics provides full support for MEMS sensors through a complete suite of Linux device drivers (LDD) leveraging on the IIO API/framework made available on GitHub:
+
+https://github.com/STMicroelectronics/st-mems-android-linux-drivers-iio/
+
+For recent Android systems and pure Linux systems, a brand new sensors HAL implementation has been designed accordingly to be combined with the above-mentioned LDD suite for IIO:
+
+https://github.com/STMicroelectronics/st-mems-android-linux-sensors-hal
+
+__We highly encourage and recommend that users upgrade to the suite of IIO drivers and sensors HAL when integrating our sensors in Linux kernel and Android systems. These upgrades are especially important for our most recent devices and for targets expected to run Android distributions.__
+
+The designs for the latest Android versions using the Input HAL and the Input LDD will fail their Android CTS tests for sensors due to tightening requirements impacting high-speed data read and use of buffers/FIFO.
+
 Index
 =====
 	* Introduction
 	* Software architecture
 	* Integration details
-	* STM proprietary libraries
+	* STMicroelectronics proprietary libraries
 	* More information
 	* Copyright
 
 
 Introduction
 =========
-The STM Android sensor Hardware Abstraction Layer (*HAL*) defines a standard interface for STM sensors allowing Android to be agnostic about [lower-level driver implementations](https://github.com/STMicroelectronics/STMems_Linux_Input_drivers/tree/linux-3.10.y-gh) . The HAL library is packaged into modules (.so) file and loaded by the Android system at the appropriate time. For more information see [AOSP HAL Interface](https://source.android.com/devices/sensors/hal-interface.html) 
+The ST Android sensor Hardware Abstraction Layer (*HAL*) defines a standard interface for ST sensors allowing Android to be agnostic about [lower-level driver implementations](https://github.com/STMicroelectronics/STMems_Linux_Input_drivers/tree/linux-3.10.y-gh) . The HAL library is packaged into modules (.so) file and loaded by the Android system at the appropriate time. For more information see [AOSP HAL Interface](https://source.android.com/devices/sensors/hal-interface.html)
 
-STM Sensor HAL is leaning on [Linux Input framework](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/input) to gather data from sensor device drivers and to forward samples to the Android Framework
+ST sensors HAL is leaning on [Linux Input framework](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/input) to gather data from sensor device drivers and to forward samples to the Android Framework
 
 Currently supported sensors are:
 
@@ -47,7 +78,7 @@ Currently supported sensors are:
 
 Software architecture
 ===============
-STM Sensor HAL is written in *C++* language using object-oriented design. For each hw sensor there is a custom class file (*AccelSensor.cpp*, *MagnSensor.cpp*, *GyroSensor.cpp*, *PressSensor.cpp* and *HumiditySensor.cpp*) which extends the common base class (*SensorBase.cpp*).
+ST sensor HAL is written in *C++* language using object-oriented design. For each hw sensor there is a custom class file (*AccelSensor.cpp*, *MagnSensor.cpp*, *GyroSensor.cpp*, *PressSensor.cpp* and *HumiditySensor.cpp*) which extends the common base class (*SensorBase.cpp*).
 
 Configuration parameters for each device (such as the name of the sensor, default full scale, names of the sysfs files, etc.) are specified in a dedicated file placed in the *conf* directory and named *conf_<sensor_name\>.h* (e.g. *conf_LSM6DSM.h*)
 
@@ -153,7 +184,7 @@ Integration details
 
 ### Android
 
-Copy the HAL source code into *<AOSP_DIR\>/hardware/STMicroelectronics/SensorHAL_Input* folder. During building process Android will include automatically the SensorHAL Android.mk.
+Copy the HAL source code into *<AOSP_DIR\>/hardware/STMicroelectronics/SensorHAL_Input* folder. During building process Android will include automatically the sensors HAL Android.mk.
 In *<AOSP_DIR\>/device/<vendor\>/<board\>/device.mk* add package build information:
 
 	PRODUCT_PACKAGES += sensors.{TARGET_BOARD_PLATFORM}
@@ -193,7 +224,7 @@ In *<AOSP_DIR\>/device/<vendor\>/<board\>/ueventd.rc* add rules to access to inp
 	/sys/class/input/input* temp/sampling_freq_avail 0666 system system
 	/sys/class/input/input* temp/sampling_freq 0666 system system
 
-To compile SensorHAL_Input just build AOSP source code from *$TOP* folder
+To compile sensors HAL input just build AOSP source code from *$TOP* folder
 
 	$ cd <AOSP_DIR>
 	$ source build/envsetup.sh
@@ -206,35 +237,35 @@ For more information on compiling an Android project, please consult the [AOSP w
 
 ### Linux
 
-To build the SensorHAL for linux only set CROSS_COMPILE environment accordingly to you target board, follow an examples for raspberry pi zero target:
+To build the sensors HAL for Linux only set CROSS_COMPILE environment accordingly to you target board, follow an examples for raspberry pi zero target:
 
 >   PATH=$PATH:/local/home/raspy/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 >   make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 
-The compiled library will be placed in local SensorHAL source code path.
+The compiled library will be placed in local sensors HAL source code path.
 
-STM proprietary libraries
+STMicroelectronics proprietary libraries
 ================
 
-STM proprietary libraries are used to define composite sensors based on hardware (accelerometer, gyroscope, magnetometer) or to provide sensor calibration
+ST proprietary libraries are used to define composite sensors based on hardware (accelerometer, gyroscope, magnetometer) or to provide sensor calibration
 
 ### SENSOR_FUSION:
-> The STM Sensor Fusion library is a complete 9-axis/6-axis solution which combines the measurements from a 3-axis gyroscope, a 3-axis magnetometer and a 3-axis accelerometer to provide a robust absolute orientation vector and game orientation vector
+> The ST Sensor Fusion library is a complete 9-axis/6-axis solution which combines the measurements from a 3-axis gyroscope, a 3-axis magnetometer and a 3-axis accelerometer to provide a robust absolute orientation vector and game orientation vector
 
 ### GEOMAG_FUSION:
-> The STM GeoMag Fusion library is a complete 6-axis solution which combines the measurements from a 3-axis magnetometer and a 3-axis accelerometer to provide a robust geomagnetic orientation vector
+> The ST GeoMag Fusion library is a complete 6-axis solution which combines the measurements from a 3-axis magnetometer and a 3-axis accelerometer to provide a robust geomagnetic orientation vector
 
 ### GBIAS:
-> The STM Gbias Calibration library provides an efficient gyroscope bias runtime compensation
+> The ST Gbias Calibration library provides an efficient gyroscope bias runtime compensation
 
 ### MAGCALIB:
-> The STM Magnetometer Calibration library provides an accurate magnetometer Hard Iron (HI) and Soft Iron (SI) runtime compensation
+> The ST Magnetometer Calibration library provides an accurate magnetometer Hard Iron (HI) and Soft Iron (SI) runtime compensation
 
-The *Android.mk* file enumerates STM libraries supported by the HAL. The *ENABLED_MODULES* variable is used to enable support for proprietary STM libraries
+The *Android.mk* file enumerates ST libraries supported by the HAL. The *ENABLED_MODULES* variable is used to enable support for proprietary ST libraries
 
 	ENABLED_MODULES := SENSOR_FUSION MAGCALIB GBIAS
 
-The release of STM proprietary libraries is subject to signature of a License User Agreement (LUA); please contact an STMicroelectronics sales office and representatives for further information.
+The release of ST proprietary libraries is subject to signature of a License User Agreement (LUA); please contact an STMicroelectronics sales office and representatives for further information.
 
 
 Copyright
